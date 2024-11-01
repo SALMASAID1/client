@@ -123,26 +123,37 @@ void Login() {
 
     char passw[20];
     int found = 0;
-    char CIN[20];
+    char CINN[20];
+    int k;
 
     printf("Let's connect to your account:\n");
     printf("Enter your CIN: ");
-    scanf("%s", CIN);
+    scanf("%s", CINN);
 
     printf("Enter your PASSWORD: ");
-    scanf("%s", passw);
+        for (k = 0; k < 19; k++) {
+        passw[k] = getch();
+
+        if (passw[k] == '\r') {
+            break;
+        }
+
+        printf("*");
+    }
+
+    passw[k] = '\0';
 
     FILE *fp = fopen("CLIENT.txt", "r");
     if (fp == NULL) {
-        printf("Error: Could not open the file.\n");
+        printf("\nError: Could not open the file.\n");
         return;
     }
 
     Client client;
-    while (fscanf(fp, "%*s %*s %s %s", client.CIN, client.password) == 3) {
-        if (strcmp(client.CIN, CIN) == 0 && strcmp(client.password, passw) == 0) {
+    while (fscanf(fp, "%*s %*s %s %s", client.CIN, client.password) == 2) {
+        if (strcmp(client.CIN, CINN) == 0 && strcmp(client.password, passw) == 0) {
             setConsoleColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY, 0);
-            printf("Connected successfully!\n");
+            printf("\nConnected successfully!\n");
             resetConsoleColor();
             found = 1;
             break;
@@ -151,7 +162,7 @@ void Login() {
 
     if (!found) {
         setConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY, 0);
-        printf("You need to create an account first!\n");
+        printf("\nYou need to create an account first!\n");
         resetConsoleColor();
     }
 
