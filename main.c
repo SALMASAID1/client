@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <conio.h>
 #include"fonction.h"
+
 int main(){
     int choice;
 

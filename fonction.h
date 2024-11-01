@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
-
+#include <conio.h>
 void Login(void);
 void sign_in(void);
 void leave(void);
@@ -50,6 +50,7 @@ int is_CIN_unique(const char *cin) {
 }
 
 void sign_in() {
+    int i,j;
     Client client;
     FILE *fp = fopen("CLIENT.txt", "a");
     if (fp == NULL) {
@@ -74,14 +75,37 @@ void sign_in() {
     } while (!is_CIN_unique(client.CIN));
 
     do {
-        printf("Enter NEW PASSWORD: ");
-        scanf("%s", client.password);
-        printf("Confirm your PASSWORD: ");
-        scanf("%s", client.confirm_password);
+
+    printf("Enter NEW PASSWORD: ");
+    for (i = 0; i < 19; i++) {
+        client.password[i] = getch();  // Read character without displaying it
+
+        if (client.password[i] == '\r') {  // Stop if Enter is pressed
+            break;
+        }
+
+        printf("*");  // Display an asterisk for each character
+    }
+
+    client.password[i] = '\0';  // Null-terminate the string
+
+
+        printf("\nConfirm your PASSWORD: ");
+           for (j = 0; j < 19; j++) {
+        client.confirm_password[j] = getch();
+
+        if (client.confirm_password[j] == '\r') {
+            break;
+        }
+
+        printf("*");
+    }
+
+    client.confirm_password[j] = '\0';
 
         if (strcmp(client.password, client.confirm_password) != 0) {
                 setConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY, 0);
-                printf("Error: Passwords do not match. Please try again.\n");
+                printf("\nError: Passwords do not match. Please try again.\n");
                resetConsoleColor();
 
         }
@@ -89,7 +113,7 @@ void sign_in() {
 
     fprintf(fp, "%s %s %s %s\n", client.last_name, client.First_name, client.CIN, client.password);
         setConsoleColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY, 0);
-                 printf("Information added successfully!\n");
+                 printf("\nInformation added successfully!\n");
                resetConsoleColor();
 
 
