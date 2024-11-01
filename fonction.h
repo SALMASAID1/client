@@ -120,16 +120,15 @@ void sign_in() {
     fclose(fp);
 }
 void Login() {
-    char lastname[50];
-    char firstname[50];
+
     char passw[20];
     int found = 0;
+    char CIN[20];
 
     printf("Let's connect to your account:\n");
-    printf("Enter your LAST NAME: ");
-    scanf("%s", lastname);
-    printf("Enter your FIRST NAME: ");
-    scanf("%s", firstname);
+    printf("Enter your CIN: ");
+    scanf("%s", CIN);
+
     printf("Enter your PASSWORD: ");
     scanf("%s", passw);
 
@@ -140,8 +139,8 @@ void Login() {
     }
 
     Client client;
-    while (fscanf(fp, "%s %s %*s %s", client.last_name, client.First_name, client.password) == 3) {
-        if (strcmp(client.last_name, lastname) == 0 && strcmp(client.First_name, firstname) == 0 && strcmp(client.password, passw) == 0) {
+    while (fscanf(fp, "%*s %*s %s %s", client.CIN, client.password) == 3) {
+        if (strcmp(client.CIN, CIN) == 0 && strcmp(client.password, passw) == 0) {
             setConsoleColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY, 0);
             printf("Connected successfully!\n");
             resetConsoleColor();
