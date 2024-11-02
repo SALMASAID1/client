@@ -8,6 +8,29 @@
 void Login(void);
 void sign_in(void);
 void leave(void);
+// Function to get the console width
+int getConsoleWidth() {
+    // Get the console handle
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(hConsole, &csbi);
+    return csbi.srWindow.Right - csbi.srWindow.Left + 1; // Width of the console
+}
+
+// Function to print centered text
+void printCentered(const char *text) {
+    int consoleWidth = getConsoleWidth();
+    int len = strlen(text);
+    int padding = (consoleWidth - len) / 2; // Calculate padding for centering
+    if (padding > 0) {
+        // Print spaces for padding
+        for (int i = 0; i < padding; i++) {
+            printf(" ");
+        }
+    }
+    printf("%s\n", text); // Print the text
+}
+
 
 void setConsoleColor(int textColor, int bgColor) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -119,6 +142,81 @@ void sign_in() {
 
     fclose(fp);
 }
+
+
+void liste() {
+    int c;
+    do {
+        // Displaying the menu with color and better formatting
+        setConsoleColor(FOREGROUND_GREEN| FOREGROUND_INTENSITY,0); // Green text
+        printCentered("   ---------------------------");
+        printCentered("   ----- LIST OF OPTIONS -----");
+            resetConsoleColor();
+         setConsoleColor(FOREGROUND_BLUE| FOREGROUND_INTENSITY,0);
+          printCentered(" ---------------------------");
+          printCentered("          1 - View Product List");
+          printCentered("    2 - Add To Cart");
+          printCentered("  3 - View Cart");
+          printCentered("        4 - Remove From Cart");
+          printCentered("5 - Checkout");
+          printCentered("    6 - Track Order");
+          printCentered("    7 - Rate Product");
+          setConsoleColor(FOREGROUND_RED| FOREGROUND_INTENSITY,0);
+          printCentered("  8 - Leave Page");
+          printCentered("---------------------------");
+        resetConsoleColor(); // Reset color before getting input
+
+        // Prompt for user input
+        printCentered("------->> SELECT YOUR OPTION: ");scanf("%d", &c);
+
+        switch (c) {
+            case 1: {
+                // Code for viewing product list
+                printCentered("Viewing product list...");
+                break;
+            }
+            case 2: {
+                // Code for adding to cart
+                printCentered("Adding to cart...");
+                break;
+            }
+            case 3: {
+                // Code for viewing cart
+                printCentered("Viewing cart...");
+                break;
+            }
+            case 4: {
+                // Code for removing from cart
+                printCentered("Removing from cart...");
+                break;
+            }
+            case 5: {
+                // Code for checkout
+                printCentered("Checking out...");
+                break;
+            }
+            case 6: {
+                // Code for tracking order
+                printCentered("Tracking order...");
+                break;
+            }
+            case 7: {
+                // Code for rating product
+                printCentered("Rating product...");
+                break;
+            }
+            case 8: {
+                leave(); // Call the leave function
+                break;
+            }
+            default:
+                setConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY,0); // Red text for error
+                printCentered("Incorrect choice! Your choice should be between [1 - 8]. Please retry.");
+                resetConsoleColor(); // Reset color after error message
+        }
+
+    } while (c != 0); // Loop until the user decides to exit
+}
 void Login() {
 
     char passw[20];
@@ -140,7 +238,6 @@ void Login() {
 
         printf("*");
     }
-
     passw[k] = '\0';
 
     FILE *fp = fopen("CLIENT.txt", "r");
@@ -156,6 +253,9 @@ void Login() {
             printf("\nConnected successfully!\n");
             resetConsoleColor();
             found = 1;
+            system("cls");
+            liste();
+
             break;
         }
     }
@@ -167,6 +267,10 @@ void Login() {
     }
 
     fclose(fp);
+
+
+
+
 }
 
 

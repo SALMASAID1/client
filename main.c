@@ -14,7 +14,7 @@ do{
     printf(" ---->> GIVE CHOICE :");scanf("%d",&choice);
 
     switch(choice){
-        case 1:{Login();;break;}
+        case 1:{Login();break;}
          case 2:{sign_in();break;}
           case 3:{leave();break;}
 
