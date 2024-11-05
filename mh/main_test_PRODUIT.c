@@ -8,7 +8,7 @@
 int main() {
     // Set text color and print greeting
     c_textcolor(4);
-    printf("\nHello chickens !!!\n");
+    printf("\nHello chickens  hhhhh !!!\n");
     c_textcolor(15);
 
     // Add a credit card for the client
