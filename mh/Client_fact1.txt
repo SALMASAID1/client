@@ -1,0 +1,12 @@
+CIN: AM123 
+Category: Electronics 
+Quantity: 2 
+Total Amount: 39.98
+CIN: AM123 
+Category: Garden Tools 
+Quantity: 1 
+Total Amount: 15.49
+CIN: AM123 
+Category: Home Appliance 
+Quantity: 3 
+Total Amount: 89.97
