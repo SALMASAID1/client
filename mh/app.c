@@ -1,1 +1,0 @@
-salma.c -run 
