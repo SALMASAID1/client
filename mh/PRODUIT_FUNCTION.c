@@ -50,6 +50,7 @@ void add_credit_card(char* CIN_client, char *name_client) {
     // Open the file in append binary mode
     CDM = fopen("CREDIT_CARD.dat", "wb");
     if (CDM == NULL) {
+        c_textcolor(4);
         printf("File does not exist!\n");
         return;  // Exit without terminating the program
     }
@@ -59,12 +60,14 @@ void add_credit_card(char* CIN_client, char *name_client) {
     A.client_CIN[sizeof(A.client_CIN) - 1] = '\0';  // Ensure null termination
     strncpy(A.client_name, name_client, sizeof(A.client_name) - 1);
     A.client_name[sizeof(A.client_name) - 1] = '\0';  // Ensure null termination
-
+    c_textcolor(5);
     c_gotoxy(18 , -1 );printf(" %s, please enter your credit card information (typically 13-19 digits):", name_client);
 
     int increment_screen = 0 ;
     do {
+        c_textcolor(1);
         c_gotoxy(19 , 4  );printf("Enter your credit card number: ");
+        c_textcolor(15);
         c_gotoxy(19  , 31);scanf("%s", A.card_number);
 
         // Check if card number contains only digits and has valid length
@@ -82,17 +85,17 @@ void add_credit_card(char* CIN_client, char *name_client) {
         if (!valid) {
             c_clrscr();
            c_textcolor(4);
-           printf("\n\nPlease enter a valid number between 13-19 digits\n\n");
-           c_textcolor(15);
+           c_gotoxy(18 , -1 );printf("\n\nPlease enter a valid number between 13-19 digits\n\n");
         }
     } while (!valid);
-
     c_gotoxy(23 , 31 );printf("\n************** Enter The Expiry Date **************\n");
 
     valid = 0;
     int month, year;
     do {
+        c_textcolor(5);
         printf("\nEnter the expiry date as MM/YY (e.g., 02/27): ");
+        c_textcolor(1) ;
         scanf("%2s/%2s", A.expiry_date.month, A.expiry_date.year);
         // Parse and validate month and year
         if ((sscanf(A.expiry_date.month, "%2d", &month) == 1) && (sscanf(A.expiry_date.year, "%2d", &year) == 1)) {
@@ -111,6 +114,7 @@ void add_credit_card(char* CIN_client, char *name_client) {
     } while (!valid);
  valid = 0;
  do {
+    c_textcolor(1);
     printf("Enter your CVV code (e.g., 123): ");
     scanf("%s", A.CVV);
 
@@ -130,65 +134,106 @@ void add_credit_card(char* CIN_client, char *name_client) {
     if (!valid) {
         c_textcolor(4);
         printf("Invalid CVV! Please enter a 3-digit number.\n");
-        c_textcolor(7);
     }
  } while (!valid);
-    c_textcolor(4);
+    c_textcolor(2);
    printf("Valid CVV Code");
    c_textcolor(15);
     fwrite(&A, sizeof(CCD), 1, CDM);
     fclose(CDM);
+    c_getch();
+    c_clrscr();
 
 }
-void  display_credit_cards(FILE  * CDM_1 , char* CIN ){
+void  display_credit_cards(FILE  * CDM_1 ,char *name_client,char* CIN ){
     CCD CD ; // CD : CARD DETAIL 
+    c_textcolor(5);
+    printf("------------------- Credit Card of : %s  , CIN : %s -------------------" , name_client , CIN ) ;
     while (fread(&CD , sizeof(CCD) ,1 , CDM_1) == 1 ) {
          if (strcmp(CIN , CD.client_CIN) == 0 ){
-            c_textcolor(4);
+            c_textcolor(1);
             printf("\nCard credit Number : ");
            for(int i = 0 ; i < strlen(CD.card_number) ; i++){
-            if (i < 2 || (i == strlen(CD.card_number)-1 ) || (i == strlen(CD.card_number)-2 ))printf("%c" ,CD.card_number[i] );
-            else printf("*");
+            if (i < 2 || (i == strlen(CD.card_number)-1 ) || (i == strlen(CD.card_number)-2 )){
+            c_textcolor(5);
+            printf("%c" ,CD.card_number[i] );
+            }
+            else {
+            c_textcolor(5);
+            printf("*");
+            }
              }
             printf("\n");
-            printf("CIN : %s\n",CD.client_CIN);           
+            c_textcolor(1);
+            printf("CIN :");
+            c_textcolor(5);
+            printf(" %s\n",CD.client_CIN);           
          }
     }
+    c_getch();
+    c_clrscr();
 }
-void Display_the_total_amount_of_client_sales(FILE *PCM, FILE *client_choice, char *CIN, int fact_num) {
+void Display_the_Supplier_sales_in_the_Day (FILE * supplier_amount){
+    time_t currentTime;
+    time(&currentTime);
+
+    struct tm *localTime = localtime(&currentTime);
+
+    int day = localTime->tm_mday;
+    int month = localTime->tm_mon + 1; // Months are 0-11, so add 1
+    int year = localTime->tm_year + 1900; // Years since 1900, so add 1900
+    c_textcolor(5);
+    printf("\ndate of sales : %02d-%02d-%d\n", day, month, year);
+    char car ;
+    rewind(supplier_amount);
+    while((car = fgetc(supplier_amount))!=EOF)
+    {
+        putchar(car );
+    }
+    c_textcolor(15);
+
+
+}
+void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE *PCM, FILE *client_choice, char *CINF, int supplier_num) { // PCM : PRODUCT CLIEN MANGMENT
+    time_t currentTime;
+    time(&currentTime);
+
+    struct tm *localTime = localtime(&currentTime);
+
+    int day = localTime->tm_mday;
+    int month = localTime->tm_mon + 1 ;     // Months are 0-11, so add 1
+    int year = localTime->tm_year + 1900 ; // Years since 1900, so add 1900
+    c_textcolor(1);
+    printf("\nToday's date: %02d-%02d-%d\n", day, month, year);    
     char filename[50];
-    sprintf(filename, "Client_fact%d.txt", fact_num);
-    FILE *client_Factor = fopen(filename, "w+t");
-    if (client_Factor == NULL) {
+    sprintf(filename, "supplier%d.txt", supplier_num);
+    FILE * supplier_amount = fopen(filename, "w+t");
+    if (supplier_amount == NULL) {
         printf("Error: Unable to create file %s!\n", filename);
         return;
     }
-
     product A;
     clc B;
     float total_amount = 0;
-
-    c_textcolor(14);
+    float sale_mount = 0  ;
+    c_textcolor(5);
     c_gotoxy(15, 30);
-    printf("----------------The total amount of your purchase, %s ----------------\n", CIN);
-    c_textcolor(15);
-
+    printf("----------------The total amount of your sale, %s ----------------\n", CINF);
+    c_textcolor(1);
+    fprintf(supplier_amount ,"CIN: %s \n", CINF );
     while (fread(&B, sizeof(clc), 1, client_choice) == 1) {
         rewind(PCM); // Ensure we read PCM from the start for each choice
         while (fread(&A, sizeof(product), 1, PCM) == 1) {
             if ((strcmp(A.category, B.category) == 0 ) && strcmp (A.name , B.name ) == 0  ) {
                 total_amount += A.price * B.quantity;
+                sale_mount += total_amount ;
             }
         }
-        fprintf(client_Factor, "CIN: %s \nCategory: %s \nQuantity: %d \nTotal Amount: %.2f\n", CIN, B.category, B.quantity, total_amount);
+        fprintf(supplier_amount, "Category: %s \nQuantity: %d \nSale Amount: %.2f\n", B.category, B.quantity, total_amount);
         total_amount = 0; // Reset for the next client choice
     }
-    char car ;
     c_textcolor(1);
-    rewind(client_Factor);
-    while((car = fgetc(client_Factor))!=EOF)
-    // fputc(car , client_Factor);
-    putchar(car);
-    c_textcolor(15);
-    fclose(client_Factor);
+    printf("                --------- %.2f DH ---------", sale_mount );
+    sale_mount = 0 ;
+    fclose(supplier_amount);
 }
