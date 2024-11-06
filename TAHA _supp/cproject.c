@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
-//#include "function.h"
+//  #include "function.h"
 void set_color(int color_code) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, color_code);
