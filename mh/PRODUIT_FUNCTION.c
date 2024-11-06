@@ -42,6 +42,9 @@ int quantity ;
 
 }clc ; // clc : client choice 
 
+// functions of chickens
+
+
 void add_credit_card(char* CIN_client, char *name_client) {
     time_t t = time(NULL);   // Get the current time
     struct tm *current_time = localtime(&t); // Convert to local time structure
