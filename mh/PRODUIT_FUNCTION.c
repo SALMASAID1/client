@@ -65,14 +65,14 @@ void add_credit_card(char* CIN_client, char *name_client) {
     strncpy(A.client_name, name_client, sizeof(A.client_name) - 1);
     A.client_name[sizeof(A.client_name) - 1] = '\0';  // Ensure null termination
     c_textcolor(5);
-    c_gotoxy(18 , -1 );printf(" %s, please enter your credit card information (typically 13-19 digits):", name_client);
+    c_gotoxy(25 , 3 );printf(" %s, please enter your credit card information (typically 13-19 digits)", name_client);
 
     int increment_screen = 0 ;
     do {
         c_textcolor(1);
-        c_gotoxy(19 , 4  );printf("Enter your credit card number: ");
+        c_gotoxy(50 , 5  );printf("Enter your credit card number: ");
         c_textcolor(15);
-        c_gotoxy(19  , 31);scanf("%s", A.card_number);
+        c_gotoxy(81  , 5);scanf("%s", A.card_number);
 
         // Check if card number contains only digits and has valid length
         valid = 1;
@@ -89,17 +89,19 @@ void add_credit_card(char* CIN_client, char *name_client) {
         if (!valid) {
             c_clrscr();
            c_textcolor(4);
-           c_gotoxy(18 , -1 );printf("\n\nPlease enter a valid number between 13-19 digits\n\n");
+           c_gotoxy(50 , -1 );printf("\n\nPlease enter a valid number between 13-19 digits\n\n");
         }
     } while (!valid);
+
+    c_textcolor(5); 
     c_gotoxy(23 , 31 );printf("\n************** Enter The Expiry Date **************\n");
 
     valid = 0;
     int month, year;
     do {
-        c_textcolor(5);
+        c_textcolor(1);
         printf("\nEnter the expiry date as MM/YY (e.g., 02/27): ");
-        c_textcolor(1) ;
+        c_textcolor(14) ;
         scanf("%2s/%2s", A.expiry_date.month, A.expiry_date.year);
         // Parse and validate month and year
         if ((sscanf(A.expiry_date.month, "%2d", &month) == 1) && (sscanf(A.expiry_date.year, "%2d", &year) == 1)) {
@@ -120,6 +122,7 @@ void add_credit_card(char* CIN_client, char *name_client) {
  do {
     c_textcolor(1);
     printf("Enter your CVV code (e.g., 123): ");
+    c_textcolor(14);
     scanf("%s", A.CVV);
 
     // Check if CVV is exactly 3 digits

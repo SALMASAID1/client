@@ -1,0 +1,6 @@
+Client: mohamed | Product ID: 1 | Comment: the product was good and i do not think is for that goog  
+Rating: 5 stars
+Client: mohamed | Product ID: 1 | Comment: 
+Rating: 1 star
+Client: mohamed | Product ID: 1 | Comment: the product is bad
+Rating: 1 star
