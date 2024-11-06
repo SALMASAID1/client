@@ -2,9 +2,7 @@
 #include <stdlib.h>
 #include "conio.h"
 #include "header_PRODUIT.h"
-      
 
-      helllo 
 int main() {
     // Set text color and print greeting
     c_textcolor(4);
@@ -22,7 +20,7 @@ int main() {
     }
 
     // Display credit card details
-    display_credit_cards(CDM, "AM123");
+    display_credit_cards(CDM, "mohamed","AM123");
     fclose(CDM);
 
     // Open PCM file
@@ -40,13 +38,19 @@ int main() {
         return 1; // Return a non-zero value for error
     }
 
-    // Display total amount of client sales
-    Display_the_total_amount_of_client_sales(PCM, C, "AM123", 1); // Ensure the correct CIN is passed
+    Display_the_Supplier_Total_amount_sales_in_the_Day(PCM, C, "AM123", 1); // Ensure the correct CIN is passed
 
-    // Close files
     fclose(C);
     fclose(PCM);
 
-    c_getch(); // Wait for user input before closing
+    FILE *kk = fopen("supplier1.txt", "rb");
+    if (kk == NULL) {
+        printf("Error: supplier1.txt does not exist!\n");
+        return 1; // Return a non-zero value for error
+    }
+
+    Display_the_Supplier_sales_in_the_Day(kk);
+    fclose(kk);
+    c_getch();
     return 0;
 }
