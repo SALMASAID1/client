@@ -52,5 +52,8 @@ int main() {
     Display_the_Supplier_sales_in_the_Day(kk);
     fclose(kk);
     c_getch();
+    c_clrscr();
+    feedback_and_rate_the_product("mohamed" , 1 );
+    c_getch();
     return 0;
 }
