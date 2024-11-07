@@ -4,3 +4,7 @@ Client: mohamed | Product ID: 1 | Comment:
 Rating: 1 star
 Client: mohamed | Product ID: 1 | Comment: the product is bad
 Rating: 1 star
+Client: mohamed | Product ID: 1 | Comment: 
+Rating: 3 stars
+Client: mohamed | Product ID: 1 | Comment: 4
+Rating: 5 stars

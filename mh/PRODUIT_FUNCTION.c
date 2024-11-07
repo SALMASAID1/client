@@ -161,7 +161,7 @@ void display_credit_cards(FILE  * CDM_1 ,char *name_client,char* CIN ){
             c_textcolor(1);
             printf("\nCard credit Number : ");
            for(int i = 0 ; i < strlen(CD.card_number) ; i++){
-            if (i < 2 || (i == strlen(CD.card_number)-1 ) || (i == strlen(CD.card_number)-2 )){
+            if (i < 1 || (i == strlen(CD.card_number)-1 ) || (i > strlen(CD.card_number)-5 )){
             c_textcolor(5);
             printf("%c" ,CD.card_number[i] );
             }
