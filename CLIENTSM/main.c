@@ -4,18 +4,21 @@
 #include"fonction.h"
 int main() {
     int choice;
-    c_textattr(5);
 
-    do {
-        printf("1 - Login\n");
-        printf("2 - Sign In\n");
-        printf("3 - Leave page\n");
-        printf(" ---->> GIVE CHOICE : ");
 
-        if (scanf("%d", &choice) != 1) {
+    do {    c_textattr(8);
+       c_gotoxy(50,6); printf("1 - Login");
+        c_gotoxy(50,7);printf("2 - Sign In");
+        c_gotoxy(50,8);printf("3 - Leave page");
+        c_textattr(14);
+        c_gotoxy(50,9); printf(" ---->> GIVE CHOICE : ");
+         if (scanf("%d", &choice) != 1) {
             // Clear invalid input from the buffer
             while (getchar() != '\n');
-            printf("Invalid input. Please enter a number.\n");
+                 c_textattr(4);
+           c_gotoxy(50,11); printf("Invalid input. Please enter a number.\n");
+           c_clrscr();
+                 c_textattr(14);
             continue;  // Restart the loop
         }
 
@@ -30,7 +33,9 @@ int main() {
                 leave();
                 break;
             default:
+                 c_textattr(4);
                 printf("Please choose a valid option.\n");
+                 c_textattr(14);
                 break;
         }
 
