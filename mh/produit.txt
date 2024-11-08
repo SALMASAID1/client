@@ -1,0 +1,10 @@
+1 electronique pc i5 2000 20
+2 electronique phone iPhone 2000 20
+3 electronique phone hwawi 3000 19
+4 electronique tv samsung 4000 15
+5 electronique camera canon 3500 10
+6 maison furniture table 1500 30
+7 maison furniture chair 800 50
+8 alimentaire fruits apple 50 200
+9 alimentaire fruits orange 60 180
+10 alimentaire drinks coca 20 100

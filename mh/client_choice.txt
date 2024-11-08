@@ -1,0 +1,5 @@
+electronique pc 5
+electronique phone 3
+electronique phone 2
+maison furniture table 1
+alimentaire fruits apple 10

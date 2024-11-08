@@ -6,9 +6,6 @@
 #include "conio.h"
 #include "header_PRODUIT.h"
 
-
-FILE * FACT ; // Client's Factor
-
 FILE * CDM;  // CRM : CREDIT CARD DETAIL MANAGEMENT
 
 typedef struct {     // Date card credit information
@@ -52,7 +49,7 @@ void add_credit_card(char* CIN_client, char *name_client) {
     int current_mont = current_time->tm_mon + 1 ;
 
     // Open the file in append binary mode
-    CDM = fopen("CREDIT_CARD.dat", "wb");
+    CDM = fopen("CREDIT_CARD.dat", "ab");
     if (CDM == NULL) {
         c_textcolor(4);
         printf("File does not exist!\n");
@@ -64,15 +61,15 @@ void add_credit_card(char* CIN_client, char *name_client) {
     A.client_CIN[sizeof(A.client_CIN) - 1] = '\0';  // Ensure null termination
     strncpy(A.client_name, name_client, sizeof(A.client_name) - 1);
     A.client_name[sizeof(A.client_name) - 1] = '\0';  // Ensure null termination
-    c_textcolor(5);
+    c_textcolor(14);
     c_gotoxy(30 , 3 );printf(" %s, please enter your credit card information (typically 13-19 digits)", name_client);
 
     // int increment_screen = 0 ;
     int count_error = 0 ;
     do {
-        c_textcolor(1);
+        c_textcolor(14);
         c_gotoxy(50 , 5+count_error  );printf("Enter your credit card number: ");
-        c_textcolor(15);
+        c_textcolor(8);
         scanf("%s", A.card_number);
         valid = 1;
         for (int i = 0; i < strlen(A.card_number); i++) {
@@ -95,10 +92,10 @@ void add_credit_card(char* CIN_client, char *name_client) {
     valid = 0;
     int month, year;
     do {
-        c_textcolor(1);
+        c_textcolor(14);
         c_gotoxy(50 , 8 + count_error );
         printf("Enter the expiry date as MM/YY (e.g., 02/27): ");
-        c_textcolor(14) ;
+        c_textcolor(8) ;
         scanf("%2s/%2s", A.expiry_date.month, A.expiry_date.year);
         // Parse and validate month and year
         if ((sscanf(A.expiry_date.month, "%2d", &month) == 1) && (sscanf(A.expiry_date.year, "%2d", &year) == 1)) {
@@ -119,10 +116,10 @@ void add_credit_card(char* CIN_client, char *name_client) {
     } while (!valid);
  valid = 0;
  do {
-    c_textcolor(1);
+    c_textcolor(14);
     count_error += 2 ;
     c_gotoxy(50 , 7 + count_error);printf("Enter your CVV code (e.g., 123): ");
-    c_textcolor(14);
+    c_textcolor(8);
     c_gotoxy(83 , 7 + count_error);scanf("%s", A.CVV);
 
     // Check if CVV is exactly 3 digits
@@ -155,15 +152,15 @@ void add_credit_card(char* CIN_client, char *name_client) {
 }
 void display_credit_cards(FILE  * CDM_1 ,char *name_client,char* CIN ){
     CCD CD ; // CD : CARD DETAIL 
-    c_textcolor(5);
+    c_textcolor(14);
     c_gotoxy(30 , 3 );printf("------------------- Credit Card of : %s  , CIN : %s -------------------" , name_client , CIN ) ;
     while (fread(&CD , sizeof(CCD) ,1 , CDM_1) == 1 ) {
          if (strcmp(CIN , CD.client_CIN) == 0 ){
-            c_textcolor(1);
+            c_textcolor(8);
             c_gotoxy(50 , 5 );printf("Card credit Number : ");
            for(int i = 0 ; i < strlen(CD.card_number) ; i++){
             if (i < 1 || (i == strlen(CD.card_number)-1 ) || (i > strlen(CD.card_number)-5 )){
-            c_textcolor(5);
+            c_textcolor(14);
             c_gotoxy(71 +i, 5 );printf("%c" ,CD.card_number[i] );
             }
             else {
@@ -173,81 +170,115 @@ void display_credit_cards(FILE  * CDM_1 ,char *name_client,char* CIN ){
             }
              }
             printf("\n");
-            c_textcolor(1);
+            c_textcolor(8);
             c_gotoxy(50 , 7 );printf("CIN :");
-            c_textcolor(5);
+            c_textcolor(14);
             printf(" %s\n",CD.client_CIN);           
          }
     }
     c_getch();
     c_clrscr();
 }
-void Display_the_Supplier_sales_in_the_Day (FILE * supplier_amount){
+
+void Display_the_Supplier_sales_in_the_Day(FILE *supplier_amount) {
+    // Get the current date
     time_t currentTime;
     time(&currentTime);
-
     struct tm *localTime = localtime(&currentTime);
-
     int day = localTime->tm_mday;
-    int month = localTime->tm_mon + 1; // Months are 0-11, so add 1
-    int year = localTime->tm_year + 1900; // Years since 1900, so add 1900
-    c_textcolor(5);
-    c_gotoxy(50 , 3 );printf("date of sales : %02d-%02d-%d", day, month, year);
-    char car ;
+    int month = localTime->tm_mon + 1;
+    int year = localTime->tm_year + 1900;
+
+    // Display a header with date
+    c_textcolor(14);
+    c_gotoxy(50, 2);
+    printf("======== SUPPLIER SALES REPORT ========");
+    c_gotoxy(50, 3);
+    printf("DATE OF SALES : %02d-%02d-%d", day, month, year);
+    c_gotoxy(50, 4);
+    printf("=======================================");
+
+    // Reset file to the beginning and set y-position
     rewind(supplier_amount);
-    int i = 0 ;
-    while((car = fgetc(supplier_amount))!=EOF)
-    {
-        c_gotoxy(50+i, 3 );putchar(car );
-        i+=1;
-    }
+    int y_position = 6;
+    char car;
+
+    // Display each character from supplier_amount file with alignment
     c_textcolor(15);
+    while ((car = fgetc(supplier_amount)) != EOF) {
+        putchar(car);
+    }
 
-
+    c_textcolor(15); // Reset color after displaying
 }
-void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE *PCM, FILE *client_choice, char *CINF, int supplier_num) { // PCM : PRODUCT CLIEN MANGMENT
+
+void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE *PCM, FILE *client_choice, char *CINF, int supplier_num) {
     time_t currentTime;
     time(&currentTime);
-
     struct tm *localTime = localtime(&currentTime);
-
     int day = localTime->tm_mday;
-    int month = localTime->tm_mon + 1 ;     // Months are 0-11, so add 1
-    int year = localTime->tm_year + 1900 ; // Years since 1900, so add 1900
-    c_textcolor(1);
-    printf("\nToday's date: %02d-%02d-%d\n", day, month, year);    
+    int month = localTime->tm_mon + 1;
+    int year = localTime->tm_year + 1900;
+    c_textcolor(14);
+    c_gotoxy(50, 2);
+    printf("======== SUPPLIER TOTAL SALES REPORT ========");
+    c_gotoxy(50, 3);
+    printf("TODAY'S DATE: %02d-%02d-%d", day, month, year);
+    c_gotoxy(50, 4);
+    printf("SUPPLIER ID: %s", CINF);
+    c_gotoxy(50, 5);
+    printf("============================================");
+
+    // Create the filename for supplier data
     char filename[50];
     sprintf(filename, "supplier%d.txt", supplier_num);
-    FILE * supplier_amount = fopen(filename, "w+t");
+    FILE *supplier_amount = fopen(filename, "w+t");
     if (supplier_amount == NULL) {
+        c_textcolor(4);
         printf("Error: Unable to create file %s!\n", filename);
         return;
     }
-    product A;
-    clc B;
+    int product_id, client_id;
+    char product_category[30], product_name[30], client_category[30], client_name[30];
+    float product_price = 0.0;
+    int product_quantity = 0, client_quantity = 0;
     float total_amount = 0;
-    float sale_mount = 0  ;
-    c_textcolor(5);
-    c_gotoxy(15, 30);
-    printf("----------------The total amount of your sale, %s ----------------\n", CINF);
-    c_textcolor(1);
-    fprintf(supplier_amount ,"CIN: %s \n", CINF );
-    while (fread(&B, sizeof(clc), 1, client_choice) == 1) {
-        rewind(PCM); // Ensure we read PCM from the start for each choice
-        while (fread(&A, sizeof(product), 1, PCM) == 1) {
-            if ((strcmp(A.category, B.category) == 0 ) && strcmp (A.name , B.name ) == 0  ) {
-                total_amount += A.price * B.quantity;
-                sale_mount += total_amount ;
+    float sale_mount = 0;
+
+    fprintf(supplier_amount, "CIN: %s\n\n", CINF);
+    c_textcolor(11);
+    int y_position = 7;
+    c_gotoxy(50, y_position++);
+    printf("| %-15s | %-10s | %-12s |", "CATEGORY", "QUANTITY", "SALE AMOUNT");
+    c_gotoxy(50, y_position++);
+    printf("|-----------------|------------|--------------|");
+
+    c_textcolor(8);
+    while (fscanf(client_choice, "%d %s %s %d", &client_id, client_category, client_name, &client_quantity) == 4) {
+        rewind(PCM);  
+        while (fscanf(PCM, "%d %s %s %*s %f %d", &product_id, product_category, product_name, &product_price, &product_quantity) == 5) {
+            if (product_id == client_id && strcmp(product_category, client_category) == 0 && strcmp(product_name, client_name) == 0) {
+                total_amount = product_price * client_quantity;
+                sale_mount += total_amount;
+                c_gotoxy(50, y_position++);
+                printf("| %-15s | %-10d | %-12.2f DH |", client_category, client_quantity, total_amount);
+                fprintf(supplier_amount, "Category: %s\nQuantity: %d\nSale Amount: %.2f\n\n", client_category, client_quantity, total_amount);
+                total_amount = 0;
+                break;
             }
         }
-        fprintf(supplier_amount, "Category: %s \nQuantity: %d \nSale Amount: %.2f\n", B.category, B.quantity, total_amount);
-        total_amount = 0; // Reset for the next client choice
     }
-    c_textcolor(1);
-    printf("                --------- %.2f DH ---------", sale_mount );
-    sale_mount = 0 ;
+    c_textcolor(14);
+    c_gotoxy(50, y_position + 1);
+    printf("============================================");
+    c_gotoxy(50, y_position + 2);
+    printf("TOTAL SALES AMOUNT: %.2f DH", sale_mount);
+    c_gotoxy(50, y_position + 3);
+    printf("============================================");
     fclose(supplier_amount);
+    c_textcolor(15);
 }
+
 void feedback_and_rate_the_product(char *name_cl, int id_product) { // name_cl: client name, id_product: product id
     FILE *client_opinion = fopen("feedback.txt", "a");
     if (client_opinion == NULL) {
@@ -257,9 +288,9 @@ void feedback_and_rate_the_product(char *name_cl, int id_product) { // name_cl: 
     }
 
     char comment[256];
-    c_textcolor(5);
+    c_textcolor(14);
     printf("%s, enter your comment about Product %d: ", name_cl, id_product);
-    c_textcolor(1);
+    c_textcolor(8);
     fflush(stdin);
     fgets(comment, sizeof(comment), stdin);
     size_t len = strlen(comment);
@@ -270,11 +301,9 @@ void feedback_and_rate_the_product(char *name_cl, int id_product) { // name_cl: 
     puts(comment);
 
     int rating;
-    c_textcolor(5);
+    c_textcolor(14);
     printf(" Rate the product (1 to 5 stars): ");
-    c_textcolor(15);
-
-    // Input loop for rating with validation
+    c_textcolor(14);
     while (1) {
         if (scanf("%d", &rating) != 1 || rating < 1 || rating > 5) {
             // Clear invalid input from buffer
@@ -286,7 +315,7 @@ void feedback_and_rate_the_product(char *name_cl, int id_product) { // name_cl: 
         }
     }
 
-    c_textcolor(1);
+    c_textcolor(8);
     switch (rating) {
         case 1:
             printf("- You rated this product 1 star: We're sorry to hear that you had a poor experience.\n");
@@ -310,7 +339,97 @@ void feedback_and_rate_the_product(char *name_cl, int id_product) { // name_cl: 
             break;
     }
     c_textcolor(14);
-    printf("\nThank you for your feedback!\n");
+    printf("Thank you for your feedback!");
     c_textcolor(15);
     fclose(client_opinion);
+}
+
+int check_stock_and_get_price(FILE *PCM, const char *category, const char *name, int quantity, float *price) {
+    product prod;
+    rewind(PCM);
+    while (fscanf(PCM, "%d %s %s %s %f %d", &prod.id_product, prod.category, prod.name, prod.description, &prod.price, &prod.quantity) == 6) {
+        if (strcmp(prod.category, category) == 0 && strcmp(prod.name, name) == 0) {
+            *price = prod.price; 
+            if (quantity <= prod.quantity) {
+                return 1; // In stock
+            } else {
+                return 0; // Out of stock
+            }
+        }
+    }
+    return -1; // Product not found
+}
+
+void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
+    FILE *FACT = fopen("FACTEUR.txt", "w");
+    if (FACT == NULL) {
+        printf("Error: Unable to create FACTEUR.txt file!\n");
+        exit(1);
+    }
+    CCD client_details;
+    int found = 0;
+    rewind(CDM);
+
+    while (fread(&client_details, sizeof(CCD), 1, CDM) == 1) {
+        if (strcmp(client_details.client_CIN, CIN) == 0) {
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found) {
+        fprintf(FACT, "Error: Client with CIN %s not found in credit card database!\n", CIN);
+        fclose(FACT);
+        return;
+    }
+
+    // Step 2: Mask credit card number
+    char hidden_card_number[50];
+    snprintf(hidden_card_number, sizeof(hidden_card_number), "%.4s **** **** %.4s", 
+             client_details.card_number, 
+             client_details.card_number + strlen(client_details.card_number) - 4);
+
+    // Step 3: Write Client Information and Date to FACTEUR
+    time_t currentTime = time(NULL);
+    struct tm *localTime = localtime(&currentTime);
+    fprintf(FACT, "================== FACTURE ==================\n");
+    fprintf(FACT, "Client Name: %s\n", client_details.client_name);
+    fprintf(FACT, "Client CIN: %s\n", client_details.client_CIN);
+    fprintf(FACT, "Card Number: %s\n", hidden_card_number);
+    fprintf(FACT, "Date of Purchase: %02d-%02d-%d\n\n",  
+            localTime->tm_mday, 
+            localTime->tm_mon + 1, 
+            localTime->tm_year + 1900);
+    fprintf(FACT, "---------------------------------------------\n");
+    fprintf(FACT, "| %-15s | %-10s | %-10s |\n", "Product", "Quantity", "Total Price");
+    fprintf(FACT, "---------------------------------------------\n");
+
+    // Step 4: Process Client's Choices and Calculate Total Cost 
+    clc client_choice_entry;
+    float grand_total = 0.0;
+    rewind(client_choice);
+    while (fscanf(client_choice, "%s %s %d", client_choice_entry.category, client_choice_entry.name, &client_choice_entry.quantity) == 3) {
+        float product_price;
+        int stock_status = check_stock_and_get_price(PCM, client_choice_entry.category, client_choice_entry.name, client_choice_entry.quantity, &product_price);
+
+        switch (stock_status) {
+            case 1: // In stock
+                grand_total += product_price * client_choice_entry.quantity;
+                fprintf(FACT, "| %-15s | %-10d | %-10.2f DH |\n", client_choice_entry.name, client_choice_entry.quantity, product_price * client_choice_entry.quantity);
+                break;
+            case 0: // Out of stock
+                fprintf(FACT, "| %-15s | %-10d | %-10s |\n", client_choice_entry.name, client_choice_entry.quantity, "Out of Stock");
+                break;
+            case -1: // Product not found
+                fprintf(FACT, "| %-15s | %-10d | %-10s |\n", client_choice_entry.name, client_choice_entry.quantity, "Not Found");
+                break;
+        }
+    }
+
+    // Step 5: Print Grand Total and Close FACTEUR File
+    fprintf(FACT, "---------------------------------------------\n");
+    fprintf(FACT, "Grand Total: %.2f DH\n", grand_total);
+    fprintf(FACT, "=============================================\n");
+
+    fclose(FACT);
 }

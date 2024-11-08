@@ -1,10 +1,2 @@
-CIN: AM123 
-Category: Electronics 
-Quantity: 2 
-Sale Amount: 0.00
-Category: Garden Tools 
-Quantity: 1 
-Sale Amount: 0.00
-Category: Home Appliance 
-Quantity: 3 
-Sale Amount: 0.00
+CIN: AM123
+

@@ -16,39 +16,51 @@ int main() {
 
     // Display credit card details
     display_credit_cards(CDM, "mohamed","AM123");
-    fclose(CDM);
 
     // Open PCM file
-    FILE *PCM = fopen("PCM.dat", "rb");
+    FILE *PCM = fopen("produit.txt", "rt");
     if (PCM == NULL) {
         printf("Error: PCM.dat does not exist!\n");
-        return 1; // Return a non-zero value for error
+        return 1;
     }
-
     // Open client choice file
-    FILE *C = fopen("client_choice.dat", "rb");
+    FILE *C = fopen("client_choice.txt", "rb");
     if (C == NULL) {
         printf("Error: client_choice.dat does not exist!\n");
-        fclose(PCM); // Close PCM before exiting
-        return 1; // Return a non-zero value for error
+        fclose(PCM); 
+        return 1; 
     }
 
     Display_the_Supplier_Total_amount_sales_in_the_Day(PCM, C, "AM123", 1); // Ensure the correct CIN is passed
 
-    fclose(C);
-    fclose(PCM);
+   fclose(C);
+    
 
-    FILE *kk = fopen("supplier1.txt", "rb");
+    FILE *kk = fopen("supplier1.txt", "rt");
     if (kk == NULL) {
         printf("Error: supplier1.txt does not exist!\n");
-        return 1; // Return a non-zero value for error
+        return 1; 
     }
-
-    Display_the_Supplier_sales_in_the_Day(kk);
+    C = fopen("client_choice.txt", "rt");
+    if (C == NULL) {
+        printf("Error: client_choice.dat does not exist!\n");
+        fclose(PCM); 
+        return 1; 
+    }
+    PCM = fopen("produit.txt", "rt");
+    if (PCM == NULL) {
+        printf("Error: PCM.dat does not exist!\n");
+        return 1;
+    }
+    client_factor(PCM,CDM,C,"AM123");
+    // Display_the_Supplier_sales_in_the_Day(kk);
     fclose(kk);
+    fclose(PCM); 
+    fclose(C);
     c_getch();
     c_clrscr();
     feedback_and_rate_the_product("mohamed" , 1 );
+    fclose(CDM);
     c_getch();
     return 0;
 }
