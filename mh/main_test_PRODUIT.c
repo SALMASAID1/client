@@ -4,11 +4,6 @@
 #include "header_PRODUIT.h"
 
 int main() {
-    // Set text color and print greeting
-    c_textcolor(4);
-    printf("\nHello chickens  hhhhh !!!\n");
-    c_textcolor(15);
-
     // Add a credit card for the client
     add_credit_card("AM123", "mohamed");
 
@@ -51,6 +46,9 @@ int main() {
 
     Display_the_Supplier_sales_in_the_Day(kk);
     fclose(kk);
+    c_getch();
+    c_clrscr();
+    feedback_and_rate_the_product("mohamed" , 1 );
     c_getch();
     return 0;
 }

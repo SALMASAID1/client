@@ -25,6 +25,7 @@ typedef struct credit_card_details {     // Credit Card Information
 } CCD ;    // CCD : CREDIT CARD DETAIL
 
 typedef struct {
+    int id_product ;
     char name[20];
     char category[50];
     float price;
@@ -40,6 +41,9 @@ char name[20];
 int quantity ;
 
 }clc ; // clc : client choice 
+
+// functions of chickens
+
 
 void add_credit_card(char* CIN_client, char *name_client) {
     time_t t = time(NULL);   // Get the current time
@@ -61,14 +65,14 @@ void add_credit_card(char* CIN_client, char *name_client) {
     strncpy(A.client_name, name_client, sizeof(A.client_name) - 1);
     A.client_name[sizeof(A.client_name) - 1] = '\0';  // Ensure null termination
     c_textcolor(5);
-    c_gotoxy(18 , -1 );printf(" %s, please enter your credit card information (typically 13-19 digits):", name_client);
+    c_gotoxy(25 , 3 );printf(" %s, please enter your credit card information (typically 13-19 digits)", name_client);
 
     int increment_screen = 0 ;
     do {
         c_textcolor(1);
-        c_gotoxy(19 , 4  );printf("Enter your credit card number: ");
+        c_gotoxy(50 , 5  );printf("Enter your credit card number: ");
         c_textcolor(15);
-        c_gotoxy(19  , 31);scanf("%s", A.card_number);
+        c_gotoxy(81  , 5);scanf("%s", A.card_number);
 
         // Check if card number contains only digits and has valid length
         valid = 1;
@@ -85,17 +89,19 @@ void add_credit_card(char* CIN_client, char *name_client) {
         if (!valid) {
             c_clrscr();
            c_textcolor(4);
-           c_gotoxy(18 , -1 );printf("\n\nPlease enter a valid number between 13-19 digits\n\n");
+           c_gotoxy(50 , -1 );printf("\n\nPlease enter a valid number between 13-19 digits\n\n");
         }
     } while (!valid);
+
+    c_textcolor(5); 
     c_gotoxy(23 , 31 );printf("\n************** Enter The Expiry Date **************\n");
 
     valid = 0;
     int month, year;
     do {
-        c_textcolor(5);
+        c_textcolor(1);
         printf("\nEnter the expiry date as MM/YY (e.g., 02/27): ");
-        c_textcolor(1) ;
+        c_textcolor(14) ;
         scanf("%2s/%2s", A.expiry_date.month, A.expiry_date.year);
         // Parse and validate month and year
         if ((sscanf(A.expiry_date.month, "%2d", &month) == 1) && (sscanf(A.expiry_date.year, "%2d", &year) == 1)) {
@@ -116,6 +122,7 @@ void add_credit_card(char* CIN_client, char *name_client) {
  do {
     c_textcolor(1);
     printf("Enter your CVV code (e.g., 123): ");
+    c_textcolor(14);
     scanf("%s", A.CVV);
 
     // Check if CVV is exactly 3 digits
@@ -145,7 +152,7 @@ void add_credit_card(char* CIN_client, char *name_client) {
     c_clrscr();
 
 }
-void  display_credit_cards(FILE  * CDM_1 ,char *name_client,char* CIN ){
+void display_credit_cards(FILE  * CDM_1 ,char *name_client,char* CIN ){
     CCD CD ; // CD : CARD DETAIL 
     c_textcolor(5);
     printf("------------------- Credit Card of : %s  , CIN : %s -------------------" , name_client , CIN ) ;
@@ -154,7 +161,7 @@ void  display_credit_cards(FILE  * CDM_1 ,char *name_client,char* CIN ){
             c_textcolor(1);
             printf("\nCard credit Number : ");
            for(int i = 0 ; i < strlen(CD.card_number) ; i++){
-            if (i < 2 || (i == strlen(CD.card_number)-1 ) || (i == strlen(CD.card_number)-2 )){
+            if (i < 1 || (i == strlen(CD.card_number)-1 ) || (i > strlen(CD.card_number)-5 )){
             c_textcolor(5);
             printf("%c" ,CD.card_number[i] );
             }
@@ -236,4 +243,70 @@ void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE *PCM, FILE *client_
     printf("                --------- %.2f DH ---------", sale_mount );
     sale_mount = 0 ;
     fclose(supplier_amount);
+}
+void feedback_and_rate_the_product(char *name_cl, int id_product) { // name_cl: client name, id_product: product id
+    FILE *client_opinion = fopen("feedback.txt", "a");
+    if (client_opinion == NULL) {
+        c_textcolor(4); 
+        printf("Error: feedback.txt does not exist!\n");
+        return;
+    }
+
+    char comment[256];
+    c_textcolor(5);
+    printf("%s, enter your comment about Product %d: ", name_cl, id_product);
+    c_textcolor(1);
+    fflush(stdin);
+    fgets(comment, sizeof(comment), stdin);
+    size_t len = strlen(comment);
+    if (len > 0 && comment[len - 1] == '\n') 
+    comment[len - 1] = '\0'; // Remove the newline character
+    // Write the comment to the file
+    fprintf(client_opinion, "Client: %s | Product ID: %d | Comment: %s\n", name_cl, id_product, comment);
+    puts(comment);
+
+    int rating;
+    c_textcolor(5);
+    printf(" Rate the product (1 to 5 stars): ");
+    c_textcolor(15);
+
+    // Input loop for rating with validation
+    while (1) {
+        if (scanf("%d", &rating) != 1 || rating < 1 || rating > 5) {
+            // Clear invalid input from buffer
+            while (getchar() != '\n');
+            c_textcolor(4);
+            printf("Invalid rating. Please enter a number between 1 and 5: ");
+        } else {
+            break;
+        }
+    }
+
+    c_textcolor(1);
+    switch (rating) {
+        case 1:
+            printf("- You rated this product 1 star: We're sorry to hear that you had a poor experience.\n");
+            fprintf(client_opinion, "Rating: 1 star\n");
+            break;
+        case 2:
+            printf("-- You rated this product 2 stars: Thank you! We'll work on improving.\n");
+            fprintf(client_opinion, "Rating: 2 stars\n");
+            break;
+        case 3:
+            printf("--- You rated this product 3 stars: Thanks for the feedback! We're glad it was satisfactory.\n");
+            fprintf(client_opinion, "Rating: 3 stars\n");
+            break;
+        case 4:
+            printf("---- You rated this product 4 stars: Great! Thank you for the positive feedback!\n");
+            fprintf(client_opinion, "Rating: 4 stars\n");
+            break;
+        case 5:
+            printf("----- You rated this product 5 stars: Awesome! We're thrilled you loved it!\n");
+            fprintf(client_opinion, "Rating: 5 stars\n");
+            break;
+    }
+    c_textcolor(14);
+    printf("\nThank you for your feedback!\n");
+    c_textcolor(15);
+    fclose(client_opinion);
 }
