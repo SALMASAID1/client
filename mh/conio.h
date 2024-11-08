@@ -66,7 +66,6 @@ struct text_info
 int   c_getch(void);
 int   c_getche(void);
 int   c_kbhit(void);
-
 void  c_clrscr();
 void  c_gotoxy(int x, int y);
 void  c_setcursortype(int cur_t);

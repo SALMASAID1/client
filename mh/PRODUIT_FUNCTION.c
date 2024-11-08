@@ -65,16 +65,15 @@ void add_credit_card(char* CIN_client, char *name_client) {
     strncpy(A.client_name, name_client, sizeof(A.client_name) - 1);
     A.client_name[sizeof(A.client_name) - 1] = '\0';  // Ensure null termination
     c_textcolor(5);
-    c_gotoxy(25 , 3 );printf(" %s, please enter your credit card information (typically 13-19 digits)", name_client);
+    c_gotoxy(30 , 3 );printf(" %s, please enter your credit card information (typically 13-19 digits)", name_client);
 
-    int increment_screen = 0 ;
+    // int increment_screen = 0 ;
+    int count_error = 0 ;
     do {
         c_textcolor(1);
-        c_gotoxy(50 , 5  );printf("Enter your credit card number: ");
+        c_gotoxy(50 , 5+count_error  );printf("Enter your credit card number: ");
         c_textcolor(15);
-        c_gotoxy(81  , 5);scanf("%s", A.card_number);
-
-        // Check if card number contains only digits and has valid length
+        scanf("%s", A.card_number);
         valid = 1;
         for (int i = 0; i < strlen(A.card_number); i++) {
             if (!isdigit(A.card_number[i])) {
@@ -87,20 +86,18 @@ void add_credit_card(char* CIN_client, char *name_client) {
         }
 
         if (!valid) {
-            c_clrscr();
-           c_textcolor(4);
-           c_gotoxy(50 , -1 );printf("\n\nPlease enter a valid number between 13-19 digits\n\n");
+            c_textcolor(4);
+            c_gotoxy(50 , 6 +count_error);printf("Please enter a valid number between 13-19 digits");
+            count_error +=2;
         }
     } while (!valid);
-
-    c_textcolor(5); 
-    c_gotoxy(23 , 31 );printf("\n************** Enter The Expiry Date **************\n");
 
     valid = 0;
     int month, year;
     do {
         c_textcolor(1);
-        printf("\nEnter the expiry date as MM/YY (e.g., 02/27): ");
+        c_gotoxy(50 , 8 + count_error );
+        printf("Enter the expiry date as MM/YY (e.g., 02/27): ");
         c_textcolor(14) ;
         scanf("%2s/%2s", A.expiry_date.month, A.expiry_date.year);
         // Parse and validate month and year
@@ -110,20 +107,23 @@ void add_credit_card(char* CIN_client, char *name_client) {
             } 
         if (( year == current_year-2000 ) && (month <= current_mont))  valid = 0 ;
         if (valid == 0 ) {
-                c_textcolor(4); 
-                printf("Invalid month or year!");
-                c_textcolor(7);
+            c_textcolor(4); 
+            c_gotoxy(50 , 9 + count_error);printf("Invalid month or year!");
+            count_error+=2;
+            c_textcolor(7);
             }
         } else {
-           printf("\nInvalid format. Please enter MM/YY\n");
+        c_gotoxy(50 , 9 + count_error );printf("Invalid format. Please enter MM/YY\n");
+        count_error +=2 ;
         }
     } while (!valid);
  valid = 0;
  do {
     c_textcolor(1);
-    printf("Enter your CVV code (e.g., 123): ");
+    count_error += 2 ;
+    c_gotoxy(50 , 7 + count_error);printf("Enter your CVV code (e.g., 123): ");
     c_textcolor(14);
-    scanf("%s", A.CVV);
+    c_gotoxy(83 , 7 + count_error);scanf("%s", A.CVV);
 
     // Check if CVV is exactly 3 digits
     valid = 1;  
@@ -139,13 +139,14 @@ void add_credit_card(char* CIN_client, char *name_client) {
     }
 
     if (!valid) {
-        c_textcolor(4);
-        printf("Invalid CVV! Please enter a 3-digit number.\n");
+        c_textcolor(4);  
+        c_gotoxy(50 , 9 + count_error );printf("Invalid CVV! Please enter a 3-digit number.");
+        count_error += 2 ;
     }
  } while (!valid);
     c_textcolor(2);
-   printf("Valid CVV Code");
-   c_textcolor(15);
+    c_gotoxy(50 , 9 + count_error );printf("Valid CVV Code");
+    c_textcolor(15);
     fwrite(&A, sizeof(CCD), 1, CDM);
     fclose(CDM);
     c_getch();
@@ -155,24 +156,25 @@ void add_credit_card(char* CIN_client, char *name_client) {
 void display_credit_cards(FILE  * CDM_1 ,char *name_client,char* CIN ){
     CCD CD ; // CD : CARD DETAIL 
     c_textcolor(5);
-    printf("------------------- Credit Card of : %s  , CIN : %s -------------------" , name_client , CIN ) ;
+    c_gotoxy(30 , 3 );printf("------------------- Credit Card of : %s  , CIN : %s -------------------" , name_client , CIN ) ;
     while (fread(&CD , sizeof(CCD) ,1 , CDM_1) == 1 ) {
          if (strcmp(CIN , CD.client_CIN) == 0 ){
             c_textcolor(1);
-            printf("\nCard credit Number : ");
+            c_gotoxy(50 , 5 );printf("Card credit Number : ");
            for(int i = 0 ; i < strlen(CD.card_number) ; i++){
             if (i < 1 || (i == strlen(CD.card_number)-1 ) || (i > strlen(CD.card_number)-5 )){
             c_textcolor(5);
-            printf("%c" ,CD.card_number[i] );
+            c_gotoxy(71 +i, 5 );printf("%c" ,CD.card_number[i] );
             }
             else {
             c_textcolor(5);
+            c_gotoxy(71 + i , 5);
             printf("*");
             }
              }
             printf("\n");
             c_textcolor(1);
-            printf("CIN :");
+            c_gotoxy(50 , 7 );printf("CIN :");
             c_textcolor(5);
             printf(" %s\n",CD.client_CIN);           
          }
@@ -190,12 +192,14 @@ void Display_the_Supplier_sales_in_the_Day (FILE * supplier_amount){
     int month = localTime->tm_mon + 1; // Months are 0-11, so add 1
     int year = localTime->tm_year + 1900; // Years since 1900, so add 1900
     c_textcolor(5);
-    printf("\ndate of sales : %02d-%02d-%d\n", day, month, year);
+    c_gotoxy(50 , 3 );printf("date of sales : %02d-%02d-%d", day, month, year);
     char car ;
     rewind(supplier_amount);
+    int i = 0 ;
     while((car = fgetc(supplier_amount))!=EOF)
     {
-        putchar(car );
+        c_gotoxy(50+i, 3 );putchar(car );
+        i+=1;
     }
     c_textcolor(15);
 
