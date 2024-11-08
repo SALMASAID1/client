@@ -1,31 +1,40 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio.h>
+#include "conio.c"
 #include"fonction.h"
-
-int main(){
+int main() {
     int choice;
+    c_textattr(5);
 
-do{
+    do {
+        printf("1 - Login\n");
+        printf("2 - Sign In\n");
+        printf("3 - Leave page\n");
+        printf(" ---->> GIVE CHOICE : ");
 
-    printf("1-Login\n");
-    printf("2-Sign In\n");
-    printf("3-Leave page\n");
-    printf(" ---->> GIVE CHOICE :");scanf("%d",&choice);
+        if (scanf("%d", &choice) != 1) {
+            // Clear invalid input from the buffer
+            while (getchar() != '\n');
+            printf("Invalid input. Please enter a number.\n");
+            continue;  // Restart the loop
+        }
 
-    switch(choice){
-        case 1:{Login();break;}
-         case 2:{sign_in();break;}
-          case 3:{leave();break;}
+        switch (choice) {
+            case 1:
+                Login();
+                break;
+            case 2:
+                sign_in();
+                break;
+            case 3:
+                leave();
+                break;
+            default:
+                printf("Please choose a valid option.\n");
+                break;
+        }
 
-        default:setConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY, 0);
-                printf("Incorrect choice!!!!! ur choice should be between [1 - 3] ..retry please.\n");
-               resetConsoleColor();
-    }
+    } while (choice != 3);  // Exit the loop if choice is 3
 
-}while(choice!=0);
-
-
-return 0;
-
+    return 0;
 }

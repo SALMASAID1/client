@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
-#include <conio.h>
+#include "conio.h"
 void Login(void);
 void sign_in(void);
 void leave(void);
@@ -15,37 +15,6 @@ void View_Purchases(void);
 void Remove_Purchases(void);
 
 
-// Function to get the console width
-int getConsoleWidth() {
-    // Get the console handle
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo(hConsole, &csbi);
-    return csbi.srWindow.Right - csbi.srWindow.Left + 1; // Width of the console
-}
-
-// Function to print centered text
-void printCentered(const char *text) {
-    int consoleWidth = getConsoleWidth();
-    int len = strlen(text);
-    int padding = (consoleWidth - len) / 2; // Calculate padding for centering
-    if (padding > 0) {
-        // Print spaces for padding
-        for (int i = 0; i < padding; i++) {
-            printf(" ");
-        }
-    }
-    printf("%s\n", text); // Print the text
-}
-
-
-void setConsoleColor(int textColor, int bgColor) {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, textColor | (bgColor << 4));
-}
-void resetConsoleColor() {
-    setConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE, 0);
-}
 
 typedef struct {
     char last_name[50];
@@ -67,9 +36,9 @@ typedef struct {
 
 
 void leave(){
-setConsoleColor(FOREGROUND_BLUE | FOREGROUND_INTENSITY, 0);
+
 printf("Exiting the Aplication...\n\t**GOOD BYE**\t");
-resetConsoleColor();
+
  exit(0);
 
 }
@@ -107,9 +76,9 @@ void sign_in() {
         printf("Enter your CIN: ");
         scanf("%s", client.CIN);
         if (!is_CIN_unique(client.CIN)) {
-                setConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY, 0);
+
                 printf("Error: CIN already exists. Please enter a unique CIN.\n");
-               resetConsoleColor();
+
 
         }
     } while (!is_CIN_unique(client.CIN));
@@ -144,17 +113,16 @@ void sign_in() {
     client.confirm_password[j] = '\0';
 
         if (strcmp(client.password, client.confirm_password) != 0) {
-                setConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY, 0);
+
                 printf("\nError: Passwords do not match. Please try again.\n");
-               resetConsoleColor();
 
         }
     } while (strcmp(client.password, client.confirm_password) != 0);
 
     fprintf(fp, "%s %s %s %s\n", client.last_name, client.First_name, client.CIN, client.password);
-        setConsoleColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY, 0);
+
                  printf("\nInformation added successfully!\n");
-               resetConsoleColor();
+
 
 
     fclose(fp);
@@ -165,24 +133,24 @@ void liste() {
     int c;
     do {
 
-        setConsoleColor(FOREGROUND_RED|FOREGROUND_BLUE| FOREGROUND_INTENSITY,0);
-        printCentered("     ---------------------------");
-        printCentered("     ----- LIST OF OPTIONS -----");
-          printCentered("      ---------------------------");
-                  resetConsoleColor();
-         setConsoleColor(FOREGROUND_BLUE|  FOREGROUND_INTENSITY,0);
-          printCentered("          1 - View Product List");
-          printCentered("     2 - Add Purchases");
-          printCentered("        3 - View Purchases ");
-          printCentered("        4 - Remove Purchases");
-          setConsoleColor(FOREGROUND_RED|FOREGROUND_BLUE|  FOREGROUND_INTENSITY,0);
-          printCentered("  5 - Leave Page");
-          printCentered("      ---------------------------");
-        resetConsoleColor();
+ ;
+        printf("    \n ---------------------------");
+        printf("     \n----- LIST OF OPTIONS -----");
+          printf("      \n---------------------------");
 
 
-        printf("------->> SELECT YOUR OPTION: ");scanf("%d", &c);
-        system("cls");
+          printf("         \n 1 - View Product List");
+          printf("     \n2 - Add Purchases");
+          printf("     \n   3 - View Purchases ");
+          printf("      \n  4 - Remove Purchases");
+
+          printf(" \n 5 - Leave Page");
+          printf("  \n    ---------------------------");
+
+
+
+        printf("\n------->> SELECT YOUR OPTION: ");scanf("%d", &c);
+
 
         switch (c) {
             case 1: {
@@ -209,9 +177,9 @@ void liste() {
                 break;
             }
             default:
-                setConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY,0); // Red text for error
-                printCentered("Incorrect choice! Your choice should be between [1 - 8]. Please retry.");
-                resetConsoleColor();
+
+                printf("Incorrect choice! Your choice should be between [1 - 8]. Please retry.");
+
         }
 
     } while (c != 0); // Loop until the user decides to exit
@@ -248,9 +216,9 @@ void Login() {
     Client client;
     while (fscanf(fp, "%*s %*s %s %s", client.CIN, client.password) == 2) {
         if (strcmp(client.CIN, CINN) == 0 && strcmp(client.password, passw) == 0) {
-            setConsoleColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY, 0);
+
             printf("\nConnected successfully!\n");
-            resetConsoleColor();
+
             found = 1;
             system("cls");
             liste();
@@ -260,9 +228,9 @@ void Login() {
     }
 
     if (!found) {
-        setConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY, 0);
+
         printf("\nYou need to create an account first!\n");
-        resetConsoleColor();
+
     }
 
     fclose(fp);
@@ -315,19 +283,16 @@ void Add_Purchases() {
 
     // Search for product in the inventory
     while (fscanf(fk, "%d %49s %49s %99s %f %d", &p.id_product, p.category, p.name, p.description, &p.price, &p.quantity) == 6) {
-        // Debugging prints to see the values being read
-        printf("Read product ID: %d, category: %s, name: %s, description: %s, price: %.2f, quantity: %d\n",
-                p.id_product, p.category, p.name, p.description, p.price, p.quantity);
-
         if (p.id_product == l.id_product) {
             found = 1;
             break;
         }
     }
 
+    fclose(fk);
+
     if (!found) {
         printf("Product ID %d not found in inventory!\n", l.id_product);
-        fclose(fk);
         return;
     }
 
@@ -337,20 +302,49 @@ void Add_Purchases() {
         while (getchar() != '\n');
     }
 
-    FILE *ff = fopen(filename, "a");
+    // Read the existing cart and check for the product
+    FILE *ff = fopen(filename, "r+");
     if (ff == NULL) {
-        printf("Error opening the cart file!\n");
-        fclose(fk);
-        return;
+        ff = fopen(filename, "w");  // Create if not exists
+        if (ff == NULL) {
+            printf("Error opening the cart file!\n");
+            return;
+        }
     }
 
-    if (fprintf(ff, "%d %d\n", l.id_product, l.quantity) > 0) {
-        printf("Product successfully added to cart.\n");
-    } else {
-        printf("Error adding product to cart.\n");
+    product cart[100];
+    int cartSize = 0;
+    int exists = 0;
+
+    // Load existing cart items
+    while (fscanf(ff, "%d %d", &cart[cartSize].id_product, &cart[cartSize].quantity) == 2) {
+        if (cart[cartSize].id_product == l.id_product) {
+            int totalQuantity = cart[cartSize].quantity + l.quantity;
+            if (totalQuantity > p.quantity) {
+                printf("Cannot add to cart. The total quantity (%d) exceeds stock available (%d).\n", totalQuantity, p.quantity);
+                fclose(ff);
+                return;
+            }
+            cart[cartSize].quantity = totalQuantity;  // Sum quantities if product already in cart
+            exists = 1;
+        }
+        cartSize++;
     }
 
-    fclose(fk);
+    // If product is new to the cart
+    if (!exists) {
+        cart[cartSize] = l;
+        cartSize++;
+    }
+
+    // Rewrite cart with updated quantities
+    freopen(filename, "w", ff);
+    for (int i = 0; i < cartSize; i++) {
+        fprintf(ff, "%d %d\n", cart[i].id_product, cart[i].quantity);
+    }
+
+    printf("Product successfully added to cart.\n");
+
     fclose(ff);
 }
 void View_Purchases() {
