@@ -36,10 +36,12 @@ typedef struct {
 
 
 void leave(){
+      c_textattr(1);
 
 printf("Exiting the Aplication...\n\t**GOOD BYE**\t");
 
  exit(0);
+   c_textattr(14);
 
 }
 
@@ -66,6 +68,7 @@ void sign_in() {
         printf("The file does not exist or could not be opened!\n");
         return;
     }
+      c_textattr(8);
 
     printf("Enter your LAST NAME: ");
     scanf("%s", client.last_name);
@@ -75,10 +78,11 @@ void sign_in() {
     do {
         printf("Enter your CIN: ");
         scanf("%s", client.CIN);
+
         if (!is_CIN_unique(client.CIN)) {
 
-                printf("Error: CIN already exists. Please enter a unique CIN.\n");
-
+              c_textcolor(4);  printf("Error: CIN already exists. Please enter a unique CIN.\n");
+      c_textattr(14);
 
         }
     } while (!is_CIN_unique(client.CIN));
@@ -113,19 +117,23 @@ void sign_in() {
     client.confirm_password[j] = '\0';
 
         if (strcmp(client.password, client.confirm_password) != 0) {
+                 c_textattr(4);
 
                 printf("\nError: Passwords do not match. Please try again.\n");
+                 c_textattr(14);
 
         }
     } while (strcmp(client.password, client.confirm_password) != 0);
 
     fprintf(fp, "%s %s %s %s\n", client.last_name, client.First_name, client.CIN, client.password);
+     c_textattr(2);
 
                  printf("\nInformation added successfully!\n");
+ c_textattr(14);
 
-
-
+c_clrscr();
     fclose(fp);
+
 }
 
 
@@ -134,27 +142,27 @@ void liste() {
          c_gotoxy(50,6);printf("---------------------------");
           c_gotoxy(50,7);printf("----- LIST OF OPTIONS -----");
            c_gotoxy(50,8);printf("---------------------------");
-           c_textattr(1);
+           c_textattr(8);
 
            c_gotoxy(50,9);printf("---> View Product List");
            c_gotoxy(50,10);printf("---> Add Purchases");
            c_gotoxy(50,11);printf("---> View Purchases ");
            c_gotoxy(50,12);printf("---> Remove Purchases");
            c_gotoxy(50,13);printf("---> Leave Page");
-           c_textattr(5);
+           c_textattr(14);
            c_gotoxy(50,14);printf("--------------------------");
 
 
     do {
 
 
-               c_textattr(1);
+               c_textattr(8);
                printf("  \n1 - View Product List");
                printf("  \n2 - Add Purchases");
                printf("  \n3 - View Purchases ");
                printf("  \n4 - Remove Purchases");
                printf("  \n5 - Leave Page");
-               c_textattr(5);
+               c_textattr(14);
 
          printf("\n\n------->> SELECT YOUR OPTION: ");scanf("%d", &c);
 
@@ -184,21 +192,22 @@ void liste() {
                 break;
             }
             default:
-
+             c_textattr(4);
                 printf("Incorrect choice! Your choice should be between [1 - 8]. Please retry.");
-
+         c_textattr(14);
         }
 
     } while (c != 0); // Loop until the user decides to exit
 }
 void Login() {
-
+c_clrscr();
     char passw[20];
     int found = 0;
     char CINN[20];
     int k;
-
+      c_textattr(8);
     printf("Let's connect to your account:\n");
+     c_textattr(14);
     printf("Enter your CIN: ");
     scanf("%s", CINN);
 
@@ -216,15 +225,19 @@ void Login() {
 
     FILE *fp = fopen("CLIENT.txt", "r");
     if (fp == NULL) {
+             c_textattr(4);
         printf("\nError: Could not open the file.\n");
+     c_textattr(14);
         return;
     }
 
     Client client;
     while (fscanf(fp, "%*s %*s %s %s", client.CIN, client.password) == 2) {
         if (strcmp(client.CIN, CINN) == 0 && strcmp(client.password, passw) == 0) {
+                 c_textattr(2);
 
             printf("\nConnected successfully!\n");
+             c_textattr(14);
 
             found = 1;
             system("cls");
@@ -235,8 +248,9 @@ void Login() {
     }
 
     if (!found) {
-
+        c_textattr(4);
         printf("\nYou need to create an account first!\n");
+         c_textattr(14);
 
     }
 
@@ -248,21 +262,23 @@ void View_Product_List() {
 
     FILE *fk = fopen("produit.txt", "rt");
     if (fk == NULL) {
+             c_textattr(4);
         printf("The file does not exist or could not be opened!\n");
+
         return;
     }
-
+     c_textattr(8);
     printf("\n====== THE PRODUCTS LIST ======\n\n");
     printf("%-20s %-20s %-15s %-15s %-10s %-10s\n", "ID_PRODUCT", "CATEGORY", "NAME", "DESCRIPTION", "PRICE", "QUANTITY");
     printf("-----------------------------------------------------------------------------------------------------\n");
-     c_textattr(1);
+     c_textattr(14);
     while (fscanf(fk, "%d %19s %19s %19s %f %d", &p.id_product, p.category, p.name, p.description, &p.price, &p.quantity) == 6) {
         printf("%-20d %-20s %-15s %-15s %-10.2f %-10d\n", p.id_product, p.category, p.name, p.description, p.price, p.quantity);
     }
 
     fclose(fk);
     printf("\n\n\n\n\n");
-     c_textattr(5);
+     c_textattr(8);
 
 
 }
@@ -280,14 +296,18 @@ void Add_Purchases() {
 
     FILE *fk = fopen("produit.txt", "rt");
     if (fk == NULL) {
+             c_textattr(4);
         printf("Error opening the product file!\n");
+     c_textattr(8);
         return;
     }
 
     int found = 0;
     printf("\nEnter PRODUCT ID: ");
     while (scanf("%d", &l.id_product) != 1) {
+             c_textattr(4);
         printf("Please enter a valid product ID (integer): ");
+     c_textattr(8);
         while (getchar() != '\n');
     }
 
@@ -302,13 +322,17 @@ void Add_Purchases() {
     fclose(fk);
 
     if (!found) {
+             c_textattr(4);
         printf("Product ID %d not found in inventory!\n", l.id_product);
+     c_textattr(8);
         return;
     }
 
     printf("\nEnter quantity (1 - %d): ", p.quantity);
     while (scanf("%d", &l.quantity) != 1 || l.quantity < 1 || l.quantity > p.quantity) {
+             c_textattr(4);
         printf("Invalid quantity. Enter a value between 1 and %d: ", p.quantity);
+     c_textattr(8);
         while (getchar() != '\n');
     }
 
@@ -317,7 +341,9 @@ void Add_Purchases() {
     if (ff == NULL) {
         ff = fopen(filename, "w");  // Create if not exists
         if (ff == NULL) {
+                 c_textattr(4);
             printf("Error opening the cart file!\n");
+         c_textattr(8);
             return;
         }
     }
@@ -331,7 +357,9 @@ void Add_Purchases() {
         if (cart[cartSize].id_product == l.id_product) {
             int totalQuantity = cart[cartSize].quantity + l.quantity;
             if (totalQuantity > p.quantity) {
-                printf("Cannot add to cart. The total quantity (%d) exceeds stock available (%d).\n", totalQuantity, p.quantity);
+                     c_textattr(4);
+            printf("Cannot add to cart. The total quantity (%d) exceeds stock available (%d).\n", totalQuantity, p.quantity);
+             c_textattr(8);
                 fclose(ff);
                 return;
             }
@@ -352,8 +380,9 @@ void Add_Purchases() {
     for (int i = 0; i < cartSize; i++) {
         fprintf(ff, "%d %d\n", cart[i].id_product, cart[i].quantity);
     }
-
+     c_textattr(2);
     printf("Product successfully added to cart.\n");
+     c_textattr(14);
 
 
     fclose(ff);
@@ -372,11 +401,14 @@ void View_Purchases() {
 
     FILE *ff = fopen(filename, "r");
     if (ff == NULL) {
+             c_textattr(4);
         printf("You have no purchases in your cart or the cart file doesn't exist.\n");
+     c_textattr(14);
         return;
     }
 
     printf("\n===== YOUR PURCHASES =====\n");
+      c_textattr(8);
     printf("%-20s %-15s %-15s %-10s %-10s %-10s\n", "Product ID", "Name", "Category", "Price", "Quantity", "Total Price");
     printf("---------------------------------------------------------------------------------------------------------\n");
     int found = 0;
@@ -385,7 +417,9 @@ void View_Purchases() {
 
         FILE *fk = fopen("produit.txt", "rt");
         if (fk == NULL) {
+                 c_textattr(4);
             printf("Error opening the product list file!\n");
+         c_textattr(14);
             fclose(ff);
             return;
         }
@@ -393,6 +427,7 @@ void View_Purchases() {
         product p;
         while (fscanf(fk, "%d %49s %49s %99s %f %d", &p.id_product, p.category, p.name, p.description, &p.price, &p.quantity) == 6) {
             if (p.id_product == id_product) {
+                      c_textattr(14);
                 float item_total_price = p.price * quantity;
                 printf("%-20d %-15s %-15s %-10.2f %-10d %-10.2f\n", p.id_product, p.name, p.category, p.price, quantity, item_total_price);
                 total_price += item_total_price;
@@ -404,13 +439,14 @@ void View_Purchases() {
     }
 
     if (!found) {
+             c_textattr(4);
         printf("Your cart is empty.\n");
+     c_textattr(14);
     } else {
 
-        printf("\n------------------------------------------------------------\n");
+        printf("\n---------------------------------------------------------------------------------------------------------\n");
         printf("%-20s %-15s %-15s %-10s %-10s %-10.2f\n", "Total", "", "", "", "", total_price);
     }
-      c_clrscr();
 
     fclose(ff);
 
@@ -430,14 +466,18 @@ void Remove_Purchases() {
 
     FILE *ff = fopen(filename, "r");
     if (ff == NULL) {
+            c_textattr(4);
         printf("Your cart is empty or the cart file doesn't exist.\n");
+    c_textattr(14);
         return;
     }
 
     // Create a temporary file to store the updated cart
     FILE *tempFile = fopen("temp_cart.txt", "w");
     if (tempFile == NULL) {
+            c_textattr(4);
         printf("Error opening temporary file.\n");
+    c_textattr(14);
         fclose(ff);
         return;
     }
@@ -448,13 +488,16 @@ void Remove_Purchases() {
     // Display the current items in the cart
     printf("\n===== YOUR CURRENT PURCHASES =====\n");
     printf("%-20s %-15s %-10s %-10s\n", "Product ID", "Name", "Price", "Quantity");
-    printf("--------------------------------------------\n");
+    printf("--------------------------------------------------------------\n");
+    c_textattr(8);
 
     // Read the items from the cart and print them
     while (fscanf(ff, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
         FILE *fk = fopen("produit.txt", "rt");
         if (fk == NULL) {
+                c_textattr(4);
             printf("Error opening product list file!\n");
+        c_textattr(8);
             fclose(ff);
             fclose(tempFile);
             return;
@@ -471,7 +514,9 @@ void Remove_Purchases() {
     }
 
     if (!found) {
+            c_textattr(4);
         printf("No products found in your cart.\n");
+    c_textattr(14);
         fclose(ff);
         fclose(tempFile);
         return;
@@ -482,25 +527,41 @@ void Remove_Purchases() {
     scanf("%d", &id_product);
 
     printf("Enter the quantity to REMOVE: ");
-    scanf("%d", &quantity);
+    while (scanf("%d", &quantity) != 1 || quantity < 1) {
+            c_textattr(4);
+        printf("Invalid quantity. Please enter a positive integer: ");
+    c_textattr(14);
+        while (getchar() != '\n'); // Clear invalid input
+    }
 
     // Rewind the cart file and copy all items to the temporary file except the one to be removed
     rewind(ff);
+    found = 0;
 
     while (fscanf(ff, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
-        // If the current product is the one to be removed
         if (id_product_in_cart == id_product) {
-            // If the quantity to be removed is less than the cart quantity, update the remaining quantity
-            if (quantity_in_cart > quantity) {
-                fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart - quantity);
-                printf("Removed %d items from cart. %d items remain.\n", quantity, quantity_in_cart - quantity);
+            found = 1;
+            if (quantity_in_cart >= quantity) {
+                if (quantity_in_cart > quantity) {
+                    fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart - quantity);
+                    printf("Removed %d items from cart. %d items remain.\n", quantity, quantity_in_cart - quantity);
+                } else {
+                    printf("Removed all %d items from cart.\n", quantity_in_cart);
+                }
             } else {
-                printf("Removed all %d items from cart.\n", quantity_in_cart);
+                c_textattr(4);
+                printf("Error: Only %d items are available in the cart. No items removed.\n", quantity_in_cart);c_textattr(14);
+                fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart); // Write original data to tempFile
             }
         } else {
-            // Otherwise, copy the item to the temporary file
             fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart);
         }
+    }
+
+    if (!found) {
+            c_textattr(4);
+        printf("Product ID %d not found in your cart.\n", id_product);
+    c_textattr(14);
     }
 
     // Close the original and temporary files
@@ -510,8 +571,10 @@ void Remove_Purchases() {
     // Replace the original cart file with the updated cart
     remove(filename); // Delete the original cart file
     rename("temp_cart.txt", filename); // Rename the temporary file to the original cart filename
+    c_textattr(2);
 
     printf("\nCart updated successfully.\n");
+    c_textattr(14);
 }
 
 
