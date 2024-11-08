@@ -131,27 +131,34 @@ void sign_in() {
 
 void liste() {
     int c;
+         c_gotoxy(50,6);printf("---------------------------");
+          c_gotoxy(50,7);printf("----- LIST OF OPTIONS -----");
+           c_gotoxy(50,8);printf("---------------------------");
+           c_textattr(1);
+
+           c_gotoxy(50,9);printf("---> View Product List");
+           c_gotoxy(50,10);printf("---> Add Purchases");
+           c_gotoxy(50,11);printf("---> View Purchases ");
+           c_gotoxy(50,12);printf("---> Remove Purchases");
+           c_gotoxy(50,13);printf("---> Leave Page");
+           c_textattr(5);
+           c_gotoxy(50,14);printf("--------------------------");
+
+
     do {
 
- ;
-        printf("    \n ---------------------------");
-        printf("     \n----- LIST OF OPTIONS -----");
-          printf("      \n---------------------------");
 
+               c_textattr(1);
+               printf("  \n1 - View Product List");
+               printf("  \n2 - Add Purchases");
+               printf("  \n3 - View Purchases ");
+               printf("  \n4 - Remove Purchases");
+               printf("  \n5 - Leave Page");
+               c_textattr(5);
 
-          printf("         \n 1 - View Product List");
-          printf("     \n2 - Add Purchases");
-          printf("     \n   3 - View Purchases ");
-          printf("      \n  4 - Remove Purchases");
+         printf("\n\n------->> SELECT YOUR OPTION: ");scanf("%d", &c);
 
-          printf(" \n 5 - Leave Page");
-          printf("  \n    ---------------------------");
-
-
-
-        printf("\n------->> SELECT YOUR OPTION: ");scanf("%d", &c);
-
-
+         c_clrscr();
         switch (c) {
             case 1: {
                 View_Product_List();
@@ -236,6 +243,7 @@ void Login() {
     fclose(fp);
 }
 void View_Product_List() {
+
     product p;
 
     FILE *fk = fopen("produit.txt", "rt");
@@ -247,15 +255,17 @@ void View_Product_List() {
     printf("\n====== THE PRODUCTS LIST ======\n\n");
     printf("%-20s %-20s %-15s %-15s %-10s %-10s\n", "ID_PRODUCT", "CATEGORY", "NAME", "DESCRIPTION", "PRICE", "QUANTITY");
     printf("-----------------------------------------------------------------------------------------------------\n");
-
+     c_textattr(1);
     while (fscanf(fk, "%d %19s %19s %19s %f %d", &p.id_product, p.category, p.name, p.description, &p.price, &p.quantity) == 6) {
         printf("%-20d %-20s %-15s %-15s %-10.2f %-10d\n", p.id_product, p.category, p.name, p.description, p.price, p.quantity);
     }
 
     fclose(fk);
     printf("\n\n\n\n\n");
-}
+     c_textattr(5);
 
+
+}
 
 void Add_Purchases() {
     product l, p;
@@ -345,7 +355,9 @@ void Add_Purchases() {
 
     printf("Product successfully added to cart.\n");
 
+
     fclose(ff);
+    c_clrscr();
 }
 void View_Purchases() {
     Client client;
@@ -367,7 +379,6 @@ void View_Purchases() {
     printf("\n===== YOUR PURCHASES =====\n");
     printf("%-20s %-15s %-15s %-10s %-10s %-10s\n", "Product ID", "Name", "Category", "Price", "Quantity", "Total Price");
     printf("---------------------------------------------------------------------------------------------------------\n");
-
     int found = 0;
     int id_product, quantity;
     while (fscanf(ff, "%d %d", &id_product, &quantity) == 2) {
@@ -399,8 +410,10 @@ void View_Purchases() {
         printf("\n------------------------------------------------------------\n");
         printf("%-20s %-15s %-15s %-10s %-10s %-10.2f\n", "Total", "", "", "", "", total_price);
     }
+      c_clrscr();
 
     fclose(ff);
+
 }
 
 
