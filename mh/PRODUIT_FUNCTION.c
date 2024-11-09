@@ -33,7 +33,9 @@ typedef struct {
 // choice of client 
 
 typedef struct {
+int id_product_clien ; 
 char category[50];
+float price;
 char name[20];
 int quantity ;
 
@@ -279,6 +281,7 @@ void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE *PCM, FILE *client_
     c_textcolor(15);
 }
 
+
 void feedback_and_rate_the_product(char *name_cl, int id_product) { // name_cl: client name, id_product: product id
     FILE *client_opinion = fopen("feedback.txt", "a");
     if (client_opinion == NULL) {
@@ -366,10 +369,12 @@ void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
         printf("Error: Unable to create FACTEUR.txt file!\n");
         exit(1);
     }
+    
     CCD client_details;
     int found = 0;
     rewind(CDM);
 
+    // Step 1: Search for client details in the credit card database (CDM)
     while (fread(&client_details, sizeof(CCD), 1, CDM) == 1) {
         if (strcmp(client_details.client_CIN, CIN) == 0) {
             found = 1;
@@ -404,18 +409,24 @@ void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
     fprintf(FACT, "| %-15s | %-10s | %-10s |\n", "Product", "Quantity", "Total Price");
     fprintf(FACT, "---------------------------------------------\n");
 
-    // Step 4: Process Client's Choices and Calculate Total Cost 
+    // Step 4: Process Client's Choices and Calculate Total Cost
     clc client_choice_entry;
     float grand_total = 0.0;
     rewind(client_choice);
-    while (fscanf(client_choice, "%s %s %d", client_choice_entry.category, client_choice_entry.name, &client_choice_entry.quantity) == 3) {
+    while (fscanf(client_choice, "%d %s %s %f %d", 
+                  &client_choice_entry.id_product_clien,
+                  client_choice_entry.category, 
+                  client_choice_entry.name, 
+                  &client_choice_entry.price, 
+                  &client_choice_entry.quantity) == 5) {
+        
         float product_price;
         int stock_status = check_stock_and_get_price(PCM, client_choice_entry.category, client_choice_entry.name, client_choice_entry.quantity, &product_price);
 
         switch (stock_status) {
             case 1: // In stock
-                grand_total += product_price * client_choice_entry.quantity;
-                fprintf(FACT, "| %-15s | %-10d | %-10.2f DH |\n", client_choice_entry.name, client_choice_entry.quantity, product_price * client_choice_entry.quantity);
+                grand_total += client_choice_entry.price * client_choice_entry.quantity;
+                fprintf(FACT, "| %-15s | %-10d | %-10.2f DH |\n", client_choice_entry.name, client_choice_entry.quantity, client_choice_entry.price * client_choice_entry.quantity);
                 break;
             case 0: // Out of stock
                 fprintf(FACT, "| %-15s | %-10d | %-10s |\n", client_choice_entry.name, client_choice_entry.quantity, "Out of Stock");

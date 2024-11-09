@@ -9,4 +9,5 @@ void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE * PCM , FILE * clie
 void Display_the_Supplier_sales_in_the_Day (FILE * supplier_amount );
 void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN);
 void feedback_and_rate_the_product(char * name_cl , int id_product);
+int check_stock_and_get_price(FILE *PCM, const char *category, const char *name, int quantity, float *price);
 #endif // FUNCTION_H_INCLUDED

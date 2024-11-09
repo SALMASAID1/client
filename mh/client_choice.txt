@@ -1,5 +1,4 @@
-electronique pc 5
-electronique phone 3
-electronique phone 2
-maison furniture table 1
-alimentaire fruits apple 10
+1 electronique pc  2000 5
+2 electronique phone  2000 5
+3 electronique phone  3000 3
+4 electronique tv  4000 4

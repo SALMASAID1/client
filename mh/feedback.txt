@@ -28,3 +28,7 @@ Client: mohamed | Product ID: 1 | Comment: the product is bad
 Rating: 2 stars
 Client: mohamed | Product ID: 1 | Comment: 5
 Rating: 4 stars
+Client: mohamed | Product ID: 1 | Comment: 4
+Rating: 4 stars
+Client: mohamed | Product ID: 1 | Comment: 1
+Rating: 1 star

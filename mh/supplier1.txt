@@ -1,2 +1,6 @@
 CIN: AM123
 
+Category: electronique
+Quantity: 2000
+Sale Amount: 4000000.00
+
