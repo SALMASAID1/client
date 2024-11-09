@@ -1,2 +1,5 @@
-1 electronique pc  2000 5
-2 electronique phone  2000 5
+8 alimentaire fruits  50 20
+9 alimentaire fruits  60 18
+10 alimentaire drinks  20 10
+4 electronique tv  4000 15
+5 electronique camera  3500 10

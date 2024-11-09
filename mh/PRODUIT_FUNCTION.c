@@ -3,7 +3,6 @@
 #include <ctype.h>
 #include <time.h>
 #include <string.h>
-#include "HaruPDF.h"
 #include "conio.h"
 #include "header_PRODUIT.h"
 
@@ -183,38 +182,6 @@ void display_credit_cards(FILE  * CDM_1 ,char *name_client,char* CIN ){
     c_clrscr();
 }
 
-void Display_the_Supplier_sales_in_the_Day(FILE *supplier_amount) {
-    // Get the current date
-    time_t currentTime;
-    time(&currentTime);
-    struct tm *localTime = localtime(&currentTime);
-    int day = localTime->tm_mday;
-    int month = localTime->tm_mon + 1;
-    int year = localTime->tm_year + 1900;
-
-    // Display a header with date
-    c_textcolor(14);
-    c_gotoxy(50, 2);
-    printf("======== SUPPLIER SALES REPORT ========");
-    c_gotoxy(50, 3);
-    printf("DATE OF SALES : %02d-%02d-%d", day, month, year);
-    c_gotoxy(50, 4);
-    printf("=======================================");
-
-    // Reset file to the beginning and set y-position
-    rewind(supplier_amount);
-    int y_position = 6;
-    char car;
-
-    // Display each character from supplier_amount file with alignment
-    c_textcolor(15);
-    while ((car = fgetc(supplier_amount)) != EOF) {
-        putchar(car);
-    }
-
-    c_textcolor(15); // Reset color after displaying
-}
-
 void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE *PCM, FILE *client_choice, char *CINF, int supplier_num) {
     time_t currentTime;
     time(&currentTime);
@@ -280,6 +247,8 @@ void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE *PCM, FILE *client_
     printf("============================================");
     fclose(supplier_amount);
     c_textcolor(15);
+    c_getch();
+    c_clrscr();
 }
 
 void feedback_and_rate_the_product(char *name_cl, int id_product) { // name_cl: client name, id_product: product id
@@ -363,8 +332,68 @@ int check_stock_and_get_price(FILE *PCM, const char *category, const char *name,
     return -1; // Product not found
 }
 
+char pdf_header[] = 
+    "%%PDF-1.4                  %% PDF header specifying version\n"
+    "1 0 obj                    %% Catalog object\n"
+    "<< /Type /Catalog\n"
+    "   /Pages 2 0 R\n"
+    ">>\n"
+    "endobj\n"
+    "\n"
+    "2 0 obj                    %% Pages object\n"
+    "<< /Type /Pages\n"
+    "   /Kids [3 0 R]\n"
+    "   /Count 1\n"
+    ">>\n"
+    "endobj\n"
+    "\n"
+    "3 0 obj                    %% Single Page object\n"
+    "<< /Type /Page\n"
+    "   /Parent 2 0 R\n"
+    "   /MediaBox [0 0 612 792]\n"
+    "   /Contents 4 0 R\n"
+    "   /Resources << /Font << /F1 5 0 R >> >>\n"
+    ">>\n"
+    "endobj\n"
+    "\n"
+    "4 0 obj                    %% Content stream for the page\n"
+    "<< /Length 330 >>          %% Length of text data\n"
+    "stream\n"
+    "BT                         %% Begin text block\n"
+    "/F1 12 Tf                  %% Set font to F1 at 12 points\n"
+    "72 750 Td                  %% Position text at (72, 750)\n";
+
+char pdf_footer[] = 
+    "ET                         %% End text block\n"
+    "endstream\n"
+    "endobj\n"
+    "\n"
+    "5 0 obj                    %% Font object\n"
+    "<< /Type /Font\n"
+    "   /Subtype /Type1\n"
+    "   /BaseFont /Helvetica\n"
+    ">>\n"
+    "endobj\n"
+    "\n"
+    "xref                       %% Cross-reference table\n"
+    "0 6\n"
+    "0000000000 65535 f\n"
+    "0000000010 00000 n\n"
+    "0000000079 00000 n\n"
+    "0000000178 00000 n\n"
+    "0000000307 00000 n\n"
+    "0000000403 00000 n\n"
+    "\n"
+    "trailer\n"
+    "<< /Root 1 0 R\n"
+    "   /Size 6\n"
+    ">>\n"
+    "startxref\n"
+    "482                        %% Offset to start of xref\n"
+    "%%%%EOF\n";
+
 void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
-    FILE *FACT = fopen("FACTEUR.txt", "w");
+    FILE *FACT = fopen("FACTEUR.pdf", "w");
     if (FACT == NULL) {
         printf("Error: Unable to create FACTEUR.txt file!\n");
         exit(1);
@@ -390,24 +419,25 @@ void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
 
     // Step 2: Mask credit card number
     char hidden_card_number[50];
-    snprintf(hidden_card_number, sizeof(hidden_card_number), "%.4s **** **** %.4s", 
+    snprintf(hidden_card_number, sizeof(hidden_card_number), "%.4s ** ** %.4s", 
              client_details.card_number, 
              client_details.card_number + strlen(client_details.card_number) - 4);
 
     // Step 3: Write Client Information and Date to FACTEUR
     time_t currentTime = time(NULL);
     struct tm *localTime = localtime(&currentTime);
-    fprintf(FACT, "================== FACTURE ==================\n");
-    fprintf(FACT, "Client Name: %s\n", client_details.client_name);
-    fprintf(FACT, "Client CIN: %s\n", client_details.client_CIN);
-    fprintf(FACT, "Card Number: %s\n", hidden_card_number);
-    fprintf(FACT, "Date of Purchase: %02d-%02d-%d\n\n",  
+    fprintf(FACT, pdf_header);
+    fprintf(FACT, "(================== FACTURE ==================) Tj\n0 -20 Td  ");
+    fprintf(FACT, "(Client Name: %s ) Tj\n0 -20 Td", client_details.client_name);
+    fprintf(FACT, "(Client CIN: %s ) Tj\n0 -20 Td", client_details.client_CIN);
+    fprintf(FACT, "(Card Number: %s ) Tj\n0 -20 Td", hidden_card_number);
+    fprintf(FACT, "(Date of Purchase: %02d-%02d-%d) Tj\n0 -30 Td " ,  
             localTime->tm_mday, 
             localTime->tm_mon + 1, 
             localTime->tm_year + 1900);
-    fprintf(FACT, "---------------------------------------------\n");
-    fprintf(FACT, "| %-15s | %-10s | %-10s |\n", "Product", "Quantity", "Total Price");
-    fprintf(FACT, "---------------------------------------------\n");
+    fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td");
+    fprintf(FACT, "(| Product         | Quantity   | Total Price |) Tj\n0 -20 Td");
+    fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td");
 
     // Step 4: Process Client's Choices and Calculate Total Cost
     clc client_choice_entry;
@@ -426,87 +456,21 @@ void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
         switch (stock_status) {
             case 1: // In stock
                 grand_total += client_choice_entry.price * client_choice_entry.quantity;
-                fprintf(FACT, "| %-15s | %-10d | %-10.2f DH |\n", client_choice_entry.name, client_choice_entry.quantity, client_choice_entry.price * client_choice_entry.quantity);
+                fprintf(FACT, "(| %-15s | %-10d | %-10.2f DH |) Tj\n0 -20 Td\n", client_choice_entry.name, client_choice_entry.quantity, client_choice_entry.price * client_choice_entry.quantity);
                 break;
             case 0: // Out of stock
-                fprintf(FACT, "| %-15s | %-10d | %-10s |\n", client_choice_entry.name, client_choice_entry.quantity, "Out of Stock");
+                fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", client_choice_entry.name, client_choice_entry.quantity, "Out of Stock");
                 break;
             case -1: // Product not found
-                fprintf(FACT, "| %-15s | %-10d | %-10s |\n", client_choice_entry.name, client_choice_entry.quantity, "Not Found");
+                fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", client_choice_entry.name, client_choice_entry.quantity, "Not Found");
                 break;
         }
     }
 
     // Step 5: Print Grand Total and Close FACTEUR File
-    fprintf(FACT, "---------------------------------------------\n");
-    fprintf(FACT, "Grand Total: %.2f DH\n", grand_total);
-    fprintf(FACT, "=============================================\n");
+    fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td\n");
+    fprintf(FACT, "(Grand Total: %.2f DH) Tj\n0 -20 Td\n", grand_total);
+    fprintf(FACT, "(=============================================) Tj\n");
+    fprintf(FACT,pdf_footer);
     fclose(FACT);
-    convert_txt_to_pdf("FACTEUR.txt" ,"FACTEUR_1.pdf");
-}
-
-void convert_txt_to_pdf(const char *txt_file, const char *pdf_file) {
-    // Create a new PDF document
-    HPDF_Doc pdf = HPDF_New(NULL, NULL);
-    if (!pdf) {
-        printf("Error creating PDF document.\n");
-        return;
-    }
-
-    // Create a new page
-    HPDF_Page page = HPDF_AddPage(pdf);
-    if (!page) {
-        printf("Error creating PDF page.\n");
-        HPDF_Free(pdf);
-        return;
-    }
-
-    // Set the page size to A4
-    HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
-
-    // Set font and size
-    HPDF_Font font = HPDF_GetFont(pdf, "Helvetica", NULL);
-    HPDF_Page_SetFontAndSize(page, font, 12);
-
-    // Open the .txt file
-    FILE *file = fopen(txt_file, "r");
-    if (!file) {
-        printf("Error opening text file.\n");
-        HPDF_Free(pdf);
-        return;
-    }
-
-    // Read the text file and write it to the PDF page
-    char buffer[1024];
-    float y_position = 800; // starting position for text (top of the page)
-    while (fgets(buffer, sizeof(buffer), file)) {
-        if (y_position < 50) {
-            // If we reach the bottom of the page, add a new page
-            page = HPDF_AddPage(pdf);
-            HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
-            HPDF_Page_SetFontAndSize(page, font, 12);
-            y_position = 800; // reset y position for new page
-        }
-
-        // Write the text to the page
-        HPDF_Page_BeginText(page);
-        HPDF_Page_TextOut(page, 50, y_position, buffer);
-        HPDF_Page_EndText(page);
-
-        // Move down for next line
-        y_position -= 15; // line height
-    }
-
-    // Close the text file
-    fclose(file);
-
-    // Save the PDF document to the specified file
-    if (HPDF_SaveToFile(pdf, pdf_file) != HPDF_OK) {
-        printf("Error saving PDF file.\n");
-    }
-
-    // Free the PDF document
-    HPDF_Free(pdf);
-
-    printf("Conversion successful! PDF saved as %s\n", pdf_file);
 }

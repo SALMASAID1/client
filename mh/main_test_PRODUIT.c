@@ -5,6 +5,8 @@
 
 int main() {
     // Add a credit card for the client
+
+
     add_credit_card("AM123", "mohamed");
 
     // Open credit card file
@@ -14,8 +16,11 @@ int main() {
         return 1; // Return a non-zero value for error
     }
 
-    // Display credit card details
+    // -----------------------------------------------// Display credit card details
+
     display_credit_cards(CDM, "mohamed","AM123");
+
+    // -----------------------------------------------
 
     // Open PCM file
     FILE *PCM = fopen("produit.txt", "rt");
@@ -31,16 +36,12 @@ int main() {
         return 1; 
     }
 
-    Display_the_Supplier_Total_amount_sales_in_the_Day(PCM, C, "AM123", 1); // Ensure the correct CIN is passed
+    // -----------------------------------------------
 
+    Display_the_Supplier_Total_amount_sales_in_the_Day(PCM, C, "AM123", 1); // Ensure the correct CIN is passed
+    // -----------------------------------------------
    fclose(C);
     
-
-    FILE *kk = fopen("supplier1.txt", "rt");
-    if (kk == NULL) {
-        printf("Error: supplier1.txt does not exist!\n");
-        return 1; 
-    }
     C = fopen("client_choice.txt", "rt");
     if (C == NULL) {
         printf("Error: client_choice.dat does not exist!\n");
@@ -52,14 +53,22 @@ int main() {
         printf("Error: PCM.dat does not exist!\n");
         return 1;
     }
+
+    // -----------------------------------------------
+
     client_factor(PCM,CDM,C,"AM123");
-    // Display_the_Supplier_sales_in_the_Day(kk);
-    fclose(kk);
+
+    // -----------------------------------------------
     fclose(PCM); 
     fclose(C);
     c_getch();
     c_clrscr();
+
+    // -----------------------------------------------
+
     feedback_and_rate_the_product("mohamed" , 1 );
+
+     // -----------------------------------------------
     fclose(CDM);
     c_getch();
     return 0;
