@@ -3,6 +3,7 @@
 #include <ctype.h>
 #include <time.h>
 #include <string.h>
+#include "HaruPDF.h"
 #include "conio.h"
 #include "header_PRODUIT.h"
 
@@ -281,7 +282,6 @@ void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE *PCM, FILE *client_
     c_textcolor(15);
 }
 
-
 void feedback_and_rate_the_product(char *name_cl, int id_product) { // name_cl: client name, id_product: product id
     FILE *client_opinion = fopen("feedback.txt", "a");
     if (client_opinion == NULL) {
@@ -441,6 +441,72 @@ void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
     fprintf(FACT, "---------------------------------------------\n");
     fprintf(FACT, "Grand Total: %.2f DH\n", grand_total);
     fprintf(FACT, "=============================================\n");
-
     fclose(FACT);
+    convert_txt_to_pdf("FACTEUR.txt" ,"FACTEUR_1.pdf");
+}
+
+void convert_txt_to_pdf(const char *txt_file, const char *pdf_file) {
+    // Create a new PDF document
+    HPDF_Doc pdf = HPDF_New(NULL, NULL);
+    if (!pdf) {
+        printf("Error creating PDF document.\n");
+        return;
+    }
+
+    // Create a new page
+    HPDF_Page page = HPDF_AddPage(pdf);
+    if (!page) {
+        printf("Error creating PDF page.\n");
+        HPDF_Free(pdf);
+        return;
+    }
+
+    // Set the page size to A4
+    HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
+
+    // Set font and size
+    HPDF_Font font = HPDF_GetFont(pdf, "Helvetica", NULL);
+    HPDF_Page_SetFontAndSize(page, font, 12);
+
+    // Open the .txt file
+    FILE *file = fopen(txt_file, "r");
+    if (!file) {
+        printf("Error opening text file.\n");
+        HPDF_Free(pdf);
+        return;
+    }
+
+    // Read the text file and write it to the PDF page
+    char buffer[1024];
+    float y_position = 800; // starting position for text (top of the page)
+    while (fgets(buffer, sizeof(buffer), file)) {
+        if (y_position < 50) {
+            // If we reach the bottom of the page, add a new page
+            page = HPDF_AddPage(pdf);
+            HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
+            HPDF_Page_SetFontAndSize(page, font, 12);
+            y_position = 800; // reset y position for new page
+        }
+
+        // Write the text to the page
+        HPDF_Page_BeginText(page);
+        HPDF_Page_TextOut(page, 50, y_position, buffer);
+        HPDF_Page_EndText(page);
+
+        // Move down for next line
+        y_position -= 15; // line height
+    }
+
+    // Close the text file
+    fclose(file);
+
+    // Save the PDF document to the specified file
+    if (HPDF_SaveToFile(pdf, pdf_file) != HPDF_OK) {
+        printf("Error saving PDF file.\n");
+    }
+
+    // Free the PDF document
+    HPDF_Free(pdf);
+
+    printf("Conversion successful! PDF saved as %s\n", pdf_file);
 }
