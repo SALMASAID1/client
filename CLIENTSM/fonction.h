@@ -36,11 +36,9 @@ typedef struct {
 
 
 void leave(){
-      c_textattr(1);
-
-printf("Exiting the Aplication...\n\t**GOOD BYE**\t");
-
- exit(0);
+    c_textattr(1);
+    printf("Exiting the Aplication...\n\t**GOOD BYE**\t");
+    exit(0);
    c_textattr(14);
 
 }
@@ -131,11 +129,10 @@ void sign_in() {
                  printf("\nInformation added successfully!\n");
  c_textattr(14);
 
-c_clrscr();
+ c_clrscr();
     fclose(fp);
 
 }
-
 
 void liste() {
     int c;
@@ -200,7 +197,7 @@ void liste() {
     } while (c != 0); // Loop until the user decides to exit
 }
 void Login() {
-c_clrscr();
+    c_clrscr();
     char passw[20];
     int found = 0;
     char CINN[20];

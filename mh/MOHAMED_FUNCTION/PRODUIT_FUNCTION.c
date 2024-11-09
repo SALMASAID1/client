@@ -30,6 +30,8 @@ typedef struct {
     int quantity ;
 }product;
 
+
+
 // choice of client 
 
 typedef struct {
@@ -395,7 +397,7 @@ char pdf_footer[] =
 void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
     FILE *FACT = fopen("FACTEUR.pdf", "w");
     if (FACT == NULL) {
-        printf("Error: Unable to create FACTEUR.txt file!\n");
+        printf("Error: Unable to create FACTEUR.pdf file!\n");
         exit(1);
     }
     
@@ -410,7 +412,6 @@ void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
             break;
         }
     }
-
     if (!found) {
         fprintf(FACT, "Error: Client with CIN %s not found in credit card database!\n", CIN);
         fclose(FACT);

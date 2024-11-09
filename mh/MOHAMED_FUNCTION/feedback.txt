@@ -1,0 +1,2 @@
+Client: mohamed | Product ID: 1 | Comment: the product is Nice
+Rating: 4 stars

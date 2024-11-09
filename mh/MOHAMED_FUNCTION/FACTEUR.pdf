@@ -1,0 +1,79 @@
+%PDF-1.4                  % PDF header specifying version
+1 0 obj                    % Catalog object
+<< /Type /Catalog
+   /Pages 2 0 R
+>>
+endobj
+
+2 0 obj                    % Pages object
+<< /Type /Pages
+   /Kids [3 0 R]
+   /Count 1
+>>
+endobj
+
+3 0 obj                    % Single Page object
+<< /Type /Page
+   /Parent 2 0 R
+   /MediaBox [0 0 612 792]
+   /Contents 4 0 R
+   /Resources << /Font << /F1 5 0 R >> >>
+>>
+endobj
+
+4 0 obj                    % Content stream for the page
+<< /Length 330 >>          % Length of text data
+stream
+BT                         % Begin text block
+/F1 12 Tf                  % Set font to F1 at 12 points
+72 750 Td                  % Position text at (72, 750)
+(================== FACTURE ==================) Tj
+0 -20 Td  (Client Name: mohamed ) Tj
+0 -20 Td(Client CIN: AM123 ) Tj
+0 -20 Td(Card Number: 1093 ** ** 9993 ) Tj
+0 -20 Td(Date of Purchase: 09-11-2024) Tj
+0 -30 Td (---------------------------------------------) Tj
+0 -20 Td(| Product         | Quantity   | Total Price |) Tj
+0 -20 Td(---------------------------------------------) Tj
+0 -20 Td(| fruits          | 20         | 1000.00    DH |) Tj
+0 -20 Td
+(| fruits          | 18         | 1080.00    DH |) Tj
+0 -20 Td
+(| drinks          | 10         | 200.00     DH |) Tj
+0 -20 Td
+(| tv              | 15         | 60000.00   DH |) Tj
+0 -20 Td
+(| camera          | 10         | 35000.00   DH |) Tj
+0 -20 Td
+(---------------------------------------------) Tj
+0 -20 Td
+(Grand Total: 97280.00 DH) Tj
+0 -20 Td
+(=============================================) Tj
+ET                         % End text block
+endstream
+endobj
+
+5 0 obj                    % Font object
+<< /Type /Font
+   /Subtype /Type1
+   /BaseFont /Helvetica
+>>
+endobj
+
+xref                       % Cross-reference table
+0 6
+0000000000 65535 f
+0000000010 00000 n
+0000000079 00000 n
+0000000178 00000 n
+0000000307 00000 n
+0000000403 00000 n
+
+trailer
+<< /Root 1 0 R
+   /Size 6
+>>
+startxref
+482                        % Offset to start of xref
+%%EOF
