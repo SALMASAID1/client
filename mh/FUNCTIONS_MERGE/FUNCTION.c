@@ -2,10 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
+#include <time.h>
+#include <ctype.h>
 #include "conio.h"
 #include "FUNCTION.h"
 
 FILE * CDM;  // CRM : CREDIT CARD DETAIL MANAGEMENT
+char Temp_CIN [20];
 
 typedef struct {   // Date card credit information
     char year [3] ;
@@ -44,6 +47,15 @@ typedef struct {
     char password[20];
     char confirm_password[20];
 } Client;
+
+typedef struct {
+int id_product_clien ; 
+char category[50];
+float price;
+char name[20];
+int quantity ;
+
+}clc ; // clc : client choice 
 
 
 char pdf_header[] = 
@@ -159,7 +171,7 @@ void sign_in() {
 
     printf("Enter NEW PASSWORD: ");
     for (i = 0; i < 19; i++) {
-        client.password[i] = getch();  // Read character without displaying it
+        client.password[i] = c_getch();  // Read character without displaying it
 
         if (client.password[i] == '\r') {  // Stop if Enter is pressed
             break;
@@ -173,7 +185,7 @@ void sign_in() {
 
         printf("\nConfirm your PASSWORD: ");
            for (j = 0; j < 19; j++) {
-        client.confirm_password[j] = getch();
+        client.confirm_password[j] = c_getch();
 
         if (client.confirm_password[j] == '\r') {
             break;
@@ -204,7 +216,15 @@ void sign_in() {
 
 }
 
-void liste() {
+void leave(){
+    c_textattr(1);
+    printf("Exiting the Aplication...\n\t**GOOD BYE**\t");
+    exit(0);
+   c_textattr(14);
+
+}
+
+void liste(char * Temp_cin) {
     int c;
          c_gotoxy(50,6);printf("---------------------------");
           c_gotoxy(50,7);printf("----- LIST OF OPTIONS -----");
@@ -222,13 +242,13 @@ void liste() {
 
     do {
 
-
                c_textattr(8);
                printf("  \n1 - View Product List");
                printf("  \n2 - Add Purchases");
                printf("  \n3 - View Purchases ");
                printf("  \n4 - Remove Purchases");
-               printf("  \n5 - Leave Page");
+               printf("  \n5 - Proceed to add a payment method");
+               printf("  \n6 - Leave Page");
                c_textattr(14);
 
          printf("\n\n------->> SELECT YOUR OPTION: ");scanf("%d", &c);
@@ -236,7 +256,7 @@ void liste() {
          c_clrscr();
         switch (c) {
             case 1: {
-                View_Product_List();
+            View_Product_List();
                 break;
 
             }
@@ -246,7 +266,7 @@ void liste() {
             }
             case 3: {
             View_Purchases();
-           break;
+                break;
             }
             case 4: {
             Remove_Purchases();
@@ -261,28 +281,31 @@ void liste() {
                 return;
             }
             Client A ;
-            while(fscanf(fp , "%s %*s %s %*s" , A.last_name , A.CIN , A.))
-            add_credit_card  (  ,  );
+            while(fscanf(fp , "%s %*s %s %*s" , A.last_name , A.CIN , A.password) == 4 ){
+            if(strcmp(A.CIN , Temp_cin ) == 0 )add_credit_card ( A.CIN ,A.last_name); // Temp_CIN frome the login function
+            break;
+            }
             fclose(fp);
             }
             case 6: {
-                leave();
+            leave();
                 break;
             }
             
             default:
-             c_textattr(4);
+            c_textattr(4);
                 printf("Incorrect choice! Your choice should be between [1 - 8]. Please retry.");
             c_textattr(14);
         }
 
     } while (c != 0); // Loop until the user decides to exit
+    c_getch();
     c_clrscr();
     c_textcolor(14);
 
 }
 
-char* Login() {
+void Login() {
     c_clrscr();
     char passw[20];
     int found = 0;
@@ -296,7 +319,7 @@ char* Login() {
 
     printf("Enter your PASSWORD: ");
         for (k = 0; k < 19; k++) {
-        passw[k] = getch();
+        passw[k] = c_getch();
 
         if (passw[k] == '\r') {
             break;
@@ -313,7 +336,6 @@ char* Login() {
      c_textattr(14);
         return;
     }
-    char Temp_CIN[20];
     Client client;
     while (fscanf(fp, "%*s %*s %s %s", client.CIN, client.password) == 2) {
         if (strcmp(client.CIN, CINN) == 0 && strcmp(client.password, passw) == 0) {
@@ -322,19 +344,19 @@ char* Login() {
             printf("\nConnected successfully!\n");
             c_textattr(14);
             found = 1;
+            c_getch();
             system("cls");
-            liste();
+            liste(Temp_CIN);
             break;
         }
     }
     if (!found) {
         c_textattr(4);
         printf("\nYou need to create an account first!\n");
-         c_textattr(14);
-
+        c_textattr(14);
     }
     fclose(fp);
-    return Temp_CIN ;
+    c_getch();
 }
 
 void View_Product_List() {
@@ -950,7 +972,7 @@ void add_supplier() {
             i = 0;
 
             // Saisie et masquage du mot de passe avec '*'
-            while ((ch = getch()) != '\r' && i < 19) {  // Limite à 19 caractères
+            while ((ch = c_getch()) != '\r' && i < 19) {  // Limite à 19 caractères
                 frn.mdpf[i++] = ch;
                 printf("*");
             }

@@ -2,9 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
+#include <time.h>
+#include <ctype.h>
 #include "conio.h"
 #include "FUNCTION.h"
 
+    char Client_CIN [20] ;
+    int choice ;
 int main (){
 
     do { 
@@ -26,6 +30,7 @@ int main (){
         }
         switch (choice) {
             case 1:
+                // strcpy (Client_CIN , Login());
                 Login();
                 break;
             case 2:

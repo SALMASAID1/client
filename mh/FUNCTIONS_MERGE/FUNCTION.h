@@ -7,12 +7,13 @@
 #include "conio.h"
                 // login page 
 
-    void Login(void);
-    void sign_in(void);
-    void leave(void);
+    void Login();
+    void  sign_in(void);
+    void  leave(void);
 
                // SAID -------- SALMA //
     void View_Product_List(void);
+    void liste(char * Temp_cin);
     void Add_Purchases(void);
     void View_Purchases(void);
     void Remove_Purchases(void);
