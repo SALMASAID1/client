@@ -1,2 +1,1 @@
- 1 pc electronique 2000.00 10 i5
- 2 phone electronique 2000.00 30 i7
+ 1 electronics pc i9 20001.00 20

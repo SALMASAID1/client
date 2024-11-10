@@ -30,7 +30,7 @@ int main() {
             c_getch();
             continue;
         }
-        
+
         switch (choice) {
             case 1:  // Supplier options
                 do {
@@ -38,15 +38,16 @@ int main() {
                     c_textattr(8);
                     c_gotoxy(50, 6); printf("1 - Login");
                     c_gotoxy(50, 7); printf("2 - Sign In");
-                    c_gotoxy(50, 8); printf("3 - Leave page");
+                    c_gotoxy(50, 8); printf("3 - Back to Main Menu");
+                    c_gotoxy(50, 9); printf("4 - Leave Program");
                     c_textattr(14);
-                    c_gotoxy(50, 9); printf(" ---->> GIVE CHOICE : ");
+                    c_gotoxy(50, 10); printf(" ---->> GIVE CHOICE : ");
                     
                     if (scanf("%d", &choice) != 1) {
                         // Handle invalid input and clear the buffer
                         while (getchar() != '\n');
                         c_textattr(4);
-                        c_gotoxy(50, 11); printf("Invalid input. Please enter a number.\n");
+                        c_gotoxy(50, 12); printf("Invalid input. Please enter a number.\n");
                         c_textattr(14);
                         c_getch();
                         continue;
@@ -60,16 +61,19 @@ int main() {
                             sign_in_supplier();
                             break;
                         case 3:
-                            leave();
+                            choice = 0;  // Go back to main menu
                             break;
+                        case 4:
+                            leave();  // Exit the program
+                            return 0;
                         default:
                             c_textattr(4);
-                            c_gotoxy(50, 11); printf("Please choose a valid option.\n");
+                            c_gotoxy(50, 12); printf("Please choose a valid option.\n");
                             c_textattr(14);
                             c_getch();
                             break;
                     }
-                } while (choice != 3);
+                } while (choice != 0 && choice != 4);
                 break;
             
             case 2:  // Client options
@@ -78,15 +82,16 @@ int main() {
                     c_textattr(8);
                     c_gotoxy(50, 6); printf("1 - Login");
                     c_gotoxy(50, 7); printf("2 - Sign In");
-                    c_gotoxy(50, 8); printf("3 - Leave page");
+                    c_gotoxy(50, 8); printf("3 - Back to Main Menu");
+                    c_gotoxy(50, 9); printf("4 - Leave Program");
                     c_textattr(14);
-                    c_gotoxy(50, 9); printf(" ---->> GIVE CHOICE : ");
+                    c_gotoxy(50, 10); printf(" ---->> GIVE CHOICE : ");
                     
                     if (scanf("%d", &choice) != 1) {
                         // Handle invalid input and clear the buffer
                         while (getchar() != '\n');
                         c_textattr(4);
-                        c_gotoxy(50, 11); printf("Invalid input. Please enter a number.\n");
+                        c_gotoxy(50, 12); printf("Invalid input. Please enter a number.\n");
                         c_textattr(14);
                         c_getch();
                         continue;
@@ -100,23 +105,22 @@ int main() {
                             sign_in_client();
                             break;
                         case 3:
-                            leave();
+                            choice = 0;  // Go back to main menu
                             break;
+                        case 4:
+                            leave();  // Exit the program
+                            return 0;
                         default:
                             c_textattr(4);
-                            c_gotoxy(50, 11); printf("Please choose a valid option.\n");
+                            c_gotoxy(50, 12); printf("Please choose a valid option.\n");
                             c_textattr(14);
                             c_getch();
                             break;
                     }
-                } while (choice != 3);
+                } while (choice != 0 && choice != 4);
                 break;
-            
-            case 4:  // Back to previous menu or exit
-                back();
-                break;
-            
-            case 5:  // Leave application
+
+            case 3:  // Leave application directly from main menu
                 leave();
                 break;
 
@@ -128,7 +132,7 @@ int main() {
                 c_getch();
                 break;
         }
-    } while (choice != 5);
+    } while (choice != 3);  // Main menu loop, exits if "Leave application" (option 3) is chosen
 
     free(Client_CIN);  // Free allocated memory before exit
     free(Supplier_CIN);

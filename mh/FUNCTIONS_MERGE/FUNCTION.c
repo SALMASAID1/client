@@ -724,6 +724,7 @@ void tap(){
     getchar();
     system("cls");
 }
+
 void choixinvalid(){
     system("cls");
     c_textcolor(4);
@@ -761,27 +762,36 @@ void add_product() {
 
     // Lecture des informations sur le produit
     // set_color(1);
-    c_textcolor(1);
+    c_textcolor(14);
     c_gotoxy(30 , 3 );
     printf("Enter product name: ");
+     c_textcolor(8);
     scanf(" %[^\n]s",p.name);
     c_gotoxy(30 , 4 );
+     c_textcolor(14);
     printf("Enter product category: ");
+     c_textcolor(8);
     scanf(" %[^\n]s",p.category);
     c_gotoxy(30 , 5 );
+     c_textcolor(14);
     printf("Enter product price: ");
+     c_textcolor(8);
     scanf("%f", &p.price);
     c_gotoxy(30 , 6 );
+     c_textcolor(14);
     printf("Enter product quantity: ");
+     c_textcolor(8);
     scanf("%d", &p.quantity);
     c_gotoxy(30 , 7 );
+     c_textcolor(14);
     printf("Enter product description: ");
+     c_textcolor(8);
     scanf(" %[^\n]s",p.description);
     c_textcolor(15);
     //set_color(7);
 
     // Enregistrement du produit dans le fichier
-    fprintf(fp, " %d %s %s %.2f %d %s\n", p.id_product, p.name, p.category, p.price, p.quantity, p.description);
+    fprintf(fp, " %d %s %s %s %.2f %d\n", p.id_product,p.category ,p.name , p.description,p.price , p.quantity);
     fclose(fp);
 
     c_textcolor(2);
@@ -1141,6 +1151,8 @@ void liste_fournisseur(char * Temp_CIN) {
             printf("Press any key to continue...\n");
             c_getch();  // Pause before clearing screen again
         }
+        c_getch();
+        c_clrscr();
     } while (choice != 5);
 }
 
