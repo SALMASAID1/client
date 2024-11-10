@@ -7,45 +7,130 @@
 #include "conio.h"
 #include "FUNCTION.h"
 
-    char Client_CIN [20] ;
-    int choice ;
-int main (){
+int choice;
 
-    do { 
-        c_textattr(8);
-        c_gotoxy(50,6);printf("1 - Login");
-        c_gotoxy(50,7);printf("2 - Sign In");
-        c_gotoxy(50,8);printf("3 - Leave page");
-        c_textattr(14);
-        c_gotoxy(50,9); printf(" ---->> GIVE CHOICE : ");
+int main() {
+    char* Client_CIN = (char*)malloc(20 * sizeof(char));
+    char* Supplier_CIN = (char*)malloc(20 * sizeof(char));
 
+    chooseLanguage();
+    do {
+        c_clrscr();
+        displayMenu();
+        c_gotoxy(40, 12);
+        printf("Enter your choice: ");
+        
         if (scanf("%d", &choice) != 1) {
-            // Clear invalid input from the buffer
-            while (getchar() != '\n');
-                c_textattr(4);
-                c_gotoxy(50,11); printf("Invalid input. Please enter a number.\n");
-                c_clrscr();
-                c_textattr(14);
-            continue;  // Restart the loop
+            // Handle invalid input and clear the buffer
+            while (getchar() != '\n'); // Clear the buffer
+            c_textattr(4);
+            c_gotoxy(40, 14);
+            printf("Invalid input. Please enter a number.\n");
+            c_textattr(14);
+            c_getch();
+            continue;
         }
+        
         switch (choice) {
-            case 1:
-                // strcpy (Client_CIN , Login());
-                Login();
+            case 1:  // Supplier options
+                do {
+                    c_clrscr();
+                    c_textattr(8);
+                    c_gotoxy(50, 6); printf("1 - Login");
+                    c_gotoxy(50, 7); printf("2 - Sign In");
+                    c_gotoxy(50, 8); printf("3 - Leave page");
+                    c_textattr(14);
+                    c_gotoxy(50, 9); printf(" ---->> GIVE CHOICE : ");
+                    
+                    if (scanf("%d", &choice) != 1) {
+                        // Handle invalid input and clear the buffer
+                        while (getchar() != '\n');
+                        c_textattr(4);
+                        c_gotoxy(50, 11); printf("Invalid input. Please enter a number.\n");
+                        c_textattr(14);
+                        c_getch();
+                        continue;
+                    }
+
+                    switch (choice) {
+                        case 1:
+                            login_supplier(Supplier_CIN);
+                            break;
+                        case 2:
+                            sign_in_supplier();
+                            break;
+                        case 3:
+                            leave();
+                            break;
+                        default:
+                            c_textattr(4);
+                            c_gotoxy(50, 11); printf("Please choose a valid option.\n");
+                            c_textattr(14);
+                            c_getch();
+                            break;
+                    }
+                } while (choice != 3);
                 break;
-            case 2:
-                sign_in();
+            
+            case 2:  // Client options
+                do {
+                    c_clrscr();
+                    c_textattr(8);
+                    c_gotoxy(50, 6); printf("1 - Login");
+                    c_gotoxy(50, 7); printf("2 - Sign In");
+                    c_gotoxy(50, 8); printf("3 - Leave page");
+                    c_textattr(14);
+                    c_gotoxy(50, 9); printf(" ---->> GIVE CHOICE : ");
+                    
+                    if (scanf("%d", &choice) != 1) {
+                        // Handle invalid input and clear the buffer
+                        while (getchar() != '\n');
+                        c_textattr(4);
+                        c_gotoxy(50, 11); printf("Invalid input. Please enter a number.\n");
+                        c_textattr(14);
+                        c_getch();
+                        continue;
+                    }
+
+                    switch (choice) {
+                        case 1:
+                            clientLogin(Client_CIN);
+                            break;
+                        case 2:
+                            sign_in_client();
+                            break;
+                        case 3:
+                            leave();
+                            break;
+                        default:
+                            c_textattr(4);
+                            c_gotoxy(50, 11); printf("Please choose a valid option.\n");
+                            c_textattr(14);
+                            c_getch();
+                            break;
+                    }
+                } while (choice != 3);
                 break;
-            case 3:
+            
+            case 4:  // Back to previous menu or exit
+                back();
+                break;
+            
+            case 5:  // Leave application
                 leave();
                 break;
+
             default:
                 c_textattr(4);
-                printf("Please choose a valid option.\n");
+                c_gotoxy(40, 14);
+                printf("Invalid choice. Please try again.");
                 c_textattr(14);
+                c_getch();
                 break;
         }
-    c_clrscr();
-    } while (choice != 3);  // Exit the loop if choice is 3
-    return 0 ;
+    } while (choice != 5);
+
+    free(Client_CIN);  // Free allocated memory before exit
+    free(Supplier_CIN);
+    return 0;
 }

@@ -37,7 +37,8 @@ typedef struct {
     char nomf[30];
     char prenomf[30];
     char Cinf[30]; // CIN de fournisseur
-    char mdpf[20];      // Mot de passe de fournisseur
+    char mdpf[20];  // Mot de passe de fournisseur
+    char cmdpf[20]; // confirm mot de pass  
 }fournisseur;
 
 typedef struct {
@@ -56,6 +57,121 @@ char name[20];
 int quantity ;
 
 }clc ; // clc : client choice 
+
+
+void back() {
+    c_textattr(1); 
+    printf("\nReturning to the previous menu...\n");
+    c_getch();      
+    c_clrscr();    
+    c_textattr(14);
+}
+
+void chooseLanguage() {
+    int choice;
+    int consoleWidth = 80; // Assuming an 80-character wide console
+    int yPosition = 5;     // Set a vertical starting position
+
+    // Centered positions based on string lengths
+    int englishPosition = (consoleWidth - 13) / 2; // "1. English" is 9 characters
+    int frenchPosition = (consoleWidth - 12) / 2;  // "2. French" is 8 characters
+    int promptPosition = (consoleWidth - 30) / 2;  // "Choose a language" prompt length
+
+    c_gotoxy(promptPosition, yPosition);
+    printf("Choose a language:\n");
+    
+    c_gotoxy(englishPosition, yPosition + 2);
+    printf("1. English\n");
+
+    c_gotoxy(frenchPosition, yPosition + 3);
+    printf("2. French\n");
+
+    c_gotoxy(promptPosition, yPosition + 5);
+    printf("Enter your choice (1 or 2): ");
+    scanf("%d", &choice);
+
+    switch (choice) {
+        case 1:
+            printf("You selected English.\n");
+            break;
+        case 2:
+            printf("Vous avez choisi le Français.\n");
+            break;
+        default:
+            printf("Invalid choice. Please select 1 or 2.\n");
+            break;
+    }
+}
+void leave(){
+    c_textattr(1);
+    printf("Exiting the Aplication...\n\t**GOOD BYE**\t");   
+    c_getch();
+   exit(0) ;
+   c_textattr(14);
+}
+
+void liste(char * Temp_cin) {
+    int c;
+         c_gotoxy(50,6);printf("---------------------------");
+          c_gotoxy(50,7);printf("----- LIST OF OPTIONS -----");
+           c_gotoxy(50,8);printf("---------------------------");
+           c_textattr(8);
+
+           c_gotoxy(50,9);printf("---> View Product List");
+           c_gotoxy(50,10);printf("---> Add Purchases");
+           c_gotoxy(50,11);printf("---> View Purchases ");
+           c_gotoxy(50,12);printf("---> Remove Purchases");
+           c_gotoxy(50,13);printf("---> Leave Page");
+           c_textattr(14);
+           c_gotoxy(50,14);printf("--------------------------");
+
+
+    do {
+
+
+               c_textattr(8);
+               printf("  \n1 - View Product List");
+               printf("  \n2 - Add Purchases");
+               printf("  \n3 - View Purchases ");
+               printf("  \n4 - Remove Purchases");
+               printf("  \n5 - Leave Page");
+               c_textattr(14);
+
+         printf("\n\n------->> SELECT YOUR OPTION: ");scanf("%d", &c);
+
+         c_clrscr();
+        switch (c) {
+            case 1: {
+                View_Product_List();
+
+                break;
+
+            }
+            case 2: {
+            Add_Purchases();
+                break;
+            }
+            case 3: {
+            View_Purchases();
+           break;
+            }
+            case 4: {
+                Remove_Purchases();
+                break;
+            }
+
+            case 5: {
+                leave();
+                break;
+            }
+            default:
+             c_textattr(4);
+                printf("Incorrect choice! Your choice should be between [1 - 8]. Please retry.");
+         c_textattr(14);
+        }
+
+    } while (c != 0); // Loop until the user decides to exit
+}
 
 
 char pdf_header[] = 
@@ -140,7 +256,7 @@ int is_CIN_unique(const char *cin) {
     return 1;
 }
 
-void sign_in() {
+void sign_in_client() {
     int i,j;
     Client client;
     FILE *fp = fopen("CLIENT.txt", "a");
@@ -216,96 +332,18 @@ void sign_in() {
 
 }
 
-void leave(){
-    c_textattr(1);
-    printf("Exiting the Aplication...\n\t**GOOD BYE**\t");
-    exit(0);
-   c_textattr(14);
-
+void displayMenu() {
+    c_gotoxy(40, 5);  // Centered coordinates (adjust as needed)
+    printf("Welcome to the Login Page\n");
+    c_gotoxy(40, 7);
+    printf("1. Supplier \n");
+    c_gotoxy(40, 8);
+    printf("2. Client\n");
+    c_gotoxy(40, 9);
+    printf("3. Leave\n");
 }
 
-void liste(char * Temp_cin) {
-    int c;
-         c_gotoxy(50,6);printf("---------------------------");
-          c_gotoxy(50,7);printf("----- LIST OF OPTIONS -----");
-           c_gotoxy(50,8);printf("---------------------------");
-           c_textattr(8);
-
-           c_gotoxy(50,9);printf("---> View Product List");
-           c_gotoxy(50,10);printf("---> Add Purchases");
-           c_gotoxy(50,11);printf("---> View Purchases ");
-           c_gotoxy(50,12);printf("---> Remove Purchases");
-           c_gotoxy(50,13);printf("---> Leave Page");
-           c_textattr(14);
-           c_gotoxy(50,14);printf("--------------------------");
-
-
-    do {
-
-               c_textattr(8);
-               printf("  \n1 - View Product List");
-               printf("  \n2 - Add Purchases");
-               printf("  \n3 - View Purchases ");
-               printf("  \n4 - Remove Purchases");
-               printf("  \n5 - Proceed to add a payment method");
-               printf("  \n6 - Leave Page");
-               c_textattr(14);
-
-         printf("\n\n------->> SELECT YOUR OPTION: ");scanf("%d", &c);
-
-         c_clrscr();
-        switch (c) {
-            case 1: {
-            View_Product_List();
-                break;
-
-            }
-            case 2: {
-            Add_Purchases();
-                break;
-            }
-            case 3: {
-            View_Purchases();
-                break;
-            }
-            case 4: {
-            Remove_Purchases();
-                break;
-            }
-            case 5 : {
-            FILE *fp = fopen("CLIENT.txt", "r");
-                if (fp == NULL) {
-                c_textattr(4);
-                printf("\nError: Could not open the file.\n");
-                c_textattr(14);
-                return;
-            }
-            Client A ;
-            while(fscanf(fp , "%s %*s %s %*s" , A.last_name , A.CIN , A.password) == 4 ){
-            if(strcmp(A.CIN , Temp_cin ) == 0 )add_credit_card ( A.CIN ,A.last_name); // Temp_CIN frome the login function
-            break;
-            }
-            fclose(fp);
-            }
-            case 6: {
-            leave();
-                break;
-            }
-            
-            default:
-            c_textattr(4);
-                printf("Incorrect choice! Your choice should be between [1 - 8]. Please retry.");
-            c_textattr(14);
-        }
-
-    } while (c != 0); // Loop until the user decides to exit
-    c_getch();
-    c_clrscr();
-    c_textcolor(14);
-
-}
-
-void Login() {
+void clientLogin (char * CIN){
     c_clrscr();
     char passw[20];
     int found = 0;
@@ -345,7 +383,7 @@ void Login() {
             c_textattr(14);
             found = 1;
             c_getch();
-            system("cls");
+            c_clrscr();
             liste(Temp_CIN);
             break;
         }
@@ -910,31 +948,81 @@ void modify_product(){
      }
 //-------------------------------------------sign fournisseur-------------------------------
 
-
-
-//------------------------------------verification cin---------------------
-int veri_cin(char *cin) {
-    FILE *fr = fopen("fournisseur.txt", "r");
-    if (fr == NULL) {
-        printf("Impossible d'ouvrir le fichier\n");
-        exit(1);
+void sign_in_supplier() {
+    int i,j;
+    fournisseur f;
+    FILE *fp = fopen("FOURNISSEUR.txt", "a");
+    if (fp == NULL) {
+        printf("The file does not exist or could not be opened!\n");
+        return;
     }
-    
-    fournisseur four;
-    while (fscanf(fr, "%s %s %s %s", four.prenomf, four.nomf, four.Cinf, four.mdpf) == 4) {
-        if (strcmp(cin, four.Cinf) == 0) {  
-            fclose(fr);
-            return 0; // CIN déjà existant
+      c_textattr(8);
+
+    printf("Enter your LAST NAME: ");
+    scanf("%s", f.nomf   );
+    printf("Enter your FIRST NAME: ");
+    scanf("%s", f.prenomf);
+
+    do {
+        printf("Enter your CIN: ");
+        scanf("%s", f.Cinf);
+
+        if (!is_CIN_unique(f.Cinf)) {
+
+              c_textcolor(4);  printf("Error: CIN already exists. Please enter a unique CIN.\n");
+      c_textattr(14);
+
         }
+    } while (!is_CIN_unique(f.Cinf));
+
+    do {
+
+    printf("Enter NEW PASSWORD: ");
+    for (i = 0; i < 19; i++) {
+        f.mdpf[i] = c_getch();  // Read character without displaying it
+
+        if (f.mdpf[i] == '\r') {  // Stop if Enter is pressed
+            break;
+        }
+
+        printf("*");
     }
-    
-    fclose(fr);
-    return 1; // CIN n'existe pas
+
+    f.mdpf[i] = '\0';
+
+
+        printf("\nConfirm your PASSWORD: ");
+           for (j = 0; j < 19; j++) {
+        f.cmdpf[j] = c_getch();
+
+        if (f.cmdpf[j] == '\r') {
+            break;
+        }
+
+        printf("*");
+    }
+
+    f.cmdpf[j] = '\0';
+
+        if (strcmp(f.mdpf, f.cmdpf) != 0) {
+                 c_textattr(4);
+
+                printf("\nError: Passwords do not match. Please try again.\n");
+                 c_textattr(14);
+
+        }
+    } while (strcmp(f.mdpf, f.cmdpf) != 0);
+
+    fprintf(fp, "%s %s %s %s\n", f.nomf, f.prenomf,f.Cinf, f.mdpf);
+     c_textattr(2);
+
+                 printf("\nInformation added successfully!\n");
+ c_textattr(14);
+
+ c_clrscr();
+    fclose(fp);
+
 }
-
-//-----------------------------------------------------------------------
-
-//------------------------------------add supplier-----------------------------
 
 void add_supplier() {
     FILE *fp;
@@ -959,18 +1047,16 @@ void add_supplier() {
          c_gotoxy(50,10);
         printf("    CIN  : ");
         scanf(" %s", frn.Cinf);
-
         // c_gotoxy(60,12);
-        if (veri_cin(frn.Cinf) == 0) {
+        if (is_CIN_unique(frn.Cinf) == 0) {
             c_gotoxy(60,12);
             printf("Be careful, the CIN is already used!\n");
             c_getch();
             c_clrscr();
         } else {
             c_gotoxy(50,12);
-             printf("Saisir le mot de passe : ");
+            printf("Saisir le mot de passe : ");
             i = 0;
-
             // Saisie et masquage du mot de passe avec '*'
             while ((ch = c_getch()) != '\r' && i < 19) {  // Limite à 19 caractères
                 frn.mdpf[i++] = ch;
@@ -980,13 +1066,9 @@ void add_supplier() {
             printf("\n");
 
             fprintf(fp, "%s %s %s %s\n", frn.prenomf, frn.nomf, frn.Cinf, frn.mdpf);
-            break;
-           
-            
-           
+            break;           
         }
     } while (1);
-
     fclose(fp);
       c_textcolor(15);
          c_textcolor(2);
@@ -995,6 +1077,129 @@ void add_supplier() {
     c_textcolor(15);
  c_getch();
  c_clrscr();
+}
+
+//------------------------------------verification cin---------------------
+int veri_cin(char *cin) {
+    FILE *fr = fopen("fournisseur.txt", "r");
+    if (fr == NULL) {
+        printf("Impossible d'ouvrir le fichier\n");
+        exit(1);
+    }
+    
+    fournisseur four;
+    while (fscanf(fr, "%s %s %s %s", four.prenomf, four.nomf, four.Cinf, four.mdpf) == 4) {
+        if (strcmp(cin, four.Cinf) == 0) {  
+            fclose(fr);
+            return 0; // CIN déjà existant
+        }
+    }
+    
+    fclose(fr);
+    return 1; // CIN n'existe pas
+}
+
+//-----------------------------------------------------------------------
+
+
+void liste_fournisseur(char * Temp_CIN) {
+    int choice;
+    
+    do {
+        system("cls");  // Clear screen (replace with `clrscr();` if using custom conio.h)
+        printf("Supplier CIN: %s\n", Temp_CIN);
+        printf("\nSupplier Menu:\n");
+        printf("1. Add Product\n");
+        printf("2. Modify Product\n");
+        printf("3. Add Supplier\n");
+        printf("4. Delete Product\n");
+        printf("5. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        
+        switch (choice) {
+            case 1:
+                add_product();
+                break;
+            case 2:
+                modify_product();
+                break;
+            case 3:
+                add_supplier();
+                break;
+            case 4:
+                delete_product();
+                break;
+            case 5:
+                printf("Returning to main menu...\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+                break;
+        }
+        if (choice != 5) {
+            printf("Press any key to continue...\n");
+            c_getch();  // Pause before clearing screen again
+        }
+    } while (choice != 5);
+}
+
+
+//------------------------------------add supplier-----------------------------
+
+
+void login_supplier (char * CIN){
+    c_clrscr();
+    char passw[20];
+    int found = 0;
+    char CINN[20];
+    int k;
+    c_textattr(8);
+    printf("Let's connect to your account:\n");
+    c_textattr(14);
+    printf("Enter your CIN: ");
+    scanf("%s", CINN);
+
+    printf("Enter your PASSWORD: ");
+        for (k = 0; k < 19; k++) {
+        passw[k] = c_getch();
+
+        if (passw[k] == '\r') {
+            break;
+        }
+
+        printf("*");
+    }
+    passw[k] = '\0';
+
+    FILE *fp = fopen("FOURNISSEUR.txt", "r");
+    if (fp == NULL) {
+        c_textattr(4);
+        printf("\nError: Could not open the file.\n");
+     c_textattr(14);
+        return;
+    }
+    fournisseur f;
+    while (fscanf(fp, "%*s %*s %s %s", f.Cinf, f.mdpf) == 2) {
+        if (strcmp(f.Cinf, CINN) == 0 && strcmp(f.mdpf, passw) == 0) {
+            c_textattr(2);
+            strcpy(Temp_CIN , CINN);
+            printf("\nConnected successfully!\n");
+            c_textattr(14);
+            found = 1;
+            c_getch();
+            c_clrscr();
+            liste_fournisseur(Temp_CIN);
+            break;
+        }
+    }
+    if (!found) {
+        c_textattr(4);
+        printf("\nYou need to create an account first!\n");
+        c_textattr(14);
+    }
+    fclose(fp);
+    c_getch();
 }
 
 //-----------------------------------------------------------------------
