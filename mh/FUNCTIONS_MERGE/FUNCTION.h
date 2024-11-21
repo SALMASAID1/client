@@ -7,7 +7,6 @@
 #include "conio.h"
                 // login page 
     void displayMenu();
-    void chooseLanguage();
     int is_CIN_unique(const char *cin);
     void back();
                // SAID -------- SALMA //
