@@ -22,7 +22,7 @@
 
                 // TAMZIRT -------- MOHAMED //
     void add_credit_card(char* CIN_client , char * name_client);
-    void display_credit_cards(FILE  * CDM_1 ,char *name_client,char* CIN );
+    void display_credit_cards(char *name_client,char* CIN );
     void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE * PCM , FILE * client_choice , char * CIN , int fact_num  ); // PCM : Product Client Managment 
     void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN);
     void feedback_and_rate_the_product(char * name_cl , int id_product);

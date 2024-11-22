@@ -67,7 +67,6 @@ void back() {
     c_textattr(14);
 }
 
-
 void leave(){
     c_textattr(1);
     printf("Exiting the Aplication...\n\t**GOOD BYE**\t");   
@@ -77,8 +76,12 @@ void leave(){
 }
 
 void liste_client(char *Temp_cin, char *client_name) {
+    FILE *FD;
+    CCD cd;
     int c;
-    int check_CRD = 1;
+    int check_CRD = 0;
+    int check_card_exists = 0;
+
     c_gotoxy(50, 5); printf("---------------------------");
     c_gotoxy(50, 6); printf("----- LIST OF OPTIONS -----");
     c_gotoxy(50, 7); printf("---------------------------");
@@ -89,9 +92,10 @@ void liste_client(char *Temp_cin, char *client_name) {
     c_gotoxy(50, 11); printf("---> View Purchases ");
     c_gotoxy(50, 12); printf("---> Remove Purchases");
     c_gotoxy(50, 13); printf("---> Add A Credit Card");
-    c_gotoxy(50, 14); printf("---> Leave Page");
+    c_gotoxy(50, 14); printf("---> Display Credit Card");
+    c_gotoxy(50, 15); printf("---> Leave Page");
     c_textattr(14);
-    c_gotoxy(50, 16); printf("--------------------------");
+    c_gotoxy(50, 17); printf("--------------------------");
 
     do {
         c_textattr(8);
@@ -100,7 +104,8 @@ void liste_client(char *Temp_cin, char *client_name) {
         printf("  \n3 - View Purchases ");
         printf("  \n4 - Remove Purchases");
         printf("  \n5 - Add A Credit Card");
-        printf("  \n6 - Leave Page");
+        printf("  \n6 - Display Credit Card");
+        printf("  \n7 - Leave Page");
         c_textattr(14);
 
         printf("\n\n------->> SELECT YOUR OPTION: ");
@@ -124,32 +129,82 @@ void liste_client(char *Temp_cin, char *client_name) {
                 Remove_Purchases();
                 break;
 
-            case 5:
-                if (check_CRD == 1) {
-                    add_credit_card(Temp_cin, client_name);
-                    check_CRD++;
-                } else {
+            case 5: {
+                FD = fopen("CREDIT_CARD.dat", "rb");
+                if (FD == NULL) {
                     c_textcolor(4);
-                    printf("\nYou have already chosen this option!");
-                    c_textattr(14);
+                    printf("\nFILE IS NOT EXIST !!!");
+                    exit(0);
+                }
+
+                check_CRD = 0;
+                check_card_exists = 0;
+                while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
+                    // Check if the card already exists for this client
+                    if (strcmp(cd.client_CIN, Temp_cin) == 0) {
+                        check_CRD = 1;
+                        if (strcmp(cd.card_number, Temp_cin) == 0) {
+                            check_card_exists = 1;
+                            break;
+                        }
+                    }
+                }
+                fclose(FD);
+
+                if (check_CRD) {
+                    if (check_card_exists) {
+                        c_textcolor(4);
+                        printf("\nThe credit card already exists for this client!");
+                    } else {
+                        add_credit_card(Temp_cin, client_name);
+                        c_textcolor(2);
+                        printf("\nCredit card added successfully!");
+                    }
+                } else {
+                    add_credit_card(Temp_cin, client_name);
+                    c_textcolor(2);
+                    printf("\nCredit card added successfully!");
                 }
                 break;
+            }
 
-            case 6:
+            case 6: {
+                FD = fopen("CREDIT_CARD.dat", "rb");
+                if (FD == NULL) {
+                    c_textcolor(4);
+                    printf("\nFILE IS NOT EXIST !!!");
+                    exit(0);
+                }
+
+                int found = 0;
+                while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
+                    if (strcmp(cd.client_CIN, Temp_cin) == 0) {
+                        display_credit_cards(client_name, Temp_cin);
+                        found = 1;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    c_textcolor(4);
+                    printf("\nNo credit card found for this client!");
+                }
+                fclose(FD);
+                break;
+            }
+
+            case 7:
                 leave();
                 break;
 
             default:
                 c_textattr(4);
-                printf("Incorrect choice! Your choice should be between [1 - 6]. Please retry.");
+                printf("Incorrect choice! Your choice should be between [1 - 7]. Please retry.");
                 c_textattr(14);
                 break;
         }
-    } while (c != 6);
+    } while (c != 7);
 }
-
-
-
 
 char pdf_header[] = 
     "%%PDF-1.4                  %% PDF header specifying version\n"
@@ -213,8 +268,6 @@ char pdf_footer[] =
     "startxref\n"
     "482                        %% Offset to start of xref\n"
     "%%%%EOF\n";
-
-
 
 // -----------------------------
 
@@ -289,7 +342,6 @@ void sign_in_client() {
 
 }
 
-
 char* Pass_hide(int max_length) {
     static char PIN[256]; // Static to ensure it persists after function execution
     int i = 0;
@@ -308,6 +360,7 @@ char* Pass_hide(int max_length) {
     printf("\n");
     return PIN;
 }
+
 void clientLogin (char * CIN){
     c_clrscr();
     char passw[20];
@@ -486,6 +539,7 @@ void Add_Purchases() {
     fclose(ff);
     c_clrscr();
 }
+
 void View_Purchases() {
     Client client;
     char filename[100];
@@ -689,7 +743,9 @@ void choixinvalid(){
     tap();
     c_textcolor(15);
 }
+
 //----------------------------------------add product--------------------------------------
+
 int get_next_product_id(FILE *fp) {
     product p;
     int id = 1;
@@ -759,6 +815,7 @@ void add_product() {
 }
 
 //----------------------------------------delete product--------------------------------------
+
 void delete_product(){
     FILE *fp,*temp;
     fp=fopen("produit.txt","r");
@@ -802,7 +859,8 @@ void delete_product(){
       printf("\nthe product is successfully deleted!!\n");
       c_textcolor(15);
       }
-      }
+}
+
 //----------------------------------------modify product--------------------------------------
   
 void modify_product(){
@@ -1332,35 +1390,73 @@ void add_credit_card(char* CIN_client, char *name_client) {
     c_clrscr();
 
 }
-void display_credit_cards(FILE  * CDM_1 ,char *name_client,char* CIN ){
-    CCD CD ; // CD : CARD DETAIL 
-    c_textcolor(14);
-    c_gotoxy(30 , 3 );printf("------------------- Credit Card of : %s  , CIN : %s -------------------" , name_client , CIN ) ;
-    while (fread(&CD , sizeof(CCD) ,1 , CDM_1) == 1 ) {
-         if (strcmp(CIN , CD.client_CIN) == 0 ){
-            c_textcolor(8);
-            c_gotoxy(50 , 5 );printf("Card credit Number : ");
-           for(int i = 0 ; i < strlen(CD.card_number) ; i++){
-            if (i < 1 || (i == strlen(CD.card_number)-1 ) || (i > strlen(CD.card_number)-5 )){
-            c_textcolor(14);
-            c_gotoxy(71 +i, 5 );printf("%c" ,CD.card_number[i] );
-            }
-            else {
-            c_textcolor(5);
-            c_gotoxy(71 + i , 5);
-            printf("*");
-            }
-             }
-            printf("\n");
-            c_textcolor(8);
-            c_gotoxy(50 , 7 );printf("CIN :");
-            c_textcolor(14);
-            printf(" %s\n",CD.client_CIN);           
-         }
+
+void display_credit_cards(char *client_name, char *CIN) {
+    FILE *CDM_1 = fopen("CREDIT_CARD.dat", "rb");
+    if (CDM_1 == NULL) {
+        c_textcolor(4);
+        printf("\nERROR: The file 'CREDIT_CARD.dat' does not exist!");
+        exit(0);
     }
+
+    CCD CD; // CD: CARD DETAIL
+    int found = 0;
+
+    c_textcolor(14);
+    printf("\n------------------- Credit Card Details -------------------\n");
+
+    while (fread(&CD, sizeof(CCD), 1, CDM_1) == 1) {
+        if (strcmp(CIN, CD.client_CIN) == 0) {
+            found = 1;
+
+            c_textcolor(8);
+            printf("\nClient Name: ");
+            c_textcolor(14);
+            printf("%s\n", CD.client_name);
+
+            c_textcolor(8);
+            printf("CIN: ");
+            c_textcolor(14);
+            printf("%s\n", Temp_CIN);
+
+            c_textcolor(8);
+            printf("Card Number: ");
+            for (int i = 0; i < strlen(CD.card_number); i++) {
+                if (i < 4 || i >= strlen(CD.card_number) - 4) {
+                    c_textcolor(14);
+                    printf("%c", CD.card_number[i]);
+                } else {
+                    c_textcolor(5);
+                    printf("*");
+                }
+            }
+            printf("\n");
+
+            c_textcolor(8);
+            printf("CVV: ");
+            c_textcolor(5); 
+            printf("***\n");
+
+            c_textcolor(8);
+            printf("Card Expiry Date: ");
+            c_textcolor(14);
+            printf("%s/%s\n", CD.expiry_date.month, CD.expiry_date.year);
+        }
+    }
+
+    if (!found) {
+        c_textcolor(4);
+        printf("\nNo credit card found for client with CIN: %s\n", CIN);
+    }
+
+    fclose(CDM_1);
+
+    c_textattr(14);
+    printf("\n----------------------------------------------------------\n");
     c_getch();
     c_clrscr();
 }
+
 
 void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE *PCM, FILE *client_choice, char *CINF, int supplier_num) {
     time_t currentTime;
