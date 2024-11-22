@@ -67,41 +67,7 @@ void back() {
     c_textattr(14);
 }
 
-void chooseLanguage() {
-    int choice;
-    int consoleWidth = 80; // Assuming an 80-character wide console
-    int yPosition = 5;     // Set a vertical starting position
 
-    // Centered positions based on string lengths
-    int englishPosition = (consoleWidth - 13) / 2; // "1. English" is 9 characters
-    int frenchPosition = (consoleWidth - 12) / 2;  // "2. French" is 8 characters
-    int promptPosition = (consoleWidth - 30) / 2;  // "Choose a language" prompt length
-
-    c_gotoxy(promptPosition, yPosition);
-    printf("Choose a language:\n");
-    
-    c_gotoxy(englishPosition, yPosition + 2);
-    printf("1. English\n");
-
-    c_gotoxy(frenchPosition, yPosition + 3);
-    printf("2. French\n");
-
-    c_gotoxy(promptPosition, yPosition + 5);
-    printf("Enter your choice (1 or 2): ");
-    scanf("%d", &choice);
-
-    switch (choice) {
-        case 1:
-            printf("You selected English.\n");
-            break;
-        case 2:
-            printf("Vous avez choisi le Français.\n");
-            break;
-        default:
-            printf("Invalid choice. Please select 1 or 2.\n");
-            break;
-    }
-}
 void leave(){
     c_textattr(1);
     printf("Exiting the Aplication...\n\t**GOOD BYE**\t");   
@@ -110,68 +76,79 @@ void leave(){
    c_textattr(14);
 }
 
-void liste(char * Temp_cin) {
+void liste_client(char *Temp_cin, char *client_name) {
     int c;
-         c_gotoxy(50,6);printf("---------------------------");
-          c_gotoxy(50,7);printf("----- LIST OF OPTIONS -----");
-           c_gotoxy(50,8);printf("---------------------------");
-           c_textattr(8);
+    int check_CRD = 1;
+    c_gotoxy(50, 5); printf("---------------------------");
+    c_gotoxy(50, 6); printf("----- LIST OF OPTIONS -----");
+    c_gotoxy(50, 7); printf("---------------------------");
+    c_textattr(8);
 
-           c_gotoxy(50,9);printf("---> View Product List");
-           c_gotoxy(50,10);printf("---> Add Purchases");
-           c_gotoxy(50,11);printf("---> View Purchases ");
-           c_gotoxy(50,12);printf("---> Remove Purchases");
-           c_gotoxy(50,13);printf("---> Leave Page");
-           c_textattr(14);
-           c_gotoxy(50,14);printf("--------------------------");
-
+    c_gotoxy(50, 9);  printf("---> View Product List");
+    c_gotoxy(50, 10); printf("---> Add Purchases");
+    c_gotoxy(50, 11); printf("---> View Purchases ");
+    c_gotoxy(50, 12); printf("---> Remove Purchases");
+    c_gotoxy(50, 13); printf("---> Add A Credit Card");
+    c_gotoxy(50, 14); printf("---> Leave Page");
+    c_textattr(14);
+    c_gotoxy(50, 16); printf("--------------------------");
 
     do {
+        c_textattr(8);
+        printf("  \n1 - View Product List");
+        printf("  \n2 - Add Purchases");
+        printf("  \n3 - View Purchases ");
+        printf("  \n4 - Remove Purchases");
+        printf("  \n5 - Add A Credit Card");
+        printf("  \n6 - Leave Page");
+        c_textattr(14);
 
+        printf("\n\n------->> SELECT YOUR OPTION: ");
+        scanf("%d", &c);
+        c_clrscr();
 
-               c_textattr(8);
-               printf("  \n1 - View Product List");
-               printf("  \n2 - Add Purchases");
-               printf("  \n3 - View Purchases ");
-               printf("  \n4 - Remove Purchases");
-               printf("  \n5 - Leave Page");
-               c_textattr(14);
-
-         printf("\n\n------->> SELECT YOUR OPTION: ");scanf("%d", &c);
-
-         c_clrscr();
         switch (c) {
-            case 1: {
+            case 1:
                 View_Product_List();
-
                 break;
 
-            }
-            case 2: {
-            Add_Purchases();
+            case 2:
+                Add_Purchases();
                 break;
-            }
-            case 3: {
-            View_Purchases();
-           break;
-            }
-            case 4: {
+
+            case 3:
+                View_Purchases();
+                break;
+
+            case 4:
                 Remove_Purchases();
                 break;
-            }
 
-            case 5: {
+            case 5:
+                if (check_CRD == 1) {
+                    add_credit_card(Temp_cin, client_name);
+                    check_CRD++;
+                } else {
+                    c_textcolor(4);
+                    printf("\nYou have already chosen this option!");
+                    c_textattr(14);
+                }
+                break;
+
+            case 6:
                 leave();
                 break;
-            }
-            default:
-             c_textattr(4);
-                printf("Incorrect choice! Your choice should be between [1 - 8]. Please retry.");
-         c_textattr(14);
-        }
 
-    } while (c != 0); // Loop until the user decides to exit
+            default:
+                c_textattr(4);
+                printf("Incorrect choice! Your choice should be between [1 - 6]. Please retry.");
+                c_textattr(14);
+                break;
+        }
+    } while (c != 6);
 }
+
+
 
 
 char pdf_header[] = 
@@ -286,35 +263,15 @@ void sign_in_client() {
     do {
 
     printf("Enter NEW PASSWORD: ");
-    for (i = 0; i < 19; i++) {
-        client.password[i] = c_getch();  // Read character without displaying it
-
-        if (client.password[i] == '\r') {  // Stop if Enter is pressed
-            break;
-        }
-
-        printf("*");
-    }
-
-    client.password[i] = '\0';
-
-
-        printf("\nConfirm your PASSWORD: ");
-           for (j = 0; j < 19; j++) {
-        client.confirm_password[j] = c_getch();
-
-        if (client.confirm_password[j] == '\r') {
-            break;
-        }
-
-        printf("*");
-    }
-
-    client.confirm_password[j] = '\0';
+    strcpy(client.password,Pass_hide(20));
+    client.password[strlen(client.password)] = '\0';
+    
+    printf("\nConfirm your PASSWORD: ");
+    strcpy(client.confirm_password,Pass_hide(20));
+    client.confirm_password[strlen(client.confirm_password)] = '\0';
 
         if (strcmp(client.password, client.confirm_password) != 0) {
                  c_textattr(4);
-
                 printf("\nError: Passwords do not match. Please try again.\n");
                  c_textattr(14);
 
@@ -332,17 +289,25 @@ void sign_in_client() {
 
 }
 
-void displayMenu() {
-    c_gotoxy(40, 5);  // Centered coordinates (adjust as needed)
-    printf("Welcome to the Login Page\n");
-    c_gotoxy(40, 7);
-    printf("1. Supplier \n");
-    c_gotoxy(40, 8);
-    printf("2. Client\n");
-    c_gotoxy(40, 9);
-    printf("3. Leave\n");
-}
 
+char* Pass_hide(int max_length) {
+    static char PIN[256]; // Static to ensure it persists after function execution
+    int i = 0;
+    char ch;
+
+    while (i < max_length - 1 && (ch = c_getch()) != '\r') {  // '\r' is Enter key in Windows
+        if (ch == '\b' && i > 0) {  // Handle backspace
+            i--;
+            printf("\b \b");  // Move back, overwrite with space, and move back again
+        } else if (ch != '\b') {
+            PIN[i++] = ch;
+            printf("*");
+        }
+    }
+    PIN[i] = '\0';  // Null-terminate the PIN string
+    printf("\n");
+    return PIN;
+}
 void clientLogin (char * CIN){
     c_clrscr();
     char passw[20];
@@ -356,16 +321,8 @@ void clientLogin (char * CIN){
     scanf("%s", CINN);
 
     printf("Enter your PASSWORD: ");
-        for (k = 0; k < 19; k++) {
-        passw[k] = c_getch();
-
-        if (passw[k] == '\r') {
-            break;
-        }
-
-        printf("*");
-    }
-    passw[k] = '\0';
+    strcpy(passw,Pass_hide(20));
+    passw[strlen(passw)] = '\0';
 
     FILE *fp = fopen("CLIENT.txt", "r");
     if (fp == NULL) {
@@ -375,7 +332,7 @@ void clientLogin (char * CIN){
         return;
     }
     Client client;
-    while (fscanf(fp, "%*s %*s %s %s", client.CIN, client.password) == 2) {
+    while (fscanf(fp, "%s %*s %s %s",client.last_name , client.CIN, client.password) == 3) {
         if (strcmp(client.CIN, CINN) == 0 && strcmp(client.password, passw) == 0) {
             c_textattr(2);
             strcpy(Temp_CIN , CINN);
@@ -384,7 +341,7 @@ void clientLogin (char * CIN){
             found = 1;
             c_getch();
             c_clrscr();
-            liste(Temp_CIN);
+            liste_client(CIN , client.last_name );
             break;
         }
     }
@@ -988,35 +945,13 @@ void sign_in_supplier() {
     do {
 
     printf("Enter NEW PASSWORD: ");
-    for (i = 0; i < 19; i++) {
-        f.mdpf[i] = c_getch();  // Read character without displaying it
-
-        if (f.mdpf[i] == '\r') {  // Stop if Enter is pressed
-            break;
-        }
-
-        printf("*");
-    }
-
-    f.mdpf[i] = '\0';
-
-
+        strcpy(f.mdpf,Pass_hide(20));
+        f.mdpf[strlen(f.mdpf)] = '\0';
         printf("\nConfirm your PASSWORD: ");
-           for (j = 0; j < 19; j++) {
-        f.cmdpf[j] = c_getch();
-
-        if (f.cmdpf[j] == '\r') {
-            break;
-        }
-
-        printf("*");
-    }
-
-    f.cmdpf[j] = '\0';
-
+        strcpy(f.cmdpf,Pass_hide(20));
+        f.cmdpf[strlen(f.cmdpf)] = '\0';
         if (strcmp(f.mdpf, f.cmdpf) != 0) {
-                 c_textattr(4);
-
+                c_textattr(4);
                 printf("\nError: Passwords do not match. Please try again.\n");
                  c_textattr(14);
 
@@ -1173,16 +1108,8 @@ void login_supplier (char * CIN){
     scanf("%s", CINN);
 
     printf("Enter your PASSWORD: ");
-        for (k = 0; k < 19; k++) {
-        passw[k] = c_getch();
-
-        if (passw[k] == '\r') {
-            break;
-        }
-
-        printf("*");
-    }
-    passw[k] = '\0';
+    strcpy(passw,Pass_hide(20));
+    passw[strlen(passw)] = '\0';
 
     FILE *fp = fopen("FOURNISSEUR.txt", "r");
     if (fp == NULL) {
@@ -1316,7 +1243,7 @@ void add_credit_card(char* CIN_client, char *name_client) {
     strncpy(A.client_CIN, CIN_client, sizeof(A.client_CIN) - 1);
     A.client_CIN[sizeof(A.client_CIN) - 1] = '\0';  // Ensure null termination
     strncpy(A.client_name, name_client, sizeof(A.client_name) - 1);
-    A.client_name[sizeof(A.client_name) - 1] = '\0';  // Ensure null termination
+    A.client_name[sizeof(A.client_name) - 1] = '\0';
     c_textcolor(14);
     c_gotoxy(30 , 3 );printf(" %s, please enter your credit card information (typically 13-19 digits)", name_client);
 
@@ -1353,7 +1280,6 @@ void add_credit_card(char* CIN_client, char *name_client) {
         printf("Enter the expiry date as MM/YY (e.g., 02/27): ");
         c_textcolor(8) ;
         scanf("%2s/%2s", A.expiry_date.month, A.expiry_date.year);
-        // Parse and validate month and year
         if ((sscanf(A.expiry_date.month, "%2d", &month) == 1) && (sscanf(A.expiry_date.year, "%2d", &year) == 1)) {
             if (month > 0 && month <= 12  && year >= (current_year - 2000) ) {
                 valid = 1;

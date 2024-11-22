@@ -76,67 +76,78 @@ void leave(){
    c_textattr(14);
 }
 
-void liste(char * Temp_cin) {
+void liste_client(char *Temp_cin, char *client_name) {
+    c_clrscr();
+    c_getch();
     int c;
-           c_gotoxy(50,6);printf("---------------------------");
-           c_gotoxy(50,7);printf("----- LIST OF OPTIONS -----");
-           c_gotoxy(50,8);printf("---------------------------");
-           c_textattr(8);
+    int check_CRD = 1;
+    c_gotoxy(50, 5); printf("---------------------------");
+    c_gotoxy(50, 6); printf("----- LIST OF OPTIONS -----");
+    c_gotoxy(50, 7); printf("---------------------------");
+    c_textattr(8);
 
-           c_gotoxy(50,9);printf("---> View Product List");
-           c_gotoxy(50,10);printf("---> Add Purchases");
-           c_gotoxy(50,11);printf("---> View Purchases ");
-           c_gotoxy(50,12);printf("---> Remove Purchases");
-           c_gotoxy(50,13);printf("---> Leave Page");
-           c_textattr(14);
-           c_gotoxy(50,14);printf("--------------------------");
-
+    c_gotoxy(50, 9);  printf("---> View Product List");
+    c_gotoxy(50, 10); printf("---> Add Purchases");
+    c_gotoxy(50, 11); printf("---> View Purchases ");
+    c_gotoxy(50, 12); printf("---> Remove Purchases");
+    c_gotoxy(50, 13); printf("---> Add A Credit Card");
+    c_gotoxy(50, 14); printf("---> Leave Page");
+    c_textattr(14);
+    c_gotoxy(50, 16); printf("--------------------------");
 
     do {
+        c_textattr(8);
+        printf("  \n1 - View Product List");
+        printf("  \n2 - Add Purchases");
+        printf("  \n3 - View Purchases ");
+        printf("  \n4 - Remove Purchases");
+        printf("  \n5 - Add A Credit Card");
+        printf("  \n6 - Leave Page");
+        c_textattr(14);
 
+        printf("\n\n------->> SELECT YOUR OPTION: ");
+        scanf("%d", &c);
+        c_clrscr();
 
-               c_textattr(8);
-               printf("  \n1 - View Product List");
-               printf("  \n2 - Add Purchases");
-               printf("  \n3 - View Purchases ");
-               printf("  \n4 - Remove Purchases");
-               printf("  \n5 - Leave Page");
-               c_textattr(14);
-
-         printf("\n\n------->> SELECT YOUR OPTION: ");scanf("%d", &c);
-
-         c_clrscr();
         switch (c) {
-            case 1: {
+            case 1:
                 View_Product_List();
-
                 break;
 
-            }
-            case 2: {
-            Add_Purchases();
+            case 2:
+                Add_Purchases();
                 break;
-            }
-            case 3: {
-            View_Purchases();
-           break;
-            }
-            case 4: {
+
+            case 3:
+                View_Purchases();
+                break;
+
+            case 4:
                 Remove_Purchases();
                 break;
-            }
 
-            case 5: {
+            case 5:
+                if (check_CRD == 1) {
+                    add_credit_card(Temp_cin, client_name);
+                    check_CRD++;
+                } else {
+                    c_textcolor(4);
+                    printf("\nYou have already chosen this option!");
+                    c_textattr(14);
+                }
+                break;
+
+            case 6:
                 leave();
                 break;
-            }
-            default:
-             c_textattr(4);
-                printf("Incorrect choice! Your choice should be between [1 - 8]. Please retry.");
-         c_textattr(14);
-        }
 
-    } while (c != 0); // Loop until the user decides to exit
+            default:
+                c_textattr(4);
+                printf("Incorrect choice! Your choice should be between [1 - 6]. Please retry.");
+                c_textattr(14);
+                break;
+        }
+    } while (c != 6);
 }
 
 
@@ -298,7 +309,7 @@ void sign_in_client() {
 
 }
 
-void clientLogin (char * CIN){
+void clientLogin (char * CIN ){
     c_clrscr();
     char passw[20];
     int found = 0;
@@ -329,7 +340,7 @@ void clientLogin (char * CIN){
         return;
     }
     Client client;
-    while (fscanf(fp, "%*s %*s %s %s", client.CIN, client.password) == 2) {
+    while (fscanf(fp, "%s %*s %s %s",client.last_name , client.CIN, client.password) == 3) {
         if (strcmp(client.CIN, CINN) == 0 && strcmp(client.password, passw) == 0) {
             c_textattr(2);
             strcpy(Temp_CIN , CINN);
@@ -338,7 +349,7 @@ void clientLogin (char * CIN){
             found = 1;
             c_getch();
             c_clrscr();
-            liste(Temp_CIN);
+            liste_client(CIN , client.last_name );
             break;
         }
     }

@@ -6,6 +6,7 @@
 #include <windows.h>
 #include "conio.h"
                 // login page 
+    char* Pass_hide(int max_length);
     void displayMenu();
     int is_CIN_unique(const char *cin);
     void back();
@@ -14,7 +15,7 @@
     void sign_in_client(void);
     void leave(void);
     void View_Product_List(void);
-    void liste(char * Temp_cin);
+    void liste_client(char * Temp_cin , char * client_name);
     void Add_Purchases(void);
     void View_Purchases(void);
     void Remove_Purchases(void);
