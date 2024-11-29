@@ -140,7 +140,7 @@ void Home_LOGIN_menu() {
                         c_getch();
                         break;
                 }
-            } while (choice != 3 && choice != 4); // Keep looping until Back or Leave is selected
+            } while (choice != 3 && choice != 4); // Keep looping until Back or Leave is selected 
         } else {
             do {
                 c_clrscr();

@@ -407,9 +407,7 @@ void leave(){
          c_clrscr();
         switch (choice) {
             case 1:
-              Login();
-              
-              
+              Login();            
                 break;
             case 2:
                   add_supplier();
@@ -487,23 +485,10 @@ void leave(){
 
     fclose(fp);
 }
-
-
-
-
-
-
-
-
-
-
-
-
  //-------------------------------------------menu2--------------------------------
+
 void Menu1(){ 
     int choice;
-
-
     do { 
          // Set gray color for the surrounding text
     printf("\033[90m\n\n\n\n\n\n");
