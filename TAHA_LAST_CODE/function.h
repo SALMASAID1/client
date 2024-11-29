@@ -17,4 +17,3 @@ void modify_product();
 void add_supplier();
 
 #endif // FUNCTION_H_INCLUDED
-

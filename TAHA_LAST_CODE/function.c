@@ -68,7 +68,7 @@ void add_product() {
     p.id_product = get_next_product_id(fp);  // Set a unique product ID
 
     // Read product information
-    c_textcolor(1);
+    c_textcolor(8);
     c_gotoxy(30, 3);
     printf("Enter product name: ");
     scanf(" %[^\n]s", p.name);
@@ -108,7 +108,7 @@ void delete_product(){
         exit(1);
     }
     c_clrscr();
-    c_textcolor(1);
+    c_textcolor(8);
     c_gotoxy(30,3);
     printf("enter the product id to delete:");
     scanf("%d",&id);
@@ -155,7 +155,7 @@ void delete_product(){
            exit(1);
          }
          c_clrscr();
-          c_textcolor(1);
+          c_textcolor(14);
           c_gotoxy(30,3);
         printf("enter the product id to modify:");
         scanf("%d",&id);
@@ -166,23 +166,23 @@ void delete_product(){
         if(p.id_product==id){
               c_clrscr();
              printf("\n\n\n\n\n\n");
-             c_textcolor(1);
+             c_textcolor(8);
              printf("\t\t\t\t\t\t\t==========================\n");
-             c_textcolor(5);
+             c_textcolor(14);
              printf("\t\t\t\t\t\t\t | 1. modify name               |\n");
              printf("\t\t\t\t\t\t\t | 2. modify category           |\n");
              printf("\t\t\t\t\t\t\t | 3. modify price              |\n");
              printf("\t\t\t\t\t\t\t | 4. modify quantity           |\n");
              printf("\t\t\t\t\t\t\t | 5. modify description        |\n");
-               c_textcolor(1);
+               c_textcolor(8);
              printf("\t\t\t\t\t\t\t=========================\n");
-             c_textcolor(14);
+             c_textcolor(8);
             printf("\n\t\t\t\t\t\t\t Saisissez votre choix : ");
             scanf("%d",&c);
             c_textcolor(15);
             //-------------------------------------------clear screen------------
             c_clrscr();
-          c_textcolor(1);
+          c_textcolor(14);
           c_gotoxy(30,18);
     
             switch(c){
@@ -308,7 +308,7 @@ void Menu3(int *c) {
     scanf("%d", c);
 }
 
-//-----------------------------------------------------------------------
+//----------------------------add supplier------------------------------------------
 void add_supplier() {
     c_clrscr();
 
@@ -322,7 +322,7 @@ void add_supplier() {
     fournisseur frn;
    char ch;
    int i;
-   c_textcolor(1);
+   c_textcolor(8);
     c_gotoxy(50,6);
     printf("first name : ");
     scanf(" %[^\n]s", frn.prenomf);
@@ -338,10 +338,14 @@ void add_supplier() {
         // c_gotoxy(60,12);
         if (veri_cin(frn.Cinf) == 0) {
             c_gotoxy(60,12);
+            c_textcolor(4);
             printf("Be careful, the CIN is already used!\n");
+             c_textcolor(8);
             c_getch();
             c_clrscr();
+           
         } else {
+            c_textcolor(8);
             c_gotoxy(50,12);
              printf("Saisir le mot de passe : ");
             i = 0;

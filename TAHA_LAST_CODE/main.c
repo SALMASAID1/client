@@ -5,7 +5,7 @@
 #include <conio.h> 
 #include "function.h"
 int main(){
-      //  Menu1();
+      Menu();
       Login();
  //add_supplier();
    // add_product();

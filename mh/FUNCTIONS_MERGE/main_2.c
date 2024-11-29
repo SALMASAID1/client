@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "conio.h"
-#include "function.h"
+#include "FUNCTION.h"
 
 typedef struct Options {
     char **ops;
