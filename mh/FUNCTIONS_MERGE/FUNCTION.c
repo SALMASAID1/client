@@ -270,11 +270,11 @@ void liste_client_f(char *Temp_cin, char *client_name) {
                 break;
 
             case 3:
-                Voir_Achats();
+                View_Purchases_f();
                 break;
 
             case 4:
-                Supprimer_Achats();
+                Remove_Purchases_f();
                 break;
 
             case 5: {
@@ -304,12 +304,12 @@ void liste_client_f(char *Temp_cin, char *client_name) {
                         c_textcolor(4);
                         printf("\nLa carte de crédit existe déjà pour ce client !");
                     } else {
-                        ajouter_carte_credit(Temp_cin, client_name);
+                        add_credit_card_f(Temp_cin, client_name);
                         c_textcolor(2);
                         printf("\nCarte de crédit ajoutée avec succès !");
                     }
                 } else {
-                    ajouter_carte_credit(Temp_cin, client_name);
+                    add_credit_card_f(Temp_cin, client_name);
                     c_textcolor(2);
                     printf("\nCarte de crédit ajoutée avec succès !");
                 }
@@ -327,7 +327,7 @@ void liste_client_f(char *Temp_cin, char *client_name) {
                 int found = 0;
                 while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
                     if (strcmp(cd.client_CIN, Temp_cin) == 0) {
-                        afficher_cartes_credit(client_name, Temp_cin);
+                        display_credit_cards_f(client_name, Temp_cin);
                         found = 1;
                         break;
                     }
@@ -342,7 +342,7 @@ void liste_client_f(char *Temp_cin, char *client_name) {
             }
 
             case 7:
-                quitter();
+                leave_f();
                 break;
 
             default:
@@ -782,7 +782,7 @@ void Add_Purchases() {
         if (cart[cartSize].id_product == l.id_product) {
             int totalQuantity = cart[cartSize].quantity + l.quantity;
             if (totalQuantity > p.quantity) {
-                     c_textattr(4);
+            c_textattr(4);
             printf("Cannot add to cart. The total quantity (%d) exceeds stock available (%d).\n", totalQuantity, p.quantity);
              c_textattr(8);
                 fclose(ff);
@@ -2047,16 +2047,16 @@ void liste_fournisseur_f(char *Temp_CIN) {
 
         switch (choix) {
             case 1:
-                add_product();
+                add_product_f();
                 break;
             case 2:
-                modify_product();
+                modify_product_f();
                 break;
             case 3:
-                add_supplier();
+                add_supplier_f();
                 break;
             case 4:
-                delete_product();
+                delete_product_f();
                 break;
             case 5:
                 printf("Retour au menu principal...\n");

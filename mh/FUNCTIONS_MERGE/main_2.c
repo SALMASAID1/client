@@ -157,14 +157,56 @@ void Home_LOGIN_menu() {
                         break;
                 }
             } while (choice != 3 && choice != 4);
-        } else { // Client
-            // Code similaire pour le client
-        }
+        } else { 
+            int choice;
+            do {
+                c_clrscr();
+                c_textattr(8);
+                c_gotoxy(50, 6); printf("1 - Login");
+                c_gotoxy(50, 7); printf("2 - Sign In");
+                c_gotoxy(50, 8); printf("3 - Back to Main Menu");
+                c_gotoxy(50, 9); printf("4 - Leave Program");
+                c_textattr(14);
+                c_gotoxy(50, 10); printf(" ---->> GIVE CHOICE : ");
+                
+                if (scanf("%d", &choice) != 1) {
+                    while (getchar() != '\n');
+                    c_textattr(4);
+                    c_gotoxy(50, 12); printf("Invalid input. Please enter a number.\n");
+                    c_textattr(14);
+                    c_getch();
+                    continue;
+                }
 
-        free(Client_CIN);
-        free(Supplier_CIN);
-    }
-    c_getch();
+                switch (choice) {
+                    case 1:
+                        clientLogin(Client_CIN);
+                        break;
+                    case 2:
+                        sign_in_client();
+                        break;
+                    case 3:
+                        Home_OPTIONS();
+                        break;
+                    case 4:
+                        free(Client_CIN);
+                        free(Supplier_CIN);
+                        exit(0);
+                    default:
+                        c_textattr(4);
+                        c_gotoxy(50, 12); printf("Please choose a valid option.\n");
+                        c_textattr(14);
+                        c_getch();
+                        break;
+                }
+            } while (choice != 3 && choice != 4);
+
+                    }
+
+                    free(Client_CIN);
+                    free(Supplier_CIN);
+                }
+                c_getch();
 }
 
 void Home_LOGIN_menu_f() {
@@ -183,6 +225,7 @@ void Home_LOGIN_menu_f() {
         if (selected == 0) { // Fournisseur
             int choice;
             do {
+                
                 c_clrscr();
                 c_textattr(8);
                 c_gotoxy(50, 6); printf("1 - Se connecter");
@@ -223,8 +266,51 @@ void Home_LOGIN_menu_f() {
                         break;
                 }
             } while (choice != 3 && choice != 4);
-        } else { // Client
-            // Code similaire pour le client
+                } else {
+                    int choice;
+                do {
+                    int choice;
+                    c_clrscr();
+                    c_textattr(8);
+                    c_gotoxy(50, 6); printf("1 - Se connecter");
+                    c_gotoxy(50, 7); printf("2 - S'inscrire");
+                    c_gotoxy(50, 8); printf("3 - Retour au menu principal");
+                    c_gotoxy(50, 9); printf("4 - Quitter le programme");
+                    c_textattr(14);
+                    c_gotoxy(50, 10); printf(" ---->> VOTRE CHOIX : ");
+                    
+                    if (scanf("%d", &choice) != 1) {
+                        while (getchar() != '\n');
+                        c_textattr(4);
+                        c_gotoxy(50, 12); printf("Entrée invalide. Veuillez entrer un numéro.\n");
+                        c_textattr(14);
+                        c_getch();
+                        continue;
+                    }
+
+                    switch (choice) {
+                        case 1:
+                            clientLogin_f(Client_CIN);
+                            break;
+                        case 2:
+                            sign_in_client_f();
+                            break;
+                        case 3:
+                            Home_OPTIONS();
+                            break;
+                        case 4:
+                            free(Client_CIN);
+                            free(Supplier_CIN);
+                            exit(0);
+                        default:
+                            c_textattr(4);
+                            c_gotoxy(50, 12); printf("Veuillez choisir une option valide.\n");
+                            c_textattr(14);
+                            c_getch();
+                            break;
+                    }
+                } while (choice != 3 && choice != 4);
+
         }
 
         free(Client_CIN);
