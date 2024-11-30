@@ -156,10 +156,6 @@ void Home_LOGIN_menu() {
                         c_getch();
                         break;
                 }
-<<<<<<< HEAD
-            } while (choice != 3 && choice != 4); // Keep looping until Back or Leave is selected 
-        } else {
-=======
             } while (choice != 3 && choice != 4);
         } else { // Client
             // Code similaire pour le client
@@ -186,7 +182,6 @@ void Home_LOGIN_menu_f() {
 
         if (selected == 0) { // Fournisseur
             int choice;
->>>>>>> 72888cfe81b0a67063ae2e6797e4c693aac6f0dd
             do {
                 c_clrscr();
                 c_textattr(8);
@@ -208,10 +203,10 @@ void Home_LOGIN_menu_f() {
 
                 switch (choice) {
                     case 1:
-                        login_supplier(Supplier_CIN);
+                        login_supplier_f(Supplier_CIN);
                         break;
                     case 2:
-                        sign_in_supplier();
+                        sign_in_supplier_f();
                         break;
                     case 3:
                         Home_OPTIONS();

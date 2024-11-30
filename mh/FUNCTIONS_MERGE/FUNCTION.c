@@ -262,11 +262,11 @@ void liste_client_f(char *Temp_cin, char *client_name) {
 
         switch (c) {
             case 1:
-                Voir_Liste_Produits();
+                View_Product_List_f();
                 break;
 
             case 2:
-                Ajouter_Achats();
+                Add_Purchases_f();
                 break;
 
             case 3:
