@@ -7,3 +7,6 @@ tm med abcd 123
 =======
 said salma t00 1234
 >>>>>>> 72888cfe81b0a67063ae2e6797e4c693aac6f0dd
+med 1 1 1
+med tam abcs 1
+med tm abcd 123

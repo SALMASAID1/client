@@ -91,7 +91,8 @@ void Home_OPTIONS() {
     c_textcolor(8);
 
     int selected = c_select_menu(options);
-    if (selected == options.len - 1) { // Dernière option = Quitter
+    if (selected == options.len - 1) {
+        c_textcolor(15); // Dernière option = Quitter
         exit(0); // Quitter le programme
     } else if (selected == 1) { // Français
         Home_LOGIN_menu_f();
@@ -148,6 +149,7 @@ void Home_LOGIN_menu() {
                     case 4:
                         free(Client_CIN);
                         free(Supplier_CIN);
+                        c_textcolor(15);
                         exit(0);
                     default:
                         c_textattr(4);
@@ -191,6 +193,7 @@ void Home_LOGIN_menu() {
                     case 4:
                         free(Client_CIN);
                         free(Supplier_CIN);
+                        c_textcolor(15);
                         exit(0);
                     default:
                         c_textattr(4);
@@ -257,6 +260,7 @@ void Home_LOGIN_menu_f() {
                     case 4:
                         free(Client_CIN);
                         free(Supplier_CIN);
+                        c_textcolor(15);
                         exit(0);
                     default:
                         c_textattr(4);
@@ -301,6 +305,7 @@ void Home_LOGIN_menu_f() {
                         case 4:
                             free(Client_CIN);
                             free(Supplier_CIN);
+                            c_textcolor(15);
                             exit(0);
                         default:
                             c_textattr(4);

@@ -79,16 +79,18 @@ void leave(){
     c_textattr(1);
     printf("Exiting the Aplication...\n\t**GOOD BYE**\t");   
     c_getch();
+    c_textattr(14);
    exit(0) ;
-   c_textattr(14);
+   
 }
 // french version
 void leave_f() {
     c_textattr(1);
     printf("Fermeture de l'application...\n\t**AU REVOIR**\t");   
     c_getch();
-    exit(0);
     c_textattr(14);
+    exit(0);
+    
 }
 
 
@@ -642,7 +644,7 @@ void clientLogin_f (char * CIN){
             found = 1;
             c_getch();
             c_clrscr();
-            liste_client(CIN , client.last_name );
+            liste_client_f(CIN , client.last_name );
             break;
         }
     }
@@ -1908,55 +1910,47 @@ void add_supplier_f() {
     FILE *fp;
     fp = fopen("fournisseur.txt", "a+");
     if (fp == NULL) {
-        printf("Unable to open file\n");
+        printf("Impossible d'ouvrir le fichier\n");
         exit(1);
     }
 
     fournisseur frn;
-   char ch;
-   int i;
-   c_textcolor(1);
+    char ch;
+    int i;
+    int t = 0 ;
+    c_textcolor(1);
     c_gotoxy(50,6);
-    printf("first name : ");
+    printf("Prenom : ");
     scanf(" %[^\n]s", frn.prenomf);
     c_gotoxy(50,8);
-    printf("second name  : ");
+    printf("Nom : ");
     scanf(" %[^\n]s", frn.nomf);
-
     do {
-         c_gotoxy(50,10);
-        printf("    CIN  : ");
+        c_gotoxy(50,10 + t );
+        printf("CIN : ");
         scanf(" %s", frn.Cinf);
-        // c_gotoxy(60,12);
         if (is_CIN_unique(frn.Cinf) == 0) {
-            c_gotoxy(60,12);
-            printf("Be careful, the CIN is already used!\n");
+            c_gotoxy(60,11 + t );
+            printf("Attention, ce CIN est deja utilise !");
             c_getch();
-            c_clrscr();
+            t = t + 2 ;
         } else {
-            c_gotoxy(50,12);
+            c_gotoxy(50,12+t);
             printf("Saisir le mot de passe : ");
-            i = 0;
-            // Saisie et masquage du mot de passe avec '*'
-            while ((ch = c_getch()) != '\r' && i < 19) {  // Limite a 19 caractères
-                frn.mdpf[i++] = ch;
-                printf("*");
-            }
-            frn.mdpf[i] = '\0';  // Ajouter le caractère de fin de chaîne
-            printf("\n");
-
+            strcpy(frn.mdpf,Pass_hide(20));
+            frn.mdpf[strlen(frn.mdpf)] = '\0';
             fprintf(fp, "%s %s %s %s\n", frn.prenomf, frn.nomf, frn.Cinf, frn.mdpf);
             break;           
         }
     } while (1);
     fclose(fp);
-      c_textcolor(15);
-         c_textcolor(2);
-         c_gotoxy(60,15);
-    printf("supplier adds successfully!!");
     c_textcolor(15);
- c_getch();
- c_clrscr();
+    c_textcolor(2);
+    c_gotoxy(60,15+t);
+    printf("Fournisseur ajoute avec succès !!");
+    c_textcolor(15);
+    c_getch();
+    c_clrscr();
 }
 
 //------------------------------------verification cin---------------------
@@ -2157,7 +2151,7 @@ void login_supplier_f(char *CIN) {
             found = 1;
             c_getch();
             c_clrscr();
-            liste_fournisseur(Temp_CIN);
+            liste_fournisseur_f(Temp_CIN);
             break;
         }
     }
