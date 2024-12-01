@@ -69,7 +69,7 @@ void back() {
 // french version
 void back_f() {
     c_textattr(1); 
-    printf("\nRetour au menu précédent...\n");
+    printf("\nRetour au menu precedent...\n");
     c_getch();      
     c_clrscr();    
     c_textattr(14);
@@ -239,8 +239,8 @@ void liste_client_f(char *Temp_cin, char *client_name) {
     c_gotoxy(50, 10); printf("---> Ajouter des achats");
     c_gotoxy(50, 11); printf("---> Voir les achats");
     c_gotoxy(50, 12); printf("---> Supprimer des achats");
-    c_gotoxy(50, 13); printf("---> Ajouter une carte de crédit");
-    c_gotoxy(50, 14); printf("---> Afficher la carte de crédit");
+    c_gotoxy(50, 13); printf("---> Ajouter une carte de credit");
+    c_gotoxy(50, 14); printf("---> Afficher la carte de credit");
     c_gotoxy(50, 15); printf("---> Quitter la page");
     c_textattr(14);
     c_gotoxy(50, 17); printf("--------------------------");
@@ -251,12 +251,12 @@ void liste_client_f(char *Temp_cin, char *client_name) {
         printf("  \n2 - Ajouter des achats");
         printf("  \n3 - Voir les achats");
         printf("  \n4 - Supprimer des achats");
-        printf("  \n5 - Ajouter une carte de crédit");
-        printf("  \n6 - Afficher la carte de crédit");
+        printf("  \n5 - Ajouter une carte de credit");
+        printf("  \n6 - Afficher la carte de credit");
         printf("  \n7 - Quitter la page");
         c_textattr(14);
 
-        printf("\n\n------->> SÉLECTIONNEZ VOTRE OPTION : ");
+        printf("\n\n------->> SeLECTIONNEZ VOTRE OPTION : ");
         scanf("%d", &c);
         c_clrscr();
 
@@ -288,7 +288,7 @@ void liste_client_f(char *Temp_cin, char *client_name) {
                 check_CRD = 0;
                 check_card_exists = 0;
                 while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
-                    // Vérifiez si la carte existe déjà pour ce client
+                    // Verifiez si la carte existe deja pour ce client
                     if (strcmp(cd.client_CIN, Temp_cin) == 0) {
                         check_CRD = 1;
                         if (strcmp(cd.card_number, Temp_cin) == 0) {
@@ -302,16 +302,16 @@ void liste_client_f(char *Temp_cin, char *client_name) {
                 if (check_CRD) {
                     if (check_card_exists) {
                         c_textcolor(4);
-                        printf("\nLa carte de crédit existe déjà pour ce client !");
+                        printf("\nLa carte de credit existe deja pour ce client !");
                     } else {
                         add_credit_card_f(Temp_cin, client_name);
                         c_textcolor(2);
-                        printf("\nCarte de crédit ajoutée avec succès !");
+                        printf("\nCarte de credit ajoutee avec succès !");
                     }
                 } else {
                     add_credit_card_f(Temp_cin, client_name);
                     c_textcolor(2);
-                    printf("\nCarte de crédit ajoutée avec succès !");
+                    printf("\nCarte de credit ajoutee avec succès !");
                 }
                 break;
             }
@@ -335,7 +335,7 @@ void liste_client_f(char *Temp_cin, char *client_name) {
 
                 if (!found) {
                     c_textcolor(4);
-                    printf("\nAucune carte de crédit trouvée pour ce client !");
+                    printf("\nAucune carte de credit trouvee pour ce client !");
                 }
                 fclose(FD);
                 break;
@@ -347,7 +347,7 @@ void liste_client_f(char *Temp_cin, char *client_name) {
 
             default:
                 c_textattr(4);
-                printf("Choix incorrect ! Votre choix doit être entre [1 - 7]. Veuillez réessayer.");
+                printf("Choix incorrect ! Votre choix doit être entre [1 - 7]. Veuillez reessayer.");
                 c_textattr(14);
                 break;
         }
@@ -503,7 +503,7 @@ void sign_in_client_f() {
 
     printf("Entrez votre NOM DE FAMILLE : ");
     scanf("%s", client.last_name);
-    printf("Entrez votre PRÉNOM : ");
+    printf("Entrez votre PRENOM : ");
     scanf("%s", client.First_name);
 
     do {
@@ -512,7 +512,7 @@ void sign_in_client_f() {
 
         if (!is_CIN_unique(client.CIN)) {
             c_textcolor(4);  
-            printf("Erreur : Le CIN existe déjà. Veuillez entrer un CIN unique.\n");
+            printf("Erreur : Le CIN existe deja. Veuillez entrer un CIN unique.\n");
             c_textattr(14);
         }
     } while (!is_CIN_unique(client.CIN));
@@ -528,7 +528,7 @@ void sign_in_client_f() {
 
         if (strcmp(client.password, client.confirm_password) != 0) {
             c_textattr(4);
-            printf("\nErreur : Les mots de passe ne correspondent pas. Veuillez réessayer.\n");
+            printf("\nErreur : Les mots de passe ne correspondent pas. Veuillez reessayer.\n");
             c_textattr(14);
         }
     } while (strcmp(client.password, client.confirm_password) != 0);
@@ -536,7 +536,7 @@ void sign_in_client_f() {
     fprintf(fp, "%s %s %s %s\n", client.last_name, client.First_name, client.CIN, client.password);
     c_textattr(2);
 
-    printf("\nInformations ajoutées avec succès !\n");
+    printf("\nInformations ajoutees avec succès !\n");
     c_textattr(14);
 
     c_clrscr();
@@ -616,7 +616,7 @@ void clientLogin_f (char * CIN){
     char CINN[20];
     int k;
     c_textattr(8);
-    printf("Connectez-vous à votre compte :\n");
+    printf("Connectez-vous a votre compte :\n");
     c_textattr(14);
     printf("Entrez votre CIN : ");
     scanf("%s", CINN);
@@ -637,7 +637,7 @@ void clientLogin_f (char * CIN){
         if (strcmp(client.CIN, CINN) == 0 && strcmp(client.password, passw) == 0) {
             c_textattr(2);
             strcpy(Temp_CIN , CINN);
-            printf("\nConnecté avec succès !\n");
+            printf("\nConnecte avec succès !\n");
             c_textattr(14);
             found = 1;
             c_getch();
@@ -648,7 +648,7 @@ void clientLogin_f (char * CIN){
     }
     if (!found) {
         c_textattr(4);
-        printf("\nVous devez d'abord créer un compte !\n");
+        printf("\nVous devez d'abord creer un compte !\n");
         c_textattr(14);
     }
     fclose(fp);
@@ -695,7 +695,7 @@ void View_Product_List_f() {
     }
     c_textattr(8);
     printf("\n====== LA LISTE DES PRODUITS ======\n\n");
-    printf("%-20s %-20s %-15s %-15s %-10s %-10s\n", "ID_PRODUIT", "CATÉGORIE", "NOM", "DESCRIPTION", "PRIX", "QUANTITÉ");
+    printf("%-20s %-20s %-15s %-15s %-10s %-10s\n", "ID_PRODUIT", "CATeGORIE", "NOM", "DESCRIPTION", "PRIX", "QUANTITe");
     printf("-----------------------------------------------------------------------------------------------------\n");
     c_textattr(14);
     while (fscanf(fk, "%d %19s %19s %19s %f %d", &p.id_product, p.category, p.name, p.description, &p.price, &p.quantity) == 6) {
@@ -854,23 +854,23 @@ void Add_Purchases_f() {
 
     if (!found) {
         c_textattr(4);
-        printf("L'ID du produit %d n'a pas été trouvé dans l'inventaire !\n", l.id_product);
+        printf("L'ID du produit %d n'a pas ete trouve dans l'inventaire !\n", l.id_product);
         c_textattr(8);
         return;
     }
 
-    printf("\nEntrez la quantité (1 - %d) : ", p.quantity);
+    printf("\nEntrez la quantite (1 - %d) : ", p.quantity);
     while (scanf("%d", &l.quantity) != 1 || l.quantity < 1 || l.quantity > p.quantity) {
         c_textattr(4);
-        printf("Quantité invalide. Entrez une valeur entre 1 et %d : ", p.quantity);
+        printf("Quantite invalide. Entrez une valeur entre 1 et %d : ", p.quantity);
         c_textattr(8);
         while (getchar() != '\n');
     }
 
-    // Lire le panier existant et vérifier le produit
+    // Lire le panier existant et verifier le produit
     FILE *ff = fopen(filename, "r+");
     if (ff == NULL) {
-        ff = fopen(filename, "w");  // Créer si inexistant
+        ff = fopen(filename, "w");  // Creer si inexistant
         if (ff == NULL) {
             c_textattr(4);
             printf("Erreur lors de l'ouverture du fichier panier !\n");
@@ -889,12 +889,12 @@ void Add_Purchases_f() {
             int totalQuantity = cart[cartSize].quantity + l.quantity;
             if (totalQuantity > p.quantity) {
                 c_textattr(4);
-                printf("Impossible d'ajouter au panier. La quantité totale (%d) dépasse le stock disponible (%d).\n", totalQuantity, p.quantity);
+                printf("Impossible d'ajouter au panier. La quantite totale (%d) depasse le stock disponible (%d).\n", totalQuantity, p.quantity);
                 c_textattr(8);
                 fclose(ff);
                 return;
             }
-            cart[cartSize].quantity = totalQuantity;  // Additionner les quantités si le produit est déjà dans le panier
+            cart[cartSize].quantity = totalQuantity;  // Additionner les quantites si le produit est deja dans le panier
             exists = 1;
         }
         cartSize++;
@@ -906,13 +906,13 @@ void Add_Purchases_f() {
         cartSize++;
     }
 
-    // Réécrire le panier avec les quantités mises à jour
+    // Recrire le panier avec les quantites mises a jour
     freopen(filename, "w", ff);
     for (int i = 0; i < cartSize; i++) {
         fprintf(ff, "%d %d\n", cart[i].id_product, cart[i].quantity);
     }
     c_textattr(2);
-    printf("Produit ajouté avec succès au panier.\n");
+    printf("Produit ajoute avec succès au panier.\n");
     c_textattr(14);
 
     fclose(ff);
@@ -1005,7 +1005,7 @@ void View_Purchases_f() {
 
     printf("\n===== VOS ACHATS =====\n");
     c_textattr(8);
-    printf("%-20s %-15s %-15s %-10s %-10s %-10s\n", "ID Produit", "Nom", "Catégorie", "Prix", "Quantité", "Prix Total");
+    printf("%-20s %-15s %-15s %-10s %-10s %-10s\n", "ID Produit", "Nom", "Categorie", "Prix", "Quantite", "Prix Total");
     printf("---------------------------------------------------------------------------------------------------------\n");
     int found = 0;
     int id_product, quantity;
@@ -1204,7 +1204,7 @@ void Remove_Purchases_f() {
 
     // Display the current items in the cart
     printf("\n===== VOS ACHATS ACTUELS =====\n");
-    printf("%-20s %-15s %-10s %-10s\n", "ID Produit", "Nom", "Prix", "Quantité");
+    printf("%-20s %-15s %-10s %-10s\n", "ID Produit", "Nom", "Prix", "Quantite");
     printf("--------------------------------------------------------------\n");
     c_textattr(8);
 
@@ -1232,7 +1232,7 @@ void Remove_Purchases_f() {
 
     if (!found) {
         c_textattr(4);
-        printf("Aucun produit trouvé dans votre panier.\n");
+        printf("Aucun produit trouve dans votre panier.\n");
         c_textattr(14);
         fclose(ff);
         fclose(tempFile);
@@ -1240,13 +1240,13 @@ void Remove_Purchases_f() {
     }
 
     // Ask the user for the product ID and quantity to remove
-    printf("\nEntrez l'ID du produit à SUPPRIMER : ");
+    printf("\nEntrez l'ID du produit a SUPPRIMER : ");
     scanf("%d", &id_product);
 
-    printf("Entrez la quantité à SUPPRIMER : ");
+    printf("Entrez la quantite a SUPPRIMER : ");
     while (scanf("%d", &quantity) != 1 || quantity < 1) {
         c_textattr(4);
-        printf("Quantité invalide. Veuillez entrer un entier positif : ");
+        printf("Quantite invalide. Veuillez entrer un entier positif : ");
         c_textattr(14);
         while (getchar() != '\n'); // Clear invalid input
     }
@@ -1261,13 +1261,13 @@ void Remove_Purchases_f() {
             if (quantity_in_cart >= quantity) {
                 if (quantity_in_cart > quantity) {
                     fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart - quantity);
-                    printf("Supprimé %d article(s) du panier. Il en reste %d.\n", quantity, quantity_in_cart - quantity);
+                    printf("Supprime %d article(s) du panier. Il en reste %d.\n", quantity, quantity_in_cart - quantity);
                 } else {
-                    printf("Tous les %d articles ont été supprimés du panier.\n", quantity_in_cart);
+                    printf("Tous les %d articles ont ete supprimes du panier.\n", quantity_in_cart);
                 }
             } else {
                 c_textattr(4);
-                printf("Erreur : Il n'y a que %d article(s) disponible(s) dans le panier. Aucun article n'a été supprimé.\n", quantity_in_cart);
+                printf("Erreur : Il n'y a que %d article(s) disponible(s) dans le panier. Aucun article n'a ete supprime.\n", quantity_in_cart);
                 c_textattr(14);
                 fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart); // Write original data to tempFile
             }
@@ -1278,7 +1278,7 @@ void Remove_Purchases_f() {
 
     if (!found) {
         c_textattr(4);
-        printf("L'ID du produit %d n'a pas été trouvé dans votre panier.\n", id_product);
+        printf("L'ID du produit %d n'a pas ete trouve dans votre panier.\n", id_product);
         c_textattr(14);
     }
 
@@ -1291,7 +1291,7 @@ void Remove_Purchases_f() {
     rename("temp_cart.txt", filename); // Rename the temporary file to the original cart filename
     c_textattr(2);
 
-    printf("\nPanier mis à jour avec succès.\n");
+    printf("\nPanier mis a jour avec succès.\n");
     c_textattr(14);
 }
 
@@ -1318,12 +1318,12 @@ int get_next_product_id(FILE *fp) {
     product p;
     int id = 1;
 
-    // Aller à la fin du fichier
+    // Aller a la fin du fichier
     fseek(fp, 0, SEEK_END);
     if (ftell(fp) != 0) {  // Si le fichier n'est pas vide
         rewind(fp);
         while (fscanf(fp, " %d %s %s %f %d %s", &p.id_product, p.name, p.category, &p.price, &p.quantity, p.description) == 6) {
-            id = p.id_product + 1;  // Trouver le dernier ID et l'incrémenter
+            id = p.id_product + 1;  // Trouver le dernier ID et l'incrementer
         }
     }
     return id;
@@ -1339,7 +1339,7 @@ void add_product() {
     }
 
     product p;
-    p.id_product = get_next_product_id(fp); // Définir un ID de produit unique
+    p.id_product = get_next_product_id(fp); // Definir un ID de produit unique
 
     // Lecture des informations sur le produit
     // set_color(1);
@@ -1390,7 +1390,7 @@ void add_product_f() {
     }
 
     product p;
-    p.id_product = get_next_product_id(fp); // Générer un ID unique pour le produit
+    p.id_product = get_next_product_id(fp); // Generer un ID unique pour le produit
 
     // Saisie des informations du produit
     c_textcolor(14);
@@ -1401,7 +1401,7 @@ void add_product_f() {
 
     c_gotoxy(30, 4);
     c_textcolor(14);
-    printf("Entrez la catégorie du produit : ");
+    printf("Entrez la categorie du produit : ");
     c_textcolor(8);
     scanf(" %[^\n]s", p.category);
 
@@ -1413,7 +1413,7 @@ void add_product_f() {
 
     c_gotoxy(30, 6);
     c_textcolor(14);
-    printf("Entrez la quantité du produit : ");
+    printf("Entrez la quantite du produit : ");
     c_textcolor(8);
     scanf("%d", &p.quantity);
 
@@ -1429,7 +1429,7 @@ void add_product_f() {
     fclose(fp);
 
     c_textcolor(2);
-    printf("Produit ajouté avec succès\n");
+    printf("Produit ajoute avec succès\n");
     c_textcolor(15);
     c_getch();
     c_clrscr();
@@ -1496,7 +1496,7 @@ void delete_product_f(){
     c_clrscr();
     c_textcolor(1);
     c_gotoxy(30, 3);
-    printf("Entrez l'ID du produit à supprimer : ");
+    printf("Entrez l'ID du produit a supprimer : ");
     scanf("%d", &id);
     c_textcolor(15);
     product p;
@@ -1520,7 +1520,7 @@ void delete_product_f(){
     } else {
         c_gotoxy(30, 5);
         c_textcolor(2);
-        printf("\nLe produit a été supprimé avec succès !!\n");
+        printf("\nLe produit a ete supprime avec succès !!\n");
         c_textcolor(15);
     }
 }
@@ -1651,7 +1651,7 @@ void modify_product_f(){
     c_clrscr();
     c_textcolor(1);
     c_gotoxy(30, 3);
-    printf("Entrez l'ID du produit à modifier : ");
+    printf("Entrez l'ID du produit a modifier : ");
     scanf("%d", &id);
     c_textcolor(15);
     product p;
@@ -1664,9 +1664,9 @@ void modify_product_f(){
             printf("\t\t\t\t\t\t\t==========================\n");
             c_textcolor(5);
             printf("\t\t\t\t\t\t\t | 1. Modifier le nom         |\n");
-            printf("\t\t\t\t\t\t\t | 2. Modifier la catégorie   |\n");
+            printf("\t\t\t\t\t\t\t | 2. Modifier la categorie   |\n");
             printf("\t\t\t\t\t\t\t | 3. Modifier le prix        |\n");
-            printf("\t\t\t\t\t\t\t | 4. Modifier la quantité    |\n");
+            printf("\t\t\t\t\t\t\t | 4. Modifier la quantite    |\n");
             printf("\t\t\t\t\t\t\t | 5. Modifier la description |\n");
             c_textcolor(1);
             printf("\t\t\t\t\t\t\t=========================\n");
@@ -1688,7 +1688,7 @@ void modify_product_f(){
                     break;
                 case 2:
                     c_gotoxy(30, 18);
-                    printf("Entrez la nouvelle catégorie : ");
+                    printf("Entrez la nouvelle categorie : ");
                     scanf(" %[^\n]s", pn.category);
                     strcpy(p.category, pn.category);
                     break;
@@ -1700,7 +1700,7 @@ void modify_product_f(){
                     break;
                 case 4:
                     c_gotoxy(30, 10);
-                    printf("Entrez la nouvelle quantité : ");
+                    printf("Entrez la nouvelle quantite : ");
                     scanf("%d", &pn.quantity);
                     p.quantity = pn.quantity;
                     break;
@@ -1734,7 +1734,7 @@ void modify_product_f(){
     } else {
         c_textcolor(2);
         c_gotoxy(30, 20);
-        printf("\n\n\n\t\t\t\t\tLe produit a été modifié avec succès !!\n");
+        printf("\n\n\n\t\t\t\t\tLe produit a ete modifie avec succès !!\n");
         c_textcolor(15);
     }
 }
@@ -1808,7 +1808,7 @@ void sign_in_supplier_f() {
 
     printf("Entrez votre NOM : ");
     scanf("%s", f.nomf);
-    printf("Entrez votre PRÉNOM : ");
+    printf("Entrez votre PReNOM : ");
     scanf("%s", f.prenomf);
 
     do {
@@ -1817,7 +1817,7 @@ void sign_in_supplier_f() {
 
         if (!is_CIN_unique(f.Cinf)) {
             c_textcolor(4);
-            printf("Erreur : Ce CIN existe déjà. Veuillez entrer un CIN unique.\n");
+            printf("Erreur : Ce CIN existe deja. Veuillez entrer un CIN unique.\n");
             c_textattr(14);
         }
     } while (!is_CIN_unique(f.Cinf));
@@ -1833,7 +1833,7 @@ void sign_in_supplier_f() {
 
         if (strcmp(f.mdpf, f.cmdpf) != 0) {
             c_textattr(4);
-            printf("\nErreur : Les mots de passe ne correspondent pas. Veuillez réessayer.\n");
+            printf("\nErreur : Les mots de passe ne correspondent pas. Veuillez reessayer.\n");
             c_textattr(14);
         }
     } while (strcmp(f.mdpf, f.cmdpf) != 0);
@@ -1841,7 +1841,7 @@ void sign_in_supplier_f() {
     fprintf(fp, "%s %s %s %s\n", f.nomf, f.prenomf, f.Cinf, f.mdpf);
     c_textattr(2);
 
-    printf("\nInformations ajoutées avec succès !\n");
+    printf("\nInformations ajoutees avec succès !\n");
     c_textattr(14);
 
     c_clrscr();
@@ -1883,7 +1883,7 @@ void add_supplier() {
             printf("Saisir le mot de passe : ");
             i = 0;
             // Saisie et masquage du mot de passe avec '*'
-            while ((ch = c_getch()) != '\r' && i < 19) {  // Limite à 19 caractères
+            while ((ch = c_getch()) != '\r' && i < 19) {  // Limite a 19 caractères
                 frn.mdpf[i++] = ch;
                 printf("*");
             }
@@ -1938,7 +1938,7 @@ void add_supplier_f() {
             printf("Saisir le mot de passe : ");
             i = 0;
             // Saisie et masquage du mot de passe avec '*'
-            while ((ch = c_getch()) != '\r' && i < 19) {  // Limite à 19 caractères
+            while ((ch = c_getch()) != '\r' && i < 19) {  // Limite a 19 caractères
                 frn.mdpf[i++] = ch;
                 printf("*");
             }
@@ -1971,7 +1971,7 @@ int veri_cin(char *cin) {
     while (fscanf(fr, "%s %s %s %s", four.prenomf, four.nomf, four.Cinf, four.mdpf) == 4) {
         if (strcmp(cin, four.Cinf) == 0) {  
             fclose(fr);
-            return 0; // CIN déjà existant
+            return 0; // CIN deja existant
         }
     }
     
@@ -2033,7 +2033,7 @@ void liste_fournisseur_f(char *Temp_CIN) {
 
     do {
         c_textcolor(8);
-        system("cls");  // Effacer l'écran (remplacer par `clrscr();` si vous utilisez une version personnalisée de conio.h)
+        system("cls");  // Effacer l'ecran (remplacer par `clrscr();` si vous utilisez une version personnalisee de conio.h)
         printf("CIN du Fournisseur : %s\n", Temp_CIN);
         printf("\nMenu Fournisseur :\n");
         printf("1. Ajouter un produit\n");
@@ -2062,12 +2062,12 @@ void liste_fournisseur_f(char *Temp_CIN) {
                 printf("Retour au menu principal...\n");
                 break;
             default:
-                printf("Choix invalide. Veuillez réessayer.\n");
+                printf("Choix invalide. Veuillez reessayer.\n");
                 break;
         }
         if (choix != 5) {
             printf("Appuyez sur une touche pour continuer...\n");
-            c_getch();  // Pause avant de réinitialiser l'écran
+            c_getch();  // Pause avant de reinitialiser l'ecran
         }
         c_getch();
         c_clrscr();
@@ -2131,7 +2131,7 @@ void login_supplier_f(char *CIN) {
     char CINN[20];
     int k;
     c_textattr(8);
-    printf("Connectons-nous à votre compte :\n");
+    printf("Connectons-nous a votre compte :\n");
     c_textattr(14);
     printf("Entrez votre CIN : ");
     scanf("%s", CINN);
@@ -2152,7 +2152,7 @@ void login_supplier_f(char *CIN) {
         if (strcmp(f.Cinf, CINN) == 0 && strcmp(f.mdpf, passw) == 0) {
             c_textattr(2);
             strcpy(Temp_CIN, CINN);
-            printf("\nConnexion réussie !\n");
+            printf("\nConnexion reussie !\n");
             c_textattr(14);
             found = 1;
             c_getch();
@@ -2163,7 +2163,7 @@ void login_supplier_f(char *CIN) {
     }
     if (!found) {
         c_textattr(4);
-        printf("\nVous devez d'abord créer un compte !\n");
+        printf("\nVous devez d'abord creer un compte !\n");
         c_textattr(14);
     }
     fclose(fp);
@@ -2257,7 +2257,7 @@ void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
 void client_factor_f(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
     FILE *FACT = fopen("FACTEUR.pdf", "w");
     if (FACT == NULL) {
-        printf("Erreur : Impossible de créer le fichier FACTEUR.pdf !\n");
+        printf("Erreur : Impossible de creer le fichier FACTEUR.pdf !\n");
         exit(1);
     }
     
@@ -2265,7 +2265,7 @@ void client_factor_f(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
     int found = 0;
     rewind(CDM);
 
-    // Étape 1 : Rechercher les détails du client dans la base de données des cartes de crédit (CDM)
+    // etape 1 : Rechercher les details du client dans la base de donnees des cartes de credit (CDM)
     while (fread(&client_details, sizeof(CCD), 1, CDM) == 1) {
         if (strcmp(client_details.client_CIN, CIN) == 0) {
             found = 1;
@@ -2273,34 +2273,34 @@ void client_factor_f(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
         }
     }
     if (!found) {
-        fprintf(FACT, "Erreur : Client avec le CIN %s introuvable dans la base de données des cartes de crédit !\n", CIN);
+        fprintf(FACT, "Erreur : Client avec le CIN %s introuvable dans la base de donnees des cartes de credit !\n", CIN);
         fclose(FACT);
         return;
     }
 
-    // Étape 2 : Masquer le numéro de carte de crédit
+    // etape 2 : Masquer le numero de carte de credit
     char hidden_card_number[50];
     snprintf(hidden_card_number, sizeof(hidden_card_number), "%.4s ** ** %.4s", 
              client_details.card_number, 
              client_details.card_number + strlen(client_details.card_number) - 4);
 
-    // Étape 3 : Écrire les informations du client et la date dans FACTEUR
+    // etape 3 : ecrire les informations du client et la date dans FACTEUR
     time_t currentTime = time(NULL);
     struct tm *localTime = localtime(&currentTime);
     fprintf(FACT, pdf_header);
     fprintf(FACT, "(================== FACTURE ==================) Tj\n0 -20 Td  ");
     fprintf(FACT, "(Nom du client : %s ) Tj\n0 -20 Td", client_details.client_name);
     fprintf(FACT, "(CIN du client : %s ) Tj\n0 -20 Td", client_details.client_CIN);
-    fprintf(FACT, "(Numéro de carte : %s ) Tj\n0 -20 Td", hidden_card_number);
+    fprintf(FACT, "(Numero de carte : %s ) Tj\n0 -20 Td", hidden_card_number);
     fprintf(FACT, "(Date d'achat : %02d-%02d-%d) Tj\n0 -30 Td " ,  
             localTime->tm_mday, 
             localTime->tm_mon + 1, 
             localTime->tm_year + 1900);
     fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td");
-    fprintf(FACT, "(| Produit         | Quantité   | Prix Total  |) Tj\n0 -20 Td");
+    fprintf(FACT, "(| Produit         | Quantite   | Prix Total  |) Tj\n0 -20 Td");
     fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td");
 
-    // Étape 4 : Traiter les choix du client et calculer le coût total
+    // etape 4 : Traiter les choix du client et calculer le coût total
     clc client_choice_entry;
     float grand_total = 0.0;
     rewind(client_choice);
@@ -2328,9 +2328,9 @@ void client_factor_f(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
         }
     }
 
-    // Étape 5 : Imprimer le total général et fermer le fichier FACTEUR
+    // etape 5 : Imprimer le total general et fermer le fichier FACTEUR
     fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td\n");
-    fprintf(FACT, "(Total général : %.2f DH) Tj\n0 -20 Td\n", grand_total);
+    fprintf(FACT, "(Total general : %.2f DH) Tj\n0 -20 Td\n", grand_total);
     fprintf(FACT, "(=============================================) Tj\n");
     fprintf(FACT, pdf_footer);
     fclose(FACT);
@@ -2448,7 +2448,7 @@ void add_credit_card(char* CIN_client, char *name_client) {
 void add_credit_card_f(char* CIN_client, char *name_client) {
     time_t t = time(NULL);   // Obtenir l'heure actuelle
     struct tm *current_time = localtime(&t); // Convertir en structure de temps local
-    int current_year = current_time->tm_year + 1900; // Extraire l'année actuelle
+    int current_year = current_time->tm_year + 1900; // Extraire l'annee actuelle
     int current_mont = current_time->tm_mon + 1;
 
     // Ouvrir le fichier en mode ajout binaire
@@ -2466,13 +2466,13 @@ void add_credit_card_f(char* CIN_client, char *name_client) {
     A.client_name[sizeof(A.client_name) - 1] = '\0';
     c_textcolor(14);
     c_gotoxy(30 , 3);
-    printf(" %s, veuillez entrer les informations de votre carte de crédit (généralement 13-19 chiffres)", name_client);
+    printf(" %s, veuillez entrer les informations de votre carte de credit (generalement 13-19 chiffres)", name_client);
 
     int count_error = 0;
     do {
         c_textcolor(14);
         c_gotoxy(50 , 5 + count_error);
-        printf("Entrez le numéro de votre carte de crédit : ");
+        printf("Entrez le numero de votre carte de credit : ");
         c_textcolor(8);
         scanf("%s", A.card_number);
         valid = 1;
@@ -2489,7 +2489,7 @@ void add_credit_card_f(char* CIN_client, char *name_client) {
         if (!valid) {
             c_textcolor(4);
             c_gotoxy(50 , 6 + count_error);
-            printf("Veuillez entrer un numéro valide entre 13 et 19 chiffres");
+            printf("Veuillez entrer un numero valide entre 13 et 19 chiffres");
             count_error += 2;
         }
     } while (!valid);
@@ -2510,7 +2510,7 @@ void add_credit_card_f(char* CIN_client, char *name_client) {
             if (!valid) {
                 c_textcolor(4);
                 c_gotoxy(50 , 9 + count_error);
-                printf("Mois ou année invalide !");
+                printf("Mois ou annee invalide !");
                 count_error += 2;
                 c_textcolor(7);
             }
@@ -2531,7 +2531,7 @@ void add_credit_card_f(char* CIN_client, char *name_client) {
         c_gotoxy(83 , 7 + count_error);
         scanf("%s", A.CVV);
 
-        // Vérifier si le CVV contient exactement 3 chiffres
+        // Verifier si le CVV contient exactement 3 chiffres
         valid = 1;
         if (strlen(A.CVV) != 3) {
             valid = 0;
@@ -2547,7 +2547,7 @@ void add_credit_card_f(char* CIN_client, char *name_client) {
         if (!valid) {
             c_textcolor(4);
             c_gotoxy(50 , 9 + count_error);
-            printf("CVV invalide ! Veuillez entrer un numéro à 3 chiffres.");
+            printf("CVV invalide ! Veuillez entrer un numero a 3 chiffres.");
             count_error += 2;
         }
     } while (!valid);
@@ -2637,11 +2637,11 @@ void display_credit_cards_f(char *client_name, char *CIN) {
         exit(0);
     }
 
-    CCD CD; // CD : DÉTAILS DE LA CARTE
+    CCD CD; // CD : DeTAILS DE LA CARTE
     int found = 0;
 
     c_textcolor(14);
-    printf("\n------------------- Détails de la Carte de Crédit -------------------\n");
+    printf("\n------------------- Details de la Carte de Credit -------------------\n");
 
     while (fread(&CD, sizeof(CCD), 1, CDM_1) == 1) {
         if (strcmp(CIN, CD.client_CIN) == 0) {
@@ -2658,7 +2658,7 @@ void display_credit_cards_f(char *client_name, char *CIN) {
             printf("%s\n", Temp_CIN);
 
             c_textcolor(8);
-            printf("Numéro de Carte : ");
+            printf("Numero de Carte : ");
             for (int i = 0; i < strlen(CD.card_number); i++) {
                 if (i < 4 || i >= strlen(CD.card_number) - 4) {
                     c_textcolor(14);
@@ -2684,7 +2684,7 @@ void display_credit_cards_f(char *client_name, char *CIN) {
 
     if (!found) {
         c_textcolor(4);
-        printf("\nAucune carte de crédit trouvée pour le client avec le CIN : %s\n", CIN);
+        printf("\nAucune carte de credit trouvee pour le client avec le CIN : %s\n", CIN);
     }
 
     fclose(CDM_1);
@@ -2782,13 +2782,13 @@ void Display_the_Supplier_Total_amount_sales_in_the_Day_f(FILE *PCM, FILE *clien
     c_gotoxy(50, 5);
     printf("=========================================================");
 
-    // Créer le nom du fichier pour les données du fournisseur
+    // Creer le nom du fichier pour les donnees du fournisseur
     char filename[50];
     sprintf(filename, "fournisseur%d.txt", supplier_num);
     FILE *supplier_amount = fopen(filename, "w+t");
     if (supplier_amount == NULL) {
         c_textcolor(4);
-        printf("Erreur : Impossible de créer le fichier %s !\n", filename);
+        printf("Erreur : Impossible de creer le fichier %s !\n", filename);
         return;
     }
     int product_id, client_id;
@@ -2916,17 +2916,17 @@ void feedback_and_rate_the_product_f(char *name_cl, int id_product) { // name_cl
     size_t len = strlen(comment);
     if (len > 0 && comment[len - 1] == '\n') 
     comment[len - 1] = '\0'; // Supprimer le caractère de nouvelle ligne
-    // Écrire le commentaire dans le fichier
+    // ecrire le commentaire dans le fichier
     fprintf(client_opinion, "Client : %s | ID Produit : %d | Commentaire : %s\n", name_cl, id_product, comment);
     puts(comment);
 
     int rating;
     c_textcolor(14);
-    printf(" Notez le produit (1 à 5 étoiles) : ");
+    printf(" Notez le produit (1 a 5 etoiles) : ");
     c_textcolor(14);
     while (1) {
         if (scanf("%d", &rating) != 1 || rating < 1 || rating > 5) {
-            // Effacer les entrées non valides dans le tampon
+            // Effacer les entrees non valides dans le tampon
             while (getchar() != '\n');
             c_textcolor(4);
             printf("Note invalide. Veuillez entrer un nombre entre 1 et 5 : ");
@@ -2938,24 +2938,24 @@ void feedback_and_rate_the_product_f(char *name_cl, int id_product) { // name_cl
     c_textcolor(8);
     switch (rating) {
         case 1:
-            printf("- Vous avez attribué 1 étoile : Nous sommes désolés d'apprendre que votre expérience a été mauvaise.\n");
-            fprintf(client_opinion, "Note : 1 étoile\n");
+            printf("- Vous avez attribue 1 etoile : Nous sommes desoles d'apprendre que votre experience a ete mauvaise.\n");
+            fprintf(client_opinion, "Note : 1 etoile\n");
             break;
         case 2:
-            printf("-- Vous avez attribué 2 étoiles : Merci ! Nous travaillerons pour nous améliorer.\n");
-            fprintf(client_opinion, "Note : 2 étoiles\n");
+            printf("-- Vous avez attribue 2 etoiles : Merci ! Nous travaillerons pour nous ameliorer.\n");
+            fprintf(client_opinion, "Note : 2 etoiles\n");
             break;
         case 3:
-            printf("--- Vous avez attribué 3 étoiles : Merci pour votre retour ! Nous sommes heureux que ce soit satisfaisant.\n");
-            fprintf(client_opinion, "Note : 3 étoiles\n");
+            printf("--- Vous avez attribue 3 etoiles : Merci pour votre retour ! Nous sommes heureux que ce soit satisfaisant.\n");
+            fprintf(client_opinion, "Note : 3 etoiles\n");
             break;
         case 4:
-            printf("---- Vous avez attribué 4 étoiles : Super ! Merci pour ce retour positif !\n");
-            fprintf(client_opinion, "Note : 4 étoiles\n");
+            printf("---- Vous avez attribue 4 etoiles : Super ! Merci pour ce retour positif !\n");
+            fprintf(client_opinion, "Note : 4 etoiles\n");
             break;
         case 5:
-            printf("----- Vous avez attribué 5 étoiles : Génial ! Nous sommes ravis que vous ayez adoré !\n");
-            fprintf(client_opinion, "Note : 5 étoiles\n");
+            printf("----- Vous avez attribue 5 etoiles : Genial ! Nous sommes ravis que vous ayez adore !\n");
+            fprintf(client_opinion, "Note : 5 etoiles\n");
             break;
     }
     c_textcolor(14);

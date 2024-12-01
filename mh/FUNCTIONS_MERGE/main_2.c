@@ -13,7 +13,7 @@ typedef struct Options {
 
 // Fonctions utilitaires
 void c_print_centered(const char *text, int y) {
-    int x = (80 - strlen(text)) / 2; // Calculer la position centrée
+    int x = (80 - strlen(text)) / 2; // Calculer la position centree
     c_gotoxy(x, y * 2);
     printf("%s", text);
 }
@@ -51,7 +51,7 @@ int c_select_menu(Options options) {
                     c_draw_menu(current_option, options);
                 }
                 break;
-            case 13: // Entrée
+            case 13: // Entree
                 return current_option;
         }
     }
@@ -77,12 +77,12 @@ char *choose_language[] = {
     "[- Leave   -]"
 };
 
-// Déclaration des fonctions
+// Declaration des fonctions
 void Home_OPTIONS();
 void Home_LOGIN_menu();
 void Home_LOGIN_menu_f();
 
-// Implémentation des fonctions principales
+// Implementation des fonctions principales
 void Home_OPTIONS() {
     c_textcolor(14);
     options.title = "----- HOME -- PAGE -----";
@@ -238,7 +238,7 @@ void Home_LOGIN_menu_f() {
                 if (scanf("%d", &choice) != 1) {
                     while (getchar() != '\n');
                     c_textattr(4);
-                    c_gotoxy(50, 12); printf("Entrée invalide. Veuillez entrer un numéro.\n");
+                    c_gotoxy(50, 12); printf("Entree invalide. Veuillez entrer un numero.\n");
                     c_textattr(14);
                     c_getch();
                     continue;
@@ -282,7 +282,7 @@ void Home_LOGIN_menu_f() {
                     if (scanf("%d", &choice) != 1) {
                         while (getchar() != '\n');
                         c_textattr(4);
-                        c_gotoxy(50, 12); printf("Entrée invalide. Veuillez entrer un numéro.\n");
+                        c_gotoxy(50, 12); printf("Entree invalide. Veuillez entrer un numero.\n");
                         c_textattr(14);
                         c_getch();
                         continue;
