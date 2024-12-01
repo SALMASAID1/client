@@ -1,0 +1,7 @@
+Monday 50
+Tuesday 30
+Wednesday 32
+Thursday 10
+Friday 20
+Saturday 80
+Sunday 5

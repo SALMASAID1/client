@@ -10,6 +10,7 @@
     char* Pass_hide(int max_length);
     void displayMenu();
     int is_CIN_unique(const char *cin);
+    int is_CIN_unique_supplier(const char *cin);
     void back();
                // SAID -------- SALMA //
     void clientLogin(char * CIN);
@@ -24,7 +25,8 @@
                 // TAMZIRT -------- MOHAMED //
     void add_credit_card(char* CIN_client , char * name_client);
     void display_credit_cards(char *name_client,char* CIN );
-    void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE * PCM , FILE * client_choice , char * CIN , int fact_num  ); // PCM : Product Client Managment 
+//     FILE * PCM , FILE * client_choice ,
+    void Display_the_Supplier_Total_amount_sales_in_the_Day( char * CIN , int fact_num  ); // PCM : Product Client Managment 
     void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN);
     void feedback_and_rate_the_product(char * name_cl , int id_product);
     int check_stock_and_get_price(FILE *PCM, const char *category, const char *name, int quantity, float *price);
@@ -62,13 +64,14 @@ void Remove_Purchases_f(void);
 // TAMZIRT -------- MOHAMED //
 void add_credit_card_f(char* CIN_client , char * name_client);
 void display_credit_cards_f(char *name_client,char* CIN );
-void Display_the_Supplier_Total_amount_sales_in_the_Day_f(FILE * PCM , FILE * client_choice , char * CIN , int fact_num); // PCM: Product Client Management 
+void Display_the_Supplier_Total_amount_sales_in_the_Day_f(char * CIN , int fact_num); // PCM: Product Client Management 
 void client_factor_f(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN);
 void feedback_and_rate_the_product_f(char * name_cl , int id_product);
 int check_stock_and_get_price(FILE *PCM, const char *category, const char *name, int quantity, float *price);
 
 // Alaoui -------- TAHA //
 void sign_in_supplier_f();
+
 void login_supplier_f(char * CIN );
 void liste_fournisseur_f( char * Temp_CIN );
 void add_product_f();

@@ -1,2 +1,5 @@
- 1 electronics pc i9 20001.00 20
-1 pc electronique 20000.00 11 i5
+8 alimentaire fruits  50 20
+9 alimentaire fruits  60 18
+10 alimentaire drinks  20 10
+4 electronique tv  4000 15
+5 electronique camera  3500 10

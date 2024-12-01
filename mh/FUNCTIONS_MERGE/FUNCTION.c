@@ -437,6 +437,20 @@ int is_CIN_unique(const char *cin) {
     return 1;
 }
 
+int is_CIN_unique_supplier(const char *cin) {
+    FILE *fp = fopen("FOURNISSEUR.txt", "r");
+    if (fp == NULL) return 1;
+    char file_cin[20];
+    while (fscanf(fp, "%*s %*s %s %*s", file_cin) == 1) {
+        if (strcmp(file_cin, cin) == 0) {
+            fclose(fp);
+            return 0;
+        }
+    }
+    fclose(fp);
+    return 1;
+}
+
 void sign_in_client() {
     int i,j;
     Client client;
@@ -1763,13 +1777,13 @@ void sign_in_supplier() {
         printf("Enter your CIN: ");
         scanf("%s", f.Cinf);
 
-        if (!is_CIN_unique(f.Cinf)) {
+        if (!is_CIN_unique_supplier(f.Cinf)) {
 
               c_textcolor(4);  printf("Error: CIN already exists. Please enter a unique CIN.\n");
       c_textattr(14);
 
         }
-    } while (!is_CIN_unique(f.Cinf));
+    } while (!is_CIN_unique_supplier(f.Cinf));
 
     do {
 
@@ -1817,12 +1831,12 @@ void sign_in_supplier_f() {
         printf("Entrez votre CIN : ");
         scanf("%s", f.Cinf);
 
-        if (!is_CIN_unique(f.Cinf)) {
+        if (!is_CIN_unique_supplier(f.Cinf)) {
             c_textcolor(4);
             printf("Erreur : Ce CIN existe deja. Veuillez entrer un CIN unique.\n");
             c_textattr(14);
         }
-    } while (!is_CIN_unique(f.Cinf));
+    } while (!is_CIN_unique_supplier(f.Cinf));
 
     do {
         printf("Entrez un NOUVEAU MOT DE PASSE : ");
@@ -1978,17 +1992,18 @@ int veri_cin(char *cin) {
 
 void liste_fournisseur(char * Temp_CIN) {
     int choice;
-    
+    int n ;
     do {
         c_textcolor(8);
-        system("cls");  // Clear screen (replace with `clrscr();` if using custom conio.h)
+        c_clrscr();
         printf("Supplier CIN: %s\n", Temp_CIN);
         printf("\nSupplier Menu:\n");
         printf("1. Add Product\n");
         printf("2. Modify Product\n");
         printf("3. Add Supplier\n");
-        printf("4. Delete Product\n");
-        printf("5. Exit\n");
+        printf("4. Display the Supplier Total amount sales in the Day");
+        printf("5. Delete Product\n");
+        printf("6. Exit\n");
         c_textcolor(14);
         printf("Enter your choice: ");
         scanf("%d", &choice);
@@ -2003,17 +2018,23 @@ void liste_fournisseur(char * Temp_CIN) {
             case 3:
                 add_supplier();
                 break;
-            case 4:
+            case 4 :
+            c_clrscr();
+            printf("Entre number of supplier : "); 
+            scanf("%d",&n);
+            Display_the_Supplier_Total_amount_sales_in_the_Day(Temp_CIN,n);
+            break;
+            case 5:
                 delete_product();
                 break;
-            case 5:
+            case 6:
                 printf("Returning to main menu...\n");
                 break;
             default:
                 printf("Invalid choice. Please try again.\n");
                 break;
         }
-        if (choice != 5) {
+        if (choice !=  6) {
             printf("Press any key to continue...\n");
             c_getch();  // Pause before clearing screen again
         }
@@ -2022,24 +2043,25 @@ void liste_fournisseur(char * Temp_CIN) {
     } while (choice != 5);
 }
 // french version
-void liste_fournisseur_f(char *Temp_CIN) {
-    int choix;
-
+void liste_fournisseur_f(char * Temp_CIN) {
+    int choice;
+    int n;
     do {
         c_textcolor(8);
-        system("cls");  // Effacer l'ecran (remplacer par `clrscr();` si vous utilisez une version personnalisee de conio.h)
-        printf("CIN du Fournisseur : %s\n", Temp_CIN);
+        c_clrscr();
+        printf("CIN du fournisseur : %s\n", Temp_CIN);
         printf("\nMenu Fournisseur :\n");
         printf("1. Ajouter un produit\n");
         printf("2. Modifier un produit\n");
         printf("3. Ajouter un fournisseur\n");
-        printf("4. Supprimer un produit\n");
-        printf("5. Quitter\n");
+        printf("4. Afficher le montant total des ventes du fournisseur dans la journée\n");
+        printf("5. Supprimer un produit\n");
+        printf("6. Quitter\n");
         c_textcolor(14);
         printf("Entrez votre choix : ");
-        scanf("%d", &choix);
-
-        switch (choix) {
+        scanf("%d", &choice);
+        
+        switch (choice) {
             case 1:
                 add_product_f();
                 break;
@@ -2050,24 +2072,79 @@ void liste_fournisseur_f(char *Temp_CIN) {
                 add_supplier_f();
                 break;
             case 4:
-                delete_product_f();
+                c_clrscr();
+                printf("Entrez le nombre de fournisseurs : "); 
+                scanf("%d", &n);
+                Display_the_Supplier_Total_amount_sales_in_the_Day_f(Temp_CIN, n);
                 break;
             case 5:
+                delete_product_f();
+                break;
+            case 6:
                 printf("Retour au menu principal...\n");
                 break;
             default:
-                printf("Choix invalide. Veuillez reessayer.\n");
+                printf("Choix invalide. Veuillez réessayer.\n");
                 break;
         }
-        if (choix != 5) {
+        if (choice != 6) {
             printf("Appuyez sur une touche pour continuer...\n");
-            c_getch();  // Pause avant de reinitialiser l'ecran
+            c_getch();  // Pause avant de nettoyer l'écran à nouveau
         }
+void liste_fournisseur(char * Temp_CIN) {
+    int choice;
+    int n;
+    do {
+        c_textcolor(8);
+        system("cls");  // Effacer l'écran (remplacer par `clrscr();` si vous utilisez conio.h personnalisé)
+        printf("CIN du fournisseur : %s\n", Temp_CIN);
+        printf("\nMenu Fournisseur :\n");
+        printf("1. Ajouter un produit\n");
+        printf("2. Modifier un produit\n");
+        printf("3. Ajouter un fournisseur\n");
+        printf("4. Afficher le montant total des ventes du fournisseur dans la journée\n");
+        printf("5. Supprimer un produit\n");
+        printf("6. Quitter\n");
+        c_textcolor(14);
+        printf("Entrez votre choix : ");
+        scanf("%d", &choice);
+        
+        switch (choice) {
+            case 1:
+                add_product();
+                break;
+            case 2:
+                modify_product();
+                break;
+            case 3:
+                add_supplier();
+                break;
+            case 4:
+                c_clrscr();
+                printf("Entrez le nombre de fournisseurs : "); 
+                scanf("%d", &n);
+                Display_the_Supplier_Total_amount_sales_in_the_Day(Temp_CIN, n);
+                break;
+            case 5:
+                delete_product();
+                break;
+            case 6:
+                printf("Retour au menu principal...\n");
+                break;
+            default:
+                printf("Choix invalide. Veuillez réessayer.\n");
+                break;
+        }
+        if (choice != 6) 
+            printf("Appuyez sur une touche pour continuer...\n");
         c_getch();
         c_clrscr();
-    } while (choix != 5);
+    } while (choice != 5);
 }
 
+        c_clrscr();
+    } while (choice != 6);
+}
 
 //------------------------------------add supplier-----------------------------
 
@@ -2157,7 +2234,7 @@ void login_supplier_f(char *CIN) {
     }
     if (!found) {
         c_textattr(4);
-        printf("\nVous devez d'abord creer un compte !\n");
+        printf("\nVous devez d'abord creer un compte!\n");
         c_textattr(14);
     }
     fclose(fp);
@@ -2690,7 +2767,21 @@ void display_credit_cards_f(char *client_name, char *CIN) {
 }
 
 
-void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE *PCM, FILE *client_choice, char *CINF, int supplier_num) {
+void Display_the_Supplier_Total_amount_sales_in_the_Day(char *CINF, int supplier_num) {
+    FILE *PCM = fopen("produit.txt", "rt");
+    if (PCM == NULL) {
+        printf("Error: PCM.dat does not exist!\n");
+        fclose(PCM); 
+        exit(0);
+    }
+
+    FILE *client_choice = fopen("client_choice.txt", "rt");
+    if (client_choice == NULL) {
+        printf("Error: client_choice.dat does not exist!\n");
+        fclose(client_choice); 
+        exit(0); 
+    }
+
     time_t currentTime;
     time(&currentTime);
     struct tm *localTime = localtime(&currentTime);
@@ -2710,7 +2801,7 @@ void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE *PCM, FILE *client_
     // Create the filename for supplier data
     char filename[50];
     sprintf(filename, "supplier%d.txt", supplier_num);
-    FILE *supplier_amount = fopen(filename, "w+t");
+    FILE *supplier_amount = fopen(filename, "a+t");
     if (supplier_amount == NULL) {
         c_textcolor(4);
         printf("Error: Unable to create file %s!\n", filename);
@@ -2756,10 +2847,24 @@ void Display_the_Supplier_Total_amount_sales_in_the_Day(FILE *PCM, FILE *client_
     fclose(supplier_amount);
     c_textcolor(15);
     c_getch();
+    fclose(PCM);
+    fclose(client_choice);
     c_clrscr();
 }
 // french version
-void Display_the_Supplier_Total_amount_sales_in_the_Day_f(FILE *PCM, FILE *client_choice, char *CINF, int supplier_num) {
+void Display_the_Supplier_Total_amount_sales_in_the_Day_f(char *CINF, int supplier_num) {
+    FILE *PCM = fopen("produit.txt", "rt");
+    if (PCM == NULL) {
+        printf("Error: PCM.dat does not exist!\n");
+        fclose(PCM);
+        exit(0);
+    }
+    FILE *client_choice = fopen("client_choice.txt", "rb");
+    if (client_choice == NULL) {
+        printf("Error: client_choice.dat does not exist!\n");
+        fclose(client_choice); 
+        exit(0); 
+    }
     time_t currentTime;
     time(&currentTime);
     struct tm *localTime = localtime(&currentTime);
