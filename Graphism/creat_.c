@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
 void ReadQuantitiesFromFile(int supplier_num) {
     // Array of weekdays
     const char *weekdays[] = {
