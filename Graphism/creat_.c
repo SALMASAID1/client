@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 
 // void data_file (int supplier_num ){
 //     sprintf(filename, "supplier%d.txt", supplier_num);
@@ -21,9 +23,6 @@
 //     while()
 // }
 
-
-#include <stdio.h>
-#include <stdlib.h>
 
 void ReadQuantitiesFromFile(int supplier_num) {
     // Array of weekdays
