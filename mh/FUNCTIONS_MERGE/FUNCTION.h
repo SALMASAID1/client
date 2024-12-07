@@ -71,7 +71,6 @@ int check_stock_and_get_price(FILE *PCM, const char *category, const char *name,
 
 // Alaoui -------- TAHA //
 void sign_in_supplier_f();
-
 void login_supplier_f(char * CIN );
 void liste_fournisseur_f( char * Temp_CIN );
 void add_product_f();
@@ -83,4 +82,10 @@ void choixinvalid();
 
 
 
+
+void menu_admin();
+void menu_admin_f();
+void Home_OPTIONS();
+void Home_LOGIN_menu();
+void Home_LOGIN_menu_f();
 #endif // FONCTION_H_INCLUDED

@@ -1,30 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
-// void data_file (int supplier_num ){
-//     sprintf(filename, "supplier%d.txt", supplier_num);
-//     FILE *supplier_amount = fopen(filename, "rt");
-//     if (supplier_amount == NULL) {
-//         c_textcolor(4);
-//         printf("Error: Unable to create file %s!\n", filename);
-//         return;
-//     }
-//     FILE *data_file = fopen("data_file.txt","rt");
-//     if(data_file == NULL){
-//         printf("the file does not exist !!!");
-//         exit(0);
-//     }
-//     int taill = 0 ;
-//     int quantity;
-//     while(fscanf(data_file ,"%d",))
-//     int *Quantity ;
-//     while()
-// }
-
-
-#include <stdio.h>
-#include <stdlib.h>
-
+#include <string.h>
 void ReadQuantitiesFromFile(int supplier_num) {
     // Array of weekdays
     const char *weekdays[] = {
@@ -150,12 +126,11 @@ void generate_histogram(const char *title, const char *data_file) {
 
 int main() {
     const char *data_file = "data_file.txt"; 
-    char title[100];  // Ensure this is large enough to hold the full title
-    // Concatenate strings using strcat
-    strcpy(title, "Weekly Sales Histogram of supplier ");  // Copy first part
-    strcat(title, "t88");  // Append second part
+    char title[100];
+    strcpy(title, "Weekly Sales Histogram of supplier "); 
+    strcat(title, "t88"); 
     
     generate_histogram(title, data_file);
-    ReadQuantitiesFromFile(1); // Example usage
+    ReadQuantitiesFromFile(1);
     return 0;
 }

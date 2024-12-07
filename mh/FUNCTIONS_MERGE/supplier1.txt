@@ -35,3 +35,9 @@ Quantity: 5
 Sale Amount: 1000.00
 
 
+CIN: AM123
+
+Category: alimentaire
+Quantity: 50
+Sale Amount: 1000.00
+

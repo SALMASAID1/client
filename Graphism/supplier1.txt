@@ -1,7 +1,7 @@
 CIN: AM123
 
 Category: alimentaire
-Quantity: 50
+Quantity: 60
 Sale Amount: 1000.00
 CIN: AM123
 
@@ -11,7 +11,7 @@ Sale Amount: 1000.00
 CIN: AM123
 
 Category: alimentaire
-Quantity: 32
+Quantity: 30
 Sale Amount: 1000.00
 CIN: AM123
 

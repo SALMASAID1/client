@@ -1,6 +1,6 @@
-Monday 50
+Monday 60
 Tuesday 30
-Wednesday 32
+Wednesday 30
 Thursday 10
 Friday 20
 Saturday 80
