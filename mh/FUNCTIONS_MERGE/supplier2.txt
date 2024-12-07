@@ -1,0 +1,6 @@
+CIN: abcd
+
+Category: alimentaire
+Quantity: 50
+Sale Amount: 1000.00
+

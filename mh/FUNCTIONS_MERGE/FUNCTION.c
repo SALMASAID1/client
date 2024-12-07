@@ -112,9 +112,10 @@ void liste_client(char *Temp_cin, char *client_name) {
     c_gotoxy(50, 12); printf("---> Remove Purchases");
     c_gotoxy(50, 13); printf("---> Add A Credit Card");
     c_gotoxy(50, 14); printf("---> Display Credit Card");
-    c_gotoxy(50, 15); printf("---> Leave Page");
+    c_gotoxy(50 ,15); printf("---> Back to Home Page");
+    c_gotoxy(50, 16); printf("---> Leave Page");
     c_textattr(14);
-    c_gotoxy(50, 17); printf("--------------------------");
+    c_gotoxy(50, 18); printf("--------------------------");
 
     do {
         c_textattr(8);
@@ -124,7 +125,8 @@ void liste_client(char *Temp_cin, char *client_name) {
         printf("  \n4 - Remove Purchases");
         printf("  \n5 - Add A Credit Card");
         printf("  \n6 - Display Credit Card");
-        printf("  \n7 - Leave Page");
+        printf("  \n7 - Back to Home Page");
+        printf("  \n8 - Leave Page");
         c_textattr(14);
 
         printf("\n\n------->> SELECT YOUR OPTION: ");
@@ -212,17 +214,19 @@ void liste_client(char *Temp_cin, char *client_name) {
                 break;
             }
 
-            case 7:
+            case 7 : 
+                Home_LOGIN_menu();
+            case 8:
                 leave();
                 break;
 
             default:
                 c_textattr(4);
-                printf("Incorrect choice! Your choice should be between [1 - 7]. Please retry.");
+                printf("Incorrect choice! Your choice should be between [1 - 8]. Please retry.");
                 c_textattr(14);
                 break;
         }
-    } while (c != 7);
+    } while (c != 8);
 }
 // french version
 void liste_client_f(char *Temp_cin, char *client_name) {
@@ -237,46 +241,48 @@ void liste_client_f(char *Temp_cin, char *client_name) {
     c_gotoxy(50, 7); printf("---------------------------");
     c_textattr(8);
 
-    c_gotoxy(50, 9);  printf("---> Voir la liste des produits");
+    c_gotoxy(50, 9);  printf("---> Afficher la liste des produits");
     c_gotoxy(50, 10); printf("---> Ajouter des achats");
     c_gotoxy(50, 11); printf("---> Voir les achats");
     c_gotoxy(50, 12); printf("---> Supprimer des achats");
     c_gotoxy(50, 13); printf("---> Ajouter une carte de credit");
     c_gotoxy(50, 14); printf("---> Afficher la carte de credit");
-    c_gotoxy(50, 15); printf("---> Quitter la page");
+    c_gotoxy(50 ,15); printf("---> Retour a la page d'accueil");
+    c_gotoxy(50, 16); printf("---> Quitter la page");
     c_textattr(14);
-    c_gotoxy(50, 17); printf("--------------------------");
+    c_gotoxy(50, 18); printf("--------------------------");
 
     do {
         c_textattr(8);
-        printf("  \n1 - Voir la liste des produits");
+        printf("  \n1 - Afficher la liste des produits");
         printf("  \n2 - Ajouter des achats");
         printf("  \n3 - Voir les achats");
         printf("  \n4 - Supprimer des achats");
         printf("  \n5 - Ajouter une carte de credit");
         printf("  \n6 - Afficher la carte de credit");
-        printf("  \n7 - Quitter la page");
+        printf("  \n7 - Retour a la page d'accueil");
+        printf("  \n8 - Quitter la page");
         c_textattr(14);
 
-        printf("\n\n------->> SeLECTIONNEZ VOTRE OPTION : ");
+        printf("\n\n------->> CHOISISSEZ VOTRE OPTION : ");
         scanf("%d", &c);
         c_clrscr();
 
         switch (c) {
             case 1:
-                View_Product_List_f();
+                View_Product_List();
                 break;
 
             case 2:
-                Add_Purchases_f();
+                Add_Purchases();
                 break;
 
             case 3:
-                View_Purchases_f();
+                View_Purchases();
                 break;
 
             case 4:
-                Remove_Purchases_f();
+                Remove_Purchases();
                 break;
 
             case 5: {
@@ -290,7 +296,6 @@ void liste_client_f(char *Temp_cin, char *client_name) {
                 check_CRD = 0;
                 check_card_exists = 0;
                 while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
-                    // Verifiez si la carte existe deja pour ce client
                     if (strcmp(cd.client_CIN, Temp_cin) == 0) {
                         check_CRD = 1;
                         if (strcmp(cd.card_number, Temp_cin) == 0) {
@@ -306,14 +311,14 @@ void liste_client_f(char *Temp_cin, char *client_name) {
                         c_textcolor(4);
                         printf("\nLa carte de credit existe deja pour ce client !");
                     } else {
-                        add_credit_card_f(Temp_cin, client_name);
+                        add_credit_card(Temp_cin, client_name);
                         c_textcolor(2);
                         printf("\nCarte de credit ajoutee avec succès !");
                     }
                 } else {
-                    add_credit_card_f(Temp_cin, client_name);
+                    add_credit_card(Temp_cin, client_name);
                     c_textcolor(2);
-                    printf("\nCarte de credit ajoutee avec succès !");
+                    printf("\nCarte de credit ajoutee avec succes !");
                 }
                 break;
             }
@@ -329,7 +334,7 @@ void liste_client_f(char *Temp_cin, char *client_name) {
                 int found = 0;
                 while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
                     if (strcmp(cd.client_CIN, Temp_cin) == 0) {
-                        display_credit_cards_f(client_name, Temp_cin);
+                        display_credit_cards(client_name, Temp_cin);
                         found = 1;
                         break;
                     }
@@ -343,17 +348,19 @@ void liste_client_f(char *Temp_cin, char *client_name) {
                 break;
             }
 
-            case 7:
-                leave_f();
+            case 7 : 
+                Home_LOGIN_menu_f();
+            case 8:
+                leave();
                 break;
 
             default:
                 c_textattr(4);
-                printf("Choix incorrect ! Votre choix doit être entre [1 - 7]. Veuillez reessayer.");
+                printf("Choix incorrect ! Votre choix doit être entre [1 - 8]. Veuillez reessayer.");
                 c_textattr(14);
                 break;
         }
-    } while (c != 7);
+    } while (c != 8);
 }
 
 
@@ -1874,52 +1881,58 @@ void add_supplier() {
     }
 
     fournisseur frn;
-   char ch;
-   int i;
-   c_textcolor(1);
-    c_gotoxy(50,6);
+    char ch;
+    int i = 0;
+    c_textcolor(1);
+    c_gotoxy(50, 6);
+    c_textcolor(14);
     printf("first name : ");
+    c_textcolor(8);
     scanf(" %[^\n]s", frn.prenomf);
-    c_gotoxy(50,8);
-    printf("second name  : ");
+    c_gotoxy(50, 8);
+    c_textcolor(14);
+    printf("last name  : ");
+    c_textcolor(8);
     scanf(" %[^\n]s", frn.nomf);
 
     do {
-         c_gotoxy(50,10);
+        c_gotoxy(50, 10 + i);
+        c_textcolor(14);
         printf("    CIN  : ");
+        c_textcolor(8);
         scanf(" %s", frn.Cinf);
-        // c_gotoxy(60,12);
-        if (is_CIN_unique(frn.Cinf) == 0) {
-            c_gotoxy(60,12);
+        
+        if (is_CIN_unique_supplier(frn.Cinf) == 0) {
+            c_gotoxy(60, 14 + i -2 );
+            c_textcolor(4);
             printf("Be careful, the CIN is already used!\n");
             c_getch();
-            c_clrscr();
+            c_textcolor(15);
+            i = i + 4;
         } else {
-            c_gotoxy(50,12);
-            printf("Saisir le mot de passe : ");
-            i = 0;
-            // Saisie et masquage du mot de passe avec '*'
-            while ((ch = c_getch()) != '\r' && i < 19) {  // Limite a 19 caractères
-                frn.mdpf[i++] = ch;
-                printf("*");
-            }
-            frn.mdpf[i] = '\0';  // Ajouter le caractère de fin de chaîne
-            printf("\n");
-
+            c_gotoxy(50, 12 + i );
+            c_textcolor(14);
+            printf("Enter the password : ");
+            c_textcolor(8);
+            strcpy(frn.mdpf, Pass_hide(20));
+            frn.mdpf[strlen(frn.mdpf)] = '\0';
             fprintf(fp, "%s %s %s %s\n", frn.prenomf, frn.nomf, frn.Cinf, frn.mdpf);
             break;           
         }
     } while (1);
     fclose(fp);
-      c_textcolor(15);
-         c_textcolor(2);
-         c_gotoxy(60,15);
+
+    c_textcolor(15);
+    c_textcolor(2);
+    c_gotoxy(60, 15 + i);
+    c_textcolor(2);
     printf("supplier adds successfully!!");
     c_textcolor(15);
- c_getch();
- c_clrscr();
+    c_getch();
+    c_clrscr();
 }
 // french version
+
 void add_supplier_f() {
     FILE *fp;
     fp = fopen("fournisseur.txt", "a+");
@@ -1930,37 +1943,50 @@ void add_supplier_f() {
 
     fournisseur frn;
     char ch;
-    int i;
-    int t = 0 ;
+    int i = 0  ;
     c_textcolor(1);
-    c_gotoxy(50,6);
+    c_gotoxy(50, 6);
+    c_textcolor(14);
     printf("Prenom : ");
+    c_textcolor(8);
     scanf(" %[^\n]s", frn.prenomf);
-    c_gotoxy(50,8);
+    c_gotoxy(50, 8);
+    c_textcolor(14);
     printf("Nom : ");
+    c_textcolor(8);
     scanf(" %[^\n]s", frn.nomf);
+
     do {
-        c_gotoxy(50,10 + t );
+        c_gotoxy(50, 10 + i );
+        c_textcolor(14);
         printf("CIN : ");
+        c_textcolor(8);
         scanf(" %s", frn.Cinf);
-        if (is_CIN_unique(frn.Cinf) == 0) {
-            c_gotoxy(60,11 + t );
-            printf("Attention, ce CIN est deja utilise !");
+        
+        if (is_CIN_unique_supplier(frn.Cinf) == 0) {
+            c_gotoxy(60, 14 + i -2 );
+            c_textcolor(4);
+            printf("Attention, le CIN est deja utilise !\n");
             c_getch();
-            t = t + 2 ;
+            c_textcolor(15);
+            i = i + 4 ;
         } else {
-            c_gotoxy(50,12+t);
-            printf("Saisir le mot de passe : ");
-            strcpy(frn.mdpf,Pass_hide(20));
+            c_gotoxy(50, 12 + i );
+            c_textcolor(14);
+            printf("Entrez le mot de passe : ");
+            c_textcolor(8);
+            strcpy(frn.mdpf, Pass_hide(20));
             frn.mdpf[strlen(frn.mdpf)] = '\0';
             fprintf(fp, "%s %s %s %s\n", frn.prenomf, frn.nomf, frn.Cinf, frn.mdpf);
             break;           
         }
     } while (1);
     fclose(fp);
+
     c_textcolor(15);
     c_textcolor(2);
-    c_gotoxy(60,15+t);
+    c_gotoxy(60, 15);
+    c_textcolor(2);
     printf("Fournisseur ajoute avec succès !!");
     c_textcolor(15);
     c_getch();
@@ -2025,6 +2051,7 @@ void liste_fournisseur(char * Temp_CIN) {
                 break;
             case 5:
                 printf("Returning to main menu...\n");
+                Home_LOGIN_menu();
                 break;
             default:
                 printf("Invalid choice. Please try again.\n");
@@ -2032,7 +2059,7 @@ void liste_fournisseur(char * Temp_CIN) {
         }
         if (choice !=  5) {
             printf("Press any key to continue...\n");
-            c_getch();  // Pause before clearing screen again
+            c_getch();
         }
         c_getch();
         c_clrscr();
@@ -2049,7 +2076,7 @@ void liste_fournisseur_f(char * Temp_CIN) {
         printf("\nMenu Fournisseur :\n");
         printf("1. Ajouter un produit\n");
         printf("2. Modifier un produit\n");
-        printf("3. Afficher le montant total des ventes du fournisseur dans la journée\n");
+        printf("3. Afficher le montant total des ventes du fournisseur dans la journee\n");
         printf("4. Supprimer un produit\n");
         printf("5. Quitter\n");
         c_textcolor(14);
@@ -2074,14 +2101,15 @@ void liste_fournisseur_f(char * Temp_CIN) {
                 break;
             case 5:
                 printf("Retour au menu principal...\n");
+                Home_LOGIN_menu_f();
                 break;
             default:
-                printf("Choix invalide. Veuillez réessayer.\n");
+                printf("Choix invalide. Veuillez reessayer.\n");
                 break;
         }
         if (choice != 5 ) {
             printf("Appuyez sur une touche pour continuer...\n");
-            c_getch();  // Pause avant de nettoyer l'écran à nouveau
+            c_getch();
         }
         }while (choice != 5);
 }
@@ -2162,7 +2190,7 @@ void login_supplier_f(char *CIN) {
         if (strcmp(f.Cinf, CINN) == 0 && strcmp(f.mdpf, passw) == 0) {
             c_textattr(2);
             strcpy(Temp_CIN, CINN);
-            printf("\nConnexion reussie !\n");
+            printf("\nConnexion reussie !\n");
             c_textattr(14);
             found = 1;
             c_getch();
@@ -3027,7 +3055,7 @@ void menu_admin() {
         c_gotoxy(10, 2);
         printf("Administrator Menu - Supplier Management:\n");
 
-        c_textcolor(11);
+        c_textcolor(8);
         printf("1. Add a Supplier\n");
         printf("2. Delete a Supplier\n");
         printf("3. View Supplier List\n");
@@ -3104,7 +3132,7 @@ void menu_admin_f() {
                 break;
             default:
                 c_textcolor(12);
-                printf("Choix invalide. Veuillez réessayer.\n");
+                printf("Choix invalide. Veuillez reessayer.\n");
                 break;
         }
         if (choix != 4) {
@@ -3116,19 +3144,6 @@ void menu_admin_f() {
     } while (choix != 4);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-// Structure pour les options du menu
 typedef struct Options {
     char **ops;
     int len;
@@ -3203,7 +3218,7 @@ char *choose_language[] = {
     "[- Leave   -]"
 };
 
-void Home_OPTIONS() {
+void Home_OPTIONS()     {
     c_textcolor(14);
     options.title = "----- HOME -- PAGE -----";
     options.ops = choose_language;
@@ -3222,7 +3237,7 @@ void Home_OPTIONS() {
     c_getch();
 }
 
-void Home_LOGIN_menu() {
+void Home_LOGIN_menu()  {
     c_textcolor(14);
     options.title = "----- HOME -- PAGE -----";
     options.ops = Home_LOGIN;
@@ -3324,7 +3339,7 @@ void Home_LOGIN_menu() {
                 }
             } while (choice != 3 && choice != 4);
 
-                    }
+                    }else Home_OPTIONS();
 
                     free(Client_CIN);
                     free(Supplier_CIN);
@@ -3339,7 +3354,7 @@ void Home_LOGIN_menu_f() {
     options.len = sizeof(Accueil_CONNEXION) / sizeof(Accueil_CONNEXION[0]);
 
     int selected = c_select_menu(options);
-    if (selected == 2) { // Quitter
+    if (selected == 3) { // Quitter
         Home_OPTIONS();
     } else {
         char *Client_CIN = (char *)malloc(20 * sizeof(char));
@@ -3436,7 +3451,7 @@ void Home_LOGIN_menu_f() {
                     }
                 } while (choice != 3 && choice != 4);
 
-        }
+        }else Home_OPTIONS();
 
         free(Client_CIN);
         free(Supplier_CIN);
