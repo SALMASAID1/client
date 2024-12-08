@@ -1,0 +1,56 @@
+//-----------------------function delete supplier--------------
+void delete_supplier(){
+    FILE *fp,*temp;
+    fp=fopen("fournisseur.txt","r");
+    temp=fopen("temp.txt","w");
+    if(fp==NULL || temp==NULL){
+        printf("unnable to open this file");
+        exit(1);
+    }
+    char CIN[30];
+    printf("enter the supplier CIN :");
+    scanf("%s",CIN);
+    int tr=0;
+    fournisseur f,fs;
+    while(fscanf(fp,"%s %s %s %s\n",f.prenomf,f.nomf,f.Cinf,f.mdpf)==4){
+        if(strcmp(f.Cinf,CIN)==0){
+            tr=1;
+            strcpy(fs.prenomf,f.prenomf);
+            strcpy(fs.Cinf,f.Cinf);
+            strcpy(fs.nomf,f.nomf);
+            strcpy(fs.mdpf,f.mdpf);
+        }
+        else{
+            fprintf(temp,"%s %s %s %s\n",f.prenomf,f.nomf,f.Cinf,f.mdpf);
+        }
+    }
+    fclose(fp);
+    fclose(temp);
+    remove("fournisseur.txt");
+    rename("temp.txt","fournisseur.txt");
+    if(tr==0){
+    c_textcolor(4);
+        printf("\nbe careful supplier does not exist !!"); 
+    c_textcolor(15);
+    }else{
+      c_textcolor(2);
+            printf("\nMr.%s %s successfully deleted \n",fs.nomf,fs.prenomf);
+      c_textcolor(15);
+    }
+     
+}
+//----------------------show supplier-----------------------
+void show_supplier(){
+    FILE *fp;
+    fp=fopen("fournisseur.txt","r");
+    fournisseur f;
+    printf("\n__________________________________________________\n");
+    printf("| %-15s | %-15s | %-10s |\n", "Last Name", "First Name", "CIN");
+    printf("--------------------------------------------------\n");
+
+    while (fscanf(fp, "%s %s %s %s", f.nomf, f.prenomf, f.Cinf, f.mdpf) == 4) {
+        printf("| %-15s | %-15s | %-10s |\n", f.nomf, f.prenomf, f.Cinf);
+    }
+    printf("--------------------------------------------------\n");
+    fclose(fp);
+}
