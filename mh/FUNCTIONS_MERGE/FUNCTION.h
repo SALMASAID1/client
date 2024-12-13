@@ -39,6 +39,8 @@
     void delete_product();
     void modify_product();
     void add_supplier();
+    void delete_supplier();
+    void show_supplier();
     int get_next_product_id(FILE *fp);
     void choixinvalid();
 
@@ -77,10 +79,10 @@ void add_product_f();
 void delete_product_f();
 void modify_product_f();
 void add_supplier_f();
+void delete_supplier_f();
+void show_supplier_f();
 int get_next_product_id(FILE *fp);
 void choixinvalid();
-
-
 
 
 void menu_admin();

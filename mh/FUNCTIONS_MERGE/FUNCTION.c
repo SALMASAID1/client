@@ -119,14 +119,15 @@ void liste_client(char *Temp_cin, char *client_name) {
 
     do {
         c_textattr(8);
-        printf("  \n1 - View Product List");
-        printf("  \n2 - Add Purchases");
-        printf("  \n3 - View Purchases ");
-        printf("  \n4 - Remove Purchases");
-        printf("  \n5 - Add A Credit Card");
-        printf("  \n6 - Display Credit Card");
-        printf("  \n7 - Back to Home Page");
-        printf("  \n8 - Leave Page");
+        printf("  1 - View Product List");
+        printf("  2 - Add Purchases");
+        printf("  3 - View Purchases ");
+        printf("  4 - Remove Purchases");
+        printf("  5 - Add A Credit Card");
+        printf("  6 - Display Credit Card");
+        printf("  7 - Confirm the purchase ");
+        printf("  8 - Back to Home Page");
+        printf("  9 - Leave Page");
         c_textattr(14);
 
         printf("\n\n------->> SELECT YOUR OPTION: ");
@@ -137,19 +138,15 @@ void liste_client(char *Temp_cin, char *client_name) {
             case 1:
                 View_Product_List();
                 break;
-
             case 2:
                 Add_Purchases();
                 break;
-
             case 3:
                 View_Purchases();
                 break;
-
             case 4:
                 Remove_Purchases();
                 break;
-
             case 5: {
                 FD = fopen("CREDIT_CARD.dat", "rb");
                 if (FD == NULL) {
@@ -213,10 +210,11 @@ void liste_client(char *Temp_cin, char *client_name) {
                 fclose(FD);
                 break;
             }
-
             case 7 : 
+                //////////////////////////
+            case 8 : 
                 Home_LOGIN_menu();
-            case 8:
+            case 9:
                 leave();
                 break;
 
@@ -2900,7 +2898,7 @@ void Display_the_Supplier_Total_amount_sales_in_the_Day_f(char *CINF, int suppli
     c_clrscr();
 }
 
-void feedback_and_rate_the_product(char *name_cl, int id_product) { // name_cl: client name, id_product: product id
+void feedback_and_rate_the_product(char *name_cl, int id_product) { 
     FILE *client_opinion = fopen("feedback.txt", "a");
     if (client_opinion == NULL) {
         c_textcolor(4); 
@@ -2916,8 +2914,7 @@ void feedback_and_rate_the_product(char *name_cl, int id_product) { // name_cl: 
     fgets(comment, sizeof(comment), stdin);
     size_t len = strlen(comment);
     if (len > 0 && comment[len - 1] == '\n') 
-    comment[len - 1] = '\0'; // Remove the newline character
-    // Write the comment to the file
+    comment[len - 1] = '\0'; 
     fprintf(client_opinion, "Client: %s | Product ID: %d | Comment: %s\n", name_cl, id_product, comment);
     puts(comment);
 
@@ -3072,10 +3069,10 @@ void menu_admin() {
                 add_supplier();
                 break;
             case 2:
-                // supprimer_fournisseur();
+                delete_supplier();
                 break;
             case 3:
-                // voir_liste_fournisseurs();
+                show_supplier();
                 break;
             case 4:
                 printf("Exiting administrator menu...\n");
@@ -3120,10 +3117,10 @@ void menu_admin_f() {
                 add_supplier();
                 break;
             case 2:
-                // supprimer_fournisseur();
+                delete_supplier_f();
                 break;
             case 3:
-                // voir_liste_fournisseurs();
+                show_supplier_f();
                 break;
             case 4:
                 printf("Quitter le menu administrateur...\n");
@@ -3457,4 +3454,170 @@ void Home_LOGIN_menu_f() {
         free(Supplier_CIN);
     }
     c_getch();
+}
+
+
+//-----------------------function delete supplier--------------
+void delete_supplier(){
+    FILE *fp,*temp;
+    fp=fopen("fournisseur.txt","r");
+    temp=fopen("temp.txt","w");
+    if(fp==NULL || temp==NULL){
+        printf("Unable to open this file");
+        exit(1);
+    }
+
+    fseek(fp, 0, SEEK_END); // Check if file is empty
+    if (ftell(fp) == 0) {
+        printf("The file fournisseur.txt is empty.");
+        fclose(fp);
+        fclose(temp);
+        remove("temp.txt");
+        return;
+    }
+    rewind(fp); // Reset file pointer to start
+
+    char CIN[30];
+    printf("Enter the supplier's CIN:");
+    scanf("%s",CIN);
+    int tr=0;
+    fournisseur f,fs;
+    while(fscanf(fp,"%s %s %s %s\n",f.prenomf,f.nomf,f.Cinf,f.mdpf)==4){
+        if(strcmp(f.Cinf,CIN)==0){
+            tr=1;
+            strcpy(fs.prenomf,f.prenomf);
+            strcpy(fs.Cinf,f.Cinf);
+            strcpy(fs.nomf,f.nomf);
+            strcpy(fs.mdpf,f.mdpf);
+        }
+        else{
+            fprintf(temp,"%s %s %s %s\n",f.prenomf,f.nomf,f.Cinf,f.mdpf);
+        }
+    }
+    fclose(fp);
+    fclose(temp);
+    remove("fournisseur.txt");
+    rename("temp.txt","fournisseur.txt");
+    if(tr==0){
+        c_textcolor(4);
+        printf("\nWarning, the supplier does not exist!!"); 
+        c_textcolor(15);
+    }else{
+        c_textcolor(2);
+        printf("\nMr. %s %s successfully deleted \n",fs.nomf,fs.prenomf);
+        c_textcolor(15);
+    }
+}
+
+//----------------------show supplier-----------------------
+void show_supplier(){
+    FILE *fp;
+    fp=fopen("fournisseur.txt","r");
+    fournisseur f;
+
+    fseek(fp, 0, SEEK_END); // Check if file is empty
+    if (ftell(fp) == 0) {
+        printf("The file fournisseur.txt is empty.");
+        fclose(fp);
+        return;
+    }
+    rewind(fp); // Reset file pointer to start
+
+    int tableWidth = 51; // Adjust width dynamically
+    printf("\n");
+    for (int i = 0; i < tableWidth; i++) printf("_");
+    printf("\n| %-15s | %-15s | %-10s |\n", "Last Name", "First Name", "CIN");
+    for (int i = 0; i < tableWidth; i++) printf("-");
+    printf("\n");
+
+    while (fscanf(fp, "%s %s %s %s", f.nomf, f.prenomf, f.Cinf, f.mdpf) == 4) {
+        printf("| %-15s | %-15s | %-10s |\n", f.nomf, f.prenomf, f.Cinf);
+    }
+    for (int i = 0; i < tableWidth; i++) printf("-");
+    printf("\n");
+
+    fclose(fp);
+}
+
+
+//-----------------------fonction supprimer fournisseur--------------
+void delete_supplier_f(){
+    FILE *fp,*temp;
+    fp=fopen("fournisseur.txt","r");
+    temp=fopen("temp.txt","w");
+    if(fp==NULL || temp==NULL){
+        printf("Impossible d'ouvrir ce fichier");
+        exit(1);
+    }
+
+    fseek(fp, 0, SEEK_END); // Check if file is empty
+    if (ftell(fp) == 0) {
+        printf("Le fichier fournisseur.txt est vide.");
+        fclose(fp);
+        fclose(temp);
+        remove("temp.txt");
+        return;
+    }
+    rewind(fp); // Reset file pointer to start
+
+    char CIN[30];
+    printf("Entrez le CIN du fournisseur :");
+    scanf("%s",CIN);
+    int tr=0;
+    fournisseur f,fs;
+    while(fscanf(fp,"%s %s %s %s\n",f.prenomf,f.nomf,f.Cinf,f.mdpf)==4){
+        if(strcmp(f.Cinf,CIN)==0){
+            tr=1;
+            strcpy(fs.prenomf,f.prenomf);
+            strcpy(fs.Cinf,f.Cinf);
+            strcpy(fs.nomf,f.nomf);
+            strcpy(fs.mdpf,f.mdpf);
+        }
+        else{
+            fprintf(temp,"%s %s %s %s\n",f.prenomf,f.nomf,f.Cinf,f.mdpf);
+        }
+    }
+    fclose(fp);
+    fclose(temp);
+    remove("fournisseur.txt");
+    rename("temp.txt","fournisseur.txt");
+    if(tr==0){
+        c_textcolor(4);
+        printf("\nAttention, le fournisseur n'existe pas !!"); 
+        c_textcolor(15);
+    }else{
+        c_textcolor(2);
+        printf("\nM. %s %s supprimé avec succès \n",fs.nomf,fs.prenomf);
+        c_textcolor(15);
+    }
+}
+
+//----------------------afficher fournisseur-----------------------
+void show_supplier_f(){
+    FILE *fp;
+    fp=fopen("fournisseur.txt","r");
+    fournisseur f;
+
+    fseek(fp, 0, SEEK_END);
+    if (ftell(fp) == 0) {
+        printf("Le fichier fournisseur.txt est vide.");
+        fclose(fp);
+        return;
+    }
+    rewind(fp); 
+
+    int tableWidth = 51;
+    printf("\n");
+    for (int i = 0; i < tableWidth; i++) printf("_");
+    printf("\n| %-15s | %-15s | %-10s |\n", "Nom", "Prénom", "CIN");
+    for (int i = 0; i < tableWidth; i++) printf("-");
+    printf("\n");
+
+    while (fscanf(fp, "%s %s %s %s", f.nomf, f.prenomf, f.Cinf, f.mdpf) == 4) {
+        printf("| %-15s | %-15s | %-10s |\n", f.nomf, f.prenomf, f.Cinf);
+    }
+    for (int i = 0; i < tableWidth; i++) printf("-");
+    printf("\n");
+
+    fclose(fp);
 }
