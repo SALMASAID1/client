@@ -3141,6 +3141,10 @@ void menu_admin_f() {
     } while (choix != 4);
 }
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 typedef struct Options {
     char **ops;
     int len;
@@ -3149,7 +3153,7 @@ typedef struct Options {
 
 // Fonctions utilitaires
 void c_print_centered(const char *text, int y) {
-    int x = (80 - strlen(text)) / 2; // Calculer la position centree
+    int x = 64; // Centered relative to x = 64
     c_gotoxy(x, y * 2);
     printf("%s", text);
 }
@@ -3221,6 +3225,8 @@ void Home_OPTIONS()     {
     options.ops = choose_language;
     options.len = sizeof(choose_language) / sizeof(choose_language[0]);
     c_textcolor(8);
+
+    c_gotoxy(64, 8); // Set cursor position to x = 64, y = 8
 
     int selected = c_select_menu(options);
     if (selected == options.len - 1) {
