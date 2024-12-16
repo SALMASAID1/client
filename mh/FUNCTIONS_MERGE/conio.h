@@ -75,3 +75,4 @@ int   c_wherex(void);
 int   c_wherey(void);
 void  c_gettextinfo(struct text_info *r);
 void  c_textattr(int newattr);
+void  usleep(int microseconds);

@@ -34,6 +34,23 @@ SOFTWARE.*/
 #define ENABLE_VIRTUAL_TERMINAL_PROCESSING 0x0004
 #endif
 
+#ifdef _WIN32
+#include <windows.h>
+void usleep(int microseconds) {
+    Sleep(microseconds / 1000); // Sleep takes milliseconds
+}
+#else
+#include <time.h>
+void usleep(int microseconds) {
+    struct timespec ts;
+    ts.tv_sec = microseconds / 1000000;           // Convert microseconds to seconds
+    ts.tv_nsec = (microseconds % 1000000) * 1000; // Convert remainder to nanoseconds
+    nanosleep(&ts, NULL);
+}
+#endif
+
+
+
 /*windows 10 can use VT100*/
 
 bool EnableVTMode() {

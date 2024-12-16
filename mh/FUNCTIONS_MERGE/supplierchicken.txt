@@ -1,0 +1,8 @@
+SUPPLIER CIN: chicken
+DATE: 16-12-2024
+
+Category           Quantity    Sale Amount (DH)
+----------------------------------------------
+----------------------------------------------
+TOTAL SALES AMOUNT: 0.00 DH
+
