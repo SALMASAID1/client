@@ -12,7 +12,6 @@
     void displayMenu();
     int is_CIN_unique(const char *cin);
     int is_CIN_unique_supplier(const char *cin);
-    void back();
                // SAID -------- SALMA //
     void clientLogin(char * CIN);
     void sign_in_client(void);
@@ -52,8 +51,6 @@
 char* Pass_hide(int max_length);
 void displayMenu_f();
 int is_CIN_unique(const char *cin);
-void back();
-
 // SAID -------- SALMA //
 void clientLogin_f(char * CIN);
 void sign_in_client_f(void);

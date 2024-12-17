@@ -72,7 +72,7 @@ int quantity ;
 
 
   
-  typedef struct {
+typedef struct {
     char **ops;
     int len;
     char *title;
@@ -133,24 +133,6 @@ int c_select_menu_f(Options options) {
                 return current_option;
         }
     }
-}
-
-
-
-void back() {
-    c_textattr(1); 
-    printf("\nReturning to the previous menu...\n");
-    c_getch();      
-    c_clrscr();    
-    c_textattr(14);
-}
-// french version
-void back_f() {
-    c_textattr(1); 
-    printf("\nRetour au menu precedent...\n");
-    c_getch();      
-    c_clrscr();    
-    c_textattr(14);
 }
 
 void leave(){
@@ -4020,6 +4002,50 @@ void draw_frame(int width, int height, int start_x, int start_y) {
     }
 }
 
+void display_supplier_menu() {
+    Options menu;
+    char *menu_options[] = {
+        "Supplier Management",
+        "Supplier Statistics",
+        "Back"
+    };
+
+    menu.ops = menu_options;
+    menu.len = 3;
+    menu.title = "Supplier Menu";
+
+    while (1) {
+        int choice = c_select_menu_f(menu);
+
+        switch (choice) {
+            case 0: // Supplier Management
+                menu_admin();
+                break;
+            case 1: // Supplier Statistics
+                c_clrscr();
+                c_textcolor(10);
+                c_gotoxy(55, 5);
+                printf("You selected Supplier Statistics.\n");
+                c_textcolor(15);
+                c_getch();
+                break;
+
+            case 2: // Back
+                Home_OPTIONS();
+                break;
+
+            default:
+                c_textcolor(4);
+                c_gotoxy(55,22);
+                printf("Invalid choice.");
+                c_textcolor(15);
+                c_getch();
+                break;
+        }
+    }
+}
+
+
 void menu_admin() {
     int choix;
     int i ;
@@ -4294,7 +4320,7 @@ void Home_LOGIN_menu()  {
     } else {
         char *Client_CIN = (char *)malloc(20 * sizeof(char));
         char *Supplier_CIN = (char *)malloc(20 * sizeof(char));
-        if(selected == 0 ) menu_admin();
+        if(selected == 0 ) display_supplier_menu();
         if (selected == 1 ) { // Fournisseur
             int choice;
             do {
