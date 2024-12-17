@@ -30,6 +30,7 @@
     void Display_the_Supplier_Total_amount_sales_in_the_Day( char * CIN  ); 
     void client_factor(char *CIN);
     void feedback_and_rate_the_product(char * name_cl , int id_product);
+    void openPDFInEdge(const char *filePath);
     int check_stock_and_get_price(FILE *PCM, const char *category, const char *name, int quantity, float *price);
 
                 // Alaoui -------- TAHA //

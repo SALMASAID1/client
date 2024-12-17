@@ -78,6 +78,21 @@ int quantity ;
     char *title;
 } Options;
 
+void openPDFInBrave(const char *filePath) {
+    char command[512]; // Buffer to hold the PowerShell command
+
+    // Format the command to open the PDF in Brave
+    snprintf(command, sizeof(command), "powershell -Command \"Start-Process 'brave.exe' -ArgumentList '%s'\"", filePath);
+
+    // Execute the command
+    int result = system(command);
+
+    // Check if the command was executed successfully
+    if (result != 0) {
+        printf("Failed to open the PDF in Brave browser.\n");
+    } 
+}
+
 void c_draw_menu_f(int current_option, Options options) {
     c_clrscr();
     c_textcolor(15);
@@ -3165,6 +3180,7 @@ void client_factor(char *CIN) {
     fprintf(FACT, "(=============================================) Tj\n");
     fprintf(FACT, pdf_footer);
     fclose(FACT);
+    openPDFInBrave("C:\\Users\\rabat\\Desktop\\Desktop_FILE\\c_project_last_updates\\C_PROJET_ACHATS-1\\mh\\FUNCTIONS_MERGE\\FACTEUR.pdf");
 }
 
 // french version
