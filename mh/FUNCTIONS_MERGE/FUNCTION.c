@@ -1309,68 +1309,57 @@ void View_Purchases_f(char *CIN) {
 
 void Remove_Purchases(char *CIN) {
     c_clrscr();
-    Client client;
     char filename[100];
-    int id_product, quantity, found = 0;
-    strcpy(client.CIN, CIN);
+    int id_product_in_cart, quantity_in_cart;
+    produit p;
+    int found = 0;
 
     // Construct the filename based on CIN
-    snprintf(filename, sizeof(filename), "%s_Cart.txt", client.CIN);
+    snprintf(filename, sizeof(filename), "%s_Cart.txt", CIN);
 
-    FILE *ff = fopen(filename, "r");
-    if (ff == NULL) {
+    // Open the cart file
+    FILE *cartFile = fopen(filename, "r");
+    if (cartFile == NULL) {
         c_textattr(4);
-        c_gotoxy(32, 8); 
+        c_gotoxy(32, 8);
         printf("Your cart is empty or the cart file doesn't exist.\n");
         c_textattr(14);
         return;
     }
 
-    // Create a temporary file to store the updated cart
-    FILE *tempFile = fopen("temp_cart.txt", "w");
-    if (tempFile == NULL) {
-        c_textattr(4);
-        c_gotoxy(32, 8);
-        printf("Error opening temporary file.\n");
-        c_textattr(14);
-        fclose(ff);
-        return;
-    }
-
-    produit p;
-    int id_product_in_cart, quantity_in_cart;
-
-    // Display the current items in the cart
-    c_gotoxy(52, 8);
+    // Display the header for the purchases
+    c_gotoxy(50, 8);
     printf("===== YOUR CURRENT PURCHASES =====");
     c_gotoxy(32, 10);
-    printf("%-20s %-15s %-10s %-10s", "Product ID", "Name", "Price", "Quantity");
+    printf("%-10s %-20s %-15s %-10s %-10s %-20s", "ID", "Name", "Category", "Price", "Quantity", "Description");
     c_gotoxy(32, 11);
-    printf("--------------------------------------------------------------");
-    c_textattr(8);
+    printf("-----------------------------------------------------------------------------------------");
 
-    // Read the items from the cart and print them
-    while (fscanf(ff, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
-        FILE *fk = fopen("produit.dat", "rb");
-        if (fk == NULL) {
+    // Iterate through the cart file
+    while (fscanf(cartFile, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
+        FILE *productFile = fopen("produit.dat", "rb");
+        if (productFile == NULL) {
             c_textattr(4);
             c_gotoxy(32, 13);
-            printf("Error opening product list file!");
+            printf("Error opening product list file!\n");
             c_textattr(14);
-            fclose(ff);
-            fclose(tempFile);
+            fclose(cartFile);
             return;
         }
 
-        while (fread(&p, sizeof(produit), 1, fk) == 1) {
+        // Search for the product in produit.dat
+        while (fread(&p, sizeof(produit), 1, productFile) == 1) {
             if (p.id_product == id_product_in_cart) {
-                c_gotoxy(32, 14);
-                printf("%-20d %-15s %-10.2f %-10d", p.id_product, p.name, p.price, quantity_in_cart);
+                // Display the product information along with the quantity from the cart
+                c_textattr(8);
+                c_gotoxy(32, 12 + found); // Adjust position for each product
+                printf("%-10d %-20s %-15s %-10.2f %-10d %-20s", 
+                    p.id_product, p.name, p.category, p.price, quantity_in_cart, p.description);
                 found = 1;
                 break;
             }
         }
-        fclose(fk);
+        fclose(productFile);
     }
 
     if (!found) {
@@ -1378,259 +1367,93 @@ void Remove_Purchases(char *CIN) {
         c_gotoxy(32, 16);
         printf("No products found in your cart.");
         c_textattr(14);
-        fclose(ff);
-        fclose(tempFile);
-        return;
     }
 
-    // Ask the user for the product ID and quantity to remove
-    c_gotoxy(32, 17);
-    printf("Enter the Product ID to REMOVE: ");
-    scanf("%d", &id_product);
+    // Close the cart file
+    fclose(cartFile);
 
-    // Check if the product ID exists in the current cart before proceeding
-    rewind(ff); // Rewind the cart file to search for the product ID
-    found = 0;
-    while (fscanf(ff, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
-        if (id_product_in_cart == id_product) {
-            found = 1;
-            break;
-        }
-    }
-
-    if (!found) { 
-        c_textattr(4);
+    if (found) {
+        c_textattr(2);
         c_gotoxy(32, 18);
-        printf("Product ID %d does not exist in your current cart.", id_product);
+        printf("End of cart display");
         c_textattr(14);
-        fclose(ff);
-        fclose(tempFile);
-        return;
+        c_getch();
     }
-
-    // Ask the user for the quantity to remove
-    c_gotoxy(32, 19);
-    printf("Enter the quantity to REMOVE: ");
-    while (scanf("%d", &quantity) != 1 || quantity < 1) {
-        c_textattr(4);
-        c_gotoxy(32, 19);
-        printf("Invalid quantity. Please enter a positive integer: ");
-        c_textattr(14);
-        while (getchar() != '\n'); // Clear invalid input
-    }
-
-    // Rewind the cart file and copy all items to the temporary file except the one to be removed
-    rewind(ff);
-    found = 0;
-
-    while (fscanf(ff, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
-        if (id_product_in_cart == id_product) {
-            found = 1;
-            if (quantity_in_cart >= quantity) {
-                if (quantity_in_cart > quantity) {
-                    c_gotoxy(32, 20);
-                    fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart - quantity);
-                    c_gotoxy(32, 21);
-                    printf("Removed %d items from cart. %d items remain.", quantity, quantity_in_cart - quantity);
-                } else {
-                    c_gotoxy(32, 22);
-                    printf("Removed all %d items from cart.", quantity_in_cart);
-                }
-            } else {
-                c_textattr(4);
-                c_gotoxy(32, 22);
-                printf("Error: Only %d items are available in the cart. No items removed.\n", quantity_in_cart);
-                c_textattr(14);
-                fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart); // Write original data to tempFile
-            }
-        } else {
-            fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart);
-        }
-    }
-
-    if (!found) {
-        c_textattr(4);
-        c_gotoxy(32, 23);
-        printf("Product ID %d not found in your cart.", id_product);
-        c_textattr(14);
-    }
-
-    // Close the original and temporary files
-    fclose(ff);
-    fclose(tempFile);
-
-    // Replace the original cart file with the updated cart
-    remove(filename); // Delete the original cart file
-    rename("temp_cart.txt", filename); // Rename the temporary file to the original cart filename
-    c_textattr(2);
-
-    c_gotoxy(32, 24);
-    printf("Cart updated successfully.");
-    c_textattr(14);
-    c_getch();
 }
+
 // french version
 void Remove_Purchases_f(char *CIN) {
     c_clrscr();
-    Client client;
     char filename[100];
-    int id_product, quantity, found = 0;
-    strcpy(client.CIN, CIN);
+    int id_product_in_cart, quantity_in_cart;
+    produit p;
+    int found = 0;
 
-    // Construct the filename based on CIN
-    snprintf(filename, sizeof(filename), "%s_Cart.txt", client.CIN);
+    // Construire le nom du fichier basé sur le CIN
+    snprintf(filename, sizeof(filename), "%s_Cart.txt", CIN);
 
-    FILE *ff = fopen(filename, "r");
-    if (ff == NULL) {
+    // Ouvrir le fichier du panier
+    FILE *cartFile = fopen(filename, "r");
+    if (cartFile == NULL) {
         c_textattr(4);
-        c_gotoxy(32, 8); 
+        c_gotoxy(32, 8);
         printf("Votre panier est vide ou le fichier du panier n'existe pas.\n");
         c_textattr(14);
         return;
     }
 
-    // Create a temporary file to store the updated cart
-    FILE *tempFile = fopen("temp_cart.txt", "w");
-    if (tempFile == NULL) {
-        c_textattr(4);
-        c_gotoxy(32, 8);
-        printf("Erreur d'ouverture du fichier temporaire.\n");
-        c_textattr(14);
-        fclose(ff);
-        return;
-    }
-
-    produit p;
-    int id_product_in_cart, quantity_in_cart;
-
-    // Display the current items in the cart
-    c_gotoxy(52, 8);
+    // Afficher l'en-tête pour les achats
+    c_gotoxy(50, 8);
     printf("===== VOS ACHATS ACTUELS =====");
     c_gotoxy(32, 10);
-    printf("%-20s %-15s %-10s %-10s", "ID Produit", "Nom", "Prix", "Quantite");
+    printf("%-10s %-20s %-15s %-10s %-10s %-20s", "ID", "Nom", "Catégorie", "Prix", "Quantité", "Description");
     c_gotoxy(32, 11);
-    printf("--------------------------------------------------------------");
-    c_textattr(8);
+    printf("-----------------------------------------------------------------------------------------");
 
-    // Read the items from the cart and print them
-    while (fscanf(ff, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
-        FILE *fk = fopen("produit.dat", "rb");
-        if (fk == NULL) {
+    // Parcourir le fichier du panier
+    while (fscanf(cartFile, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
+        FILE *productFile = fopen("produit.dat", "rb");
+        if (productFile == NULL) {
             c_textattr(4);
             c_gotoxy(32, 13);
-            printf("Erreur d'ouverture du fichier des produits!");
+            printf("Erreur lors de l'ouverture du fichier de la liste des produits !\n");
             c_textattr(14);
-            fclose(ff);
-            fclose(tempFile);
+            fclose(cartFile);
             return;
         }
 
-        while (fread(&p, sizeof(produit), 1, fk) == 1) {
+        // Rechercher le produit dans produit.dat
+        while (fread(&p, sizeof(produit), 1, productFile) == 1) {
             if (p.id_product == id_product_in_cart) {
-                c_gotoxy(32, 14);
-                printf("%-20d %-15s %-10.2f %-10d", p.id_product, p.name, p.price, quantity_in_cart);
+                // Afficher les informations sur le produit avec la quantité du panier
+                c_textattr(8);
+                c_gotoxy(32, 12 + found); // Ajuster la position pour chaque produit
+                printf("%-10d %-20s %-15s %-10.2f %-10d %-20s", 
+                    p.id_product, p.name, p.category, p.price, quantity_in_cart, p.description);
                 found = 1;
                 break;
             }
         }
-        fclose(fk);
+        fclose(productFile);
     }
 
     if (!found) {
         c_textattr(4);
         c_gotoxy(32, 16);
-        printf("Aucun produit trouve dans votre panier.");
+        printf("Aucun produit trouvé dans votre panier.");
         c_textattr(14);
-        fclose(ff);
-        fclose(tempFile);
-        return;
     }
 
-    // Ask the user for the product ID and quantity to remove
-    c_gotoxy(32, 17);
-    printf("Entrez l'ID du produit a SUPPRIMER : ");
-    scanf("%d", &id_product);
+    // Fermer le fichier du panier
+    fclose(cartFile);
 
-    // Check if the product ID exists in the current cart before proceeding
-    rewind(ff); // Rewind the cart file to search for the product ID
-    found = 0;
-    while (fscanf(ff, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
-        if (id_product_in_cart == id_product) {
-            found = 1;
-            break;
-        }
-    }
-
-    if (!found) { 
-        c_textattr(4);
+    if (found) {
+        c_textattr(2);
         c_gotoxy(32, 18);
-        printf("L'ID Produit %d n'existe pas dans votre panier actuel.", id_product);
+        printf("Fin de l'affichage du panier");
         c_textattr(14);
-        fclose(ff);
-        fclose(tempFile);
-        return;
+        c_getch();
     }
-
-    // Ask the user for the quantity to remove
-    c_gotoxy(32, 19);
-    printf("Entrez la quantite a SUPPRIMER : ");
-    while (scanf("%d", &quantity) != 1 || quantity < 1) {
-        c_textattr(4);
-        c_gotoxy(32, 19);
-        printf("Quantite invalide. Veuillez entrer un entier positif : ");
-        c_textattr(14);
-        while (getchar() != '\n'); // Clear invalid input
-    }
-
-    // Rewind the cart file and copy all items to the temporary file except the one to be removed
-    rewind(ff);
-    found = 0;
-
-    while (fscanf(ff, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
-        if (id_product_in_cart == id_product) {
-            found = 1;
-            if (quantity_in_cart >= quantity) {
-                if (quantity_in_cart > quantity) {
-                    c_gotoxy(32, 20);
-                    fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart - quantity);
-                    c_gotoxy(32, 21);
-                    printf("Supprime %d article(s) du panier. Il en reste %d.", quantity, quantity_in_cart - quantity);
-                } else {
-                    c_gotoxy(32, 22);
-                    printf("Tous les %d articles ont ete supprimes du panier.", quantity_in_cart);
-                }
-            } else {
-                c_textattr(4);
-                c_gotoxy(32, 22);
-                printf("Erreur : Il n'y a que %d article(s) dans le panier. Aucun article supprime.\n", quantity_in_cart);
-                c_textattr(14);
-                fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart); // Write original data to tempFile
-            }
-        } else {
-            fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart);
-        }
-    }
-
-    if (!found) {
-        c_textattr(4);
-        c_gotoxy(32, 23);
-        printf("L'ID Produit %d n'a pas ete trouve dans votre panier.", id_product);
-        c_textattr(14);
-    }
-
-    // Close the original and temporary files
-    fclose(ff);
-    fclose(tempFile);
-
-    // Replace the original cart file with the updated cart
-    remove(filename); // Delete the original cart file
-    rename("temp_cart.txt", filename); // Rename the temporary file to the original cart filename
-    c_textattr(2);
-
-    c_gotoxy(32, 24);
-    printf("Panier mis a jour avec succes.");
-    c_textattr(14);
-    c_getch();
 }
 
 void confirm_purchases(char *Temp_cin) {
