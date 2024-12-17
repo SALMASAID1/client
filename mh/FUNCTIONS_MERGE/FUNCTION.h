@@ -37,14 +37,13 @@
     void login_supplier(char * CIN );
     void liste_fournisseur( char * Temp_CIN );
     void add_product(char *CINF);
-    void delete_product();
-    void modify_product();
+    void delete_product(char *CINF);
+    void modify_product(char *CINF);
     void add_supplier();
     void view_product_supplier(char * CINF);
     void delete_supplier();
     void show_supplier();
     int get_next_product_id(FILE *fp);
-    void choixinvalid();
 
 
     /*French Version*/
@@ -77,14 +76,13 @@ int check_stock_and_get_price(FILE *PCM, const char *category, const char *name,
 void login_supplier_f(char * CIN );
 void liste_fournisseur_f( char * Temp_CIN );
 void add_product_f(char *CINF);
-void delete_product_f();
-void modify_product_f();
+void delete_product_f(char *CINF);
+void modify_product_f(char *CINF);
 void add_supplier_f();
 void view_product_supplier_f(char * CINF);
 void delete_supplier_f();
 void show_supplier_f();
 int  get_next_product_id(FILE *fp);
-void choixinvalid();
 
 void c_print_centered(const char *text, int y, int x_offset);
 void get_console_size(int *rows, int *cols);

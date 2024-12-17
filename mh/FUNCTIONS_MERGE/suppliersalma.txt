@@ -1,9 +1,8 @@
-SUPPLIER CIN: chicken
+SUPPLIER CIN: salma
 DATE: 17-12-2024
 
 Category           Quantity    Sale Amount (DH)
 ----------------------------------------------
-tbibi              12         480.00         
 ----------------------------------------------
-TOTAL SALES AMOUNT: 480.00 DH
+TOTAL SALES AMOUNT: 0.00 DH
 
