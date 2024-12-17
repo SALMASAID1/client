@@ -63,6 +63,7 @@ void liste_client_f(char * Temp_cin , char * client_name);
 void Add_Purchases_f(char *CIN);
 void View_Purchases_f(char *CIN);
 void Remove_Purchases_f(char *CIN);
+void confirm_purchases_f(char *CIN);
 
 // TAMZIRT -------- MOHAMED //
 void add_credit_card_f(char* CIN_client , char * name_client);

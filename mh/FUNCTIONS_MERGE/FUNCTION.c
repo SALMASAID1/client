@@ -1594,7 +1594,7 @@ void Remove_Purchases_f(char *CIN) {
 }
 
 void confirm_purchases(char *Temp_cin) {
-    FILE *cartFile, *productFile, *tempFile;
+    FILE *cartFile, *productFile;
     produit p;
     int id_product_in_cart, quantity_in_cart;
     char filename[100];
@@ -1603,133 +1603,17 @@ void confirm_purchases(char *Temp_cin) {
     // Construct the cart filename
     snprintf(filename, sizeof(filename), "%s_Cart.txt", Temp_cin);
 
-    // Open the cart file to get the products the client has bought
+    // Open the cart file
     cartFile = fopen(filename, "r");
     if (cartFile == NULL) {
         c_textattr(4);
         c_gotoxy(32, 8); 
-        printf("Your cart is empty or the cart file does not exist.\n");
+        printf("Votre panier est vide ou le fichier n'existe pas.\n");
         c_textattr(14);
         return;
     }
 
-    // Ask the client to confirm the purchase
-    c_gotoxy(32, 8);
-    printf("Do you want to confirm your purchase? [1] Yes [2] No: ");
-    scanf("%d", &confirm_choice);
-
-    if (confirm_choice != 1) {
-        c_textattr(4);
-        c_gotoxy(32, 10);
-        printf("Purchase not confirmed.\n");
-        c_textattr(14);
-        fclose(cartFile);
-        return;
-    }
-
-    // Open the product file to update quantities
-    productFile = fopen("produit.dat", "r+b");
-    if (productFile == NULL) {
-        c_textattr(4);
-        c_gotoxy(32, 12);
-        printf("Error opening the product file!\n");
-        c_textattr(14);
-        fclose(cartFile);
-        return;
-    }
-
-    // Create a temporary file to store the updated product information
-    tempFile = fopen("temp_produit.dat", "w+b");
-    if (tempFile == NULL) {
-        c_textattr(4);
-        c_gotoxy(32, 13);
-        printf("Error creating the temporary product file!\n");
-        c_textattr(14);
-        fclose(cartFile);
-        fclose(productFile);
-        return;
-    }
-
-    int found;
-    while (fscanf(cartFile, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
-        found = 0;
-        
-        // Go through the products list to find the product and update its quantity
-        while (fread(&p, sizeof(produit), 1, productFile) == 1) {
-            if (p.id_product == id_product_in_cart) {
-                found = 1;
-                // Reduce the quantity in the product file
-                if (p.quantity >= quantity_in_cart) {
-                    p.quantity -= quantity_in_cart;
-                    c_textattr(2);
-                    c_gotoxy(32, 14);
-                    printf("Product ID %d quantity updated. Remaining quantity: %d\n", p.id_product, p.quantity);
-                    c_textattr(14);
-                } else {
-                    c_textattr(4);
-                    c_gotoxy(32, 15);
-                    printf("Error: Insufficient stock for product ID %d. Purchase not confirmed.\n", p.id_product);
-                    c_textattr(14);
-                    fclose(cartFile);
-                    fclose(productFile);
-                    fclose(tempFile);
-                    remove("temp_produit.dat");
-                    return;
-                }
-            }
-            // Write the updated product information to the temporary file
-            fwrite(&p, sizeof(produit), 1, tempFile);
-        }
-
-        if (!found) {
-            c_textattr(4);
-            c_gotoxy(32, 16);
-            printf("Product ID %d not found in the product list.\n", id_product_in_cart);
-            c_textattr(14);
-        }
-        
-        // Reset the file pointer to the beginning of the file for the next read
-        rewind(productFile);
-    }
-
-    // Close all files
-    fclose(cartFile);
-    fclose(productFile);
-    fclose(tempFile);
-
-    // Replace the original product file with the updated one
-    remove("produit.dat");
-    rename("temp_produit.dat", "produit.dat");
-
-    c_textattr(2);
-    c_gotoxy(32, 18);
-    printf("Purchase confirmed and product quantities successfully updated.\n");
-    c_textattr(14);
-    c_getch();
-    c_clrscr();
-}
-// french version
-void confirm_purchases_f(char *Temp_cin) {
-    FILE *cartFile, *productFile, *tempFile;
-    produit p;
-    int id_product_in_cart, quantity_in_cart;
-    char filename[100];
-    int confirm_choice;
-
-    // Construct the cart filename
-    snprintf(filename, sizeof(filename), "%s_Cart.txt", Temp_cin);
-
-    // Open the cart file to get the products the client has bought
-    cartFile = fopen(filename, "r");
-    if (cartFile == NULL) {
-        c_textattr(4);
-        c_gotoxy(32, 8); 
-        printf("Votre panier est vide ou le fichier du panier n'existe pas.\n");
-        c_textattr(14);
-        return;
-    }
-
-    // Ask the client to confirm the purchase
+    // Ask for confirmation
     c_gotoxy(32, 8);
     printf("Voulez-vous confirmer votre achat ? [1] Oui [2] Non : ");
     scanf("%d", &confirm_choice);
@@ -1743,87 +1627,179 @@ void confirm_purchases_f(char *Temp_cin) {
         return;
     }
 
-    // Open the product file to update quantities
+    // Open the product file
     productFile = fopen("produit.dat", "r+b");
     if (productFile == NULL) {
         c_textattr(4);
         c_gotoxy(32, 12);
-        printf("Erreur d'ouverture du fichier des produits !\n");
+        printf("Erreur d'ouverture du fichier produit !\n");
         c_textattr(14);
         fclose(cartFile);
         return;
     }
 
-    // Create a temporary file to store the updated product information
-    tempFile = fopen("temp_produit.dat", "w+b");
-    if (tempFile == NULL) {
-        c_textattr(4);
-        c_gotoxy(32, 13);
-        printf("Erreur de création du fichier produit temporaire !\n");
-        c_textattr(14);
-        fclose(cartFile);
-        fclose(productFile);
-        return;
-    }
-
-    int found;
+    // Process each product in the cart
     while (fscanf(cartFile, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
-        found = 0;
-        
-        // Go through the products list to find the product and update its quantity
+        int found = 0;
+
+        // Search for the product in produit.dat
         while (fread(&p, sizeof(produit), 1, productFile) == 1) {
             if (p.id_product == id_product_in_cart) {
                 found = 1;
-                // Reduce the quantity in the product file
+
+                // Check stock availability
                 if (p.quantity >= quantity_in_cart) {
                     p.quantity -= quantity_in_cart;
+
+                    // Move the file pointer back to update the product
+                    fseek(productFile, -sizeof(produit), SEEK_CUR);
+                    fwrite(&p, sizeof(produit), 1, productFile);
+
                     c_textattr(2);
                     c_gotoxy(32, 14);
-                    printf("La quantité du produit ID %d a été mise à jour. Quantité restante : %d\n", p.id_product, p.quantity);
+                    printf("Produit ID %d mis à jour. Quantité restante : %d\n", p.id_product, p.quantity);
                     c_textattr(14);
                 } else {
                     c_textattr(4);
                     c_gotoxy(32, 15);
-                    printf("Erreur : Stock insuffisant pour le produit ID %d. Achat non confirmé.\n", p.id_product);
+                    printf("Erreur : Stock insuffisant pour le produit ID %d. Achat annulé.\n", p.id_product);
                     c_textattr(14);
+
                     fclose(cartFile);
                     fclose(productFile);
-                    fclose(tempFile);
-                    remove("temp_produit.dat");
-                    return;
+                    return; // Exit safely
                 }
+                break;
             }
-            // Write the updated product information to the temporary file
-            fwrite(&p, sizeof(produit), 1, tempFile);
         }
 
         if (!found) {
             c_textattr(4);
             c_gotoxy(32, 16);
-            printf("Produit ID %d non trouvé dans la liste des produits.\n", id_product_in_cart);
+            printf("Produit ID %d introuvable.\n", id_product_in_cart);
             c_textattr(14);
         }
-        
-        // Reset the file pointer to the beginning of the file for the next read
+
+        // Rewind file pointer to search for the next product
         rewind(productFile);
     }
 
-    // Close all files
+    // Close files
     fclose(cartFile);
     fclose(productFile);
-    fclose(tempFile);
-
-    // Replace the original product file with the updated one
-    remove("produit.dat");
-    rename("temp_produit.dat", "produit.dat");
 
     c_textattr(2);
     c_gotoxy(32, 18);
-    printf("Achat confirmé et quantités des produits mises à jour avec succès.\n");
+    printf("Achat confirmé. Quantités des produits mises à jour avec succès.\n");
     c_textattr(14);
     c_getch();
     c_clrscr();
 }
+
+// french version
+void confirm_purchases_f(char *Temp_cin) {
+    FILE *cartFile, *productFile;
+    produit p;
+    int id_product_in_cart, quantity_in_cart;
+    char filename[100];
+    int confirm_choice;
+
+    // Construire le nom du fichier du panier
+    snprintf(filename, sizeof(filename), "%s_Cart.txt", Temp_cin);
+
+    // Ouvrir le fichier panier
+    cartFile = fopen(filename, "r");
+    if (cartFile == NULL) {
+        c_textattr(4);
+        c_gotoxy(32, 8); 
+        printf("Votre panier est vide ou le fichier du panier n'existe pas.\n");
+        c_textattr(14);
+        return;
+    }
+
+    // Demander confirmation d'achat
+    c_gotoxy(32, 8);
+    printf("Voulez-vous confirmer votre achat ? [1] Oui [2] Non : ");
+    scanf("%d", &confirm_choice);
+
+    if (confirm_choice != 1) {
+        c_textattr(4);
+        c_gotoxy(32, 10);
+        printf("Achat non confirmé.\n");
+        c_textattr(14);
+        fclose(cartFile);
+        return;
+    }
+
+    // Ouvrir le fichier produit
+    productFile = fopen("produit.dat", "r+b");
+    if (productFile == NULL) {
+        c_textattr(4);
+        c_gotoxy(32, 12);
+        printf("Erreur lors de l'ouverture du fichier des produits !\n");
+        c_textattr(14);
+        fclose(cartFile);
+        return;
+    }
+
+    // Traiter chaque produit dans le panier
+    while (fscanf(cartFile, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
+        int found = 0;
+
+        // Rechercher le produit dans produit.dat
+        while (fread(&p, sizeof(produit), 1, productFile) == 1) {
+            if (p.id_product == id_product_in_cart) {
+                found = 1;
+
+                // Vérifier la disponibilité du stock
+                if (p.quantity >= quantity_in_cart) {
+                    p.quantity -= quantity_in_cart;
+
+                    // Déplacer le pointeur de fichier pour mettre à jour le produit
+                    fseek(productFile, -sizeof(produit), SEEK_CUR);
+                    fwrite(&p, sizeof(produit), 1, productFile);
+
+                    c_textattr(2);
+                    c_gotoxy(32, 14);
+                    printf("Produit ID %d mis à jour. Quantité restante : %d\n", p.id_product, p.quantity);
+                    c_textattr(14);
+                } else {
+                    c_textattr(4);
+                    c_gotoxy(32, 15);
+                    printf("Erreur : Stock insuffisant pour le produit ID %d. Achat annulé.\n", p.id_product);
+                    c_textattr(14);
+
+                    fclose(cartFile);
+                    fclose(productFile);
+                    return; // Quitter proprement
+                }
+                break;
+            }
+        }
+
+        if (!found) {
+            c_textattr(4);
+            c_gotoxy(32, 16);
+            printf("Produit ID %d introuvable dans la liste des produits.\n", id_product_in_cart);
+            c_textattr(14);
+        }
+
+        // Réinitialiser le pointeur du fichier pour rechercher le prochain produit
+        rewind(productFile);
+    }
+
+    // Fermer les fichiers
+    fclose(cartFile);
+    fclose(productFile);
+
+    c_textattr(2);
+    c_gotoxy(32, 18);
+    printf("Achat confirmé. Les quantités des produits ont été mises à jour avec succès.\n");
+    c_textattr(14);
+    c_getch();
+    c_clrscr();
+}
+
 
 //----------------------------------------add product--------------------------------------
 
