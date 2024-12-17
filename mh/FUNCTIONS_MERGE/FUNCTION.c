@@ -270,7 +270,7 @@ void liste_client_f(char *Temp_cin, char *client_name) {
 
         switch (c) {
             case 1:
-                View_Product_List();
+                View_Product_List_f();
                 break;
             case 2:
                 Add_Purchases(Temp_cin);
@@ -796,50 +796,93 @@ void clientLogin_f(char *CIN) {
 }
 
 void View_Product_List() {
-    c_clrscr();
-    product p;
-    FILE *fk = fopen("produit.txt", "rt");
-    if (fk == NULL) {
-             c_textattr(4);
-        printf("The file does not exist or could not be opened!\n");
+    c_clrscr(); // Clear the screen
+    produit p;
 
+    // Open the binary file "produit.dat" for reading
+    FILE *fk = fopen("produit.dat", "rb");
+    if (fk == NULL) {
+        c_textattr(4); // Set text color to red
+        printf("Error: The file does not exist or could not be opened!\n");
         return;
     }
-     c_textattr(8);
-    c_gotoxy(50,4);printf("====== THE PRODUCTS LIST ======");
-    c_gotoxy(18,8);printf(" %-20s %-20s %-15s %-15s %-10s %-10s", "ID_PRODUCT", "CATEGORY", "NAME", "DESCRIPTION", "PRICE", "QUANTITY");
-    c_gotoxy(18,10);printf("-------------------------------------------------------------------------------------------------");
-    c_textattr(14);
-    while (fscanf(fk, "%d %19s %19s %19s %f %d", &p.id_product, p.category, p.name, p.description, &p.price, &p.quantity) == 6) {
-        c_gotoxy(18,12);printf("%-20d %-20s %-15s %-15s %-10.2f       %-10d", p.id_product, p.category, p.name, p.description, p.price, p.quantity);
+
+    // Print the table header
+    c_textattr(8); // Set text color to gray
+    c_gotoxy(50, 4);
+    printf("====== PRODUCT LIST ======");
+    c_gotoxy(18, 8);
+    printf(" %-10s %-20s %-20s %-10s %-10s %-30s", 
+           "ID", "NAME", "CATEGORY", "PRICE", "QUANTITY", "DESCRIPTION");
+    c_gotoxy(18, 10);
+    printf("-----------------------------------------------------------------------------------------------------------");
+
+    // Read and display each product
+    c_textattr(14); // Set text color to yellow
+    int row = 12; // Start displaying from row 12
+    int productFound = 0; // To track if any products are found
+
+    while (fread(&p, sizeof(produit), 1, fk) == 1) {
+        c_gotoxy(18, row);
+        printf("%-10d %-20s %-20s %-10.2f %-10d %-30s", 
+               p.id_product, p.name, p.category, p.price, p.quantity, p.description);
+        row++;
+        productFound = 1; // Mark that at least one product was found
     }
 
-    fclose(fk);
-     c_textattr(8);
+    // If no products were found, print a message
+    if (!productFound) {
+        c_textattr(4); // Set text color to red
+        printf("\nNo products found in the file.\n");
+    }
 
-
+    fclose(fk); // Close the file
+    c_textattr(8); // Reset text color to gray
 }
 // french version
 void View_Product_List_f() {
-    c_clrscr();
-    product p;
-    FILE *fk = fopen("produit.txt", "rt");
+    c_clrscr(); // Clear the screen
+    produit p;
+
+    // Open the binary file "produit.dat" for reading
+    FILE *fk = fopen("produit.dat", "rb");
     if (fk == NULL) {
-        c_textattr(4);
-        printf("Le fichier n'existe pas ou n'a pas pu etre ouvert !\n");
+        c_textattr(4); // Set text color to red
+        printf("Erreur : Le fichier n'existe pas ou n'a pas pu être ouvert !\n");
         return;
     }
-    c_textattr(8);
-    c_gotoxy(50, 4); printf("====== LISTE DES PRODUITS ======");
-    c_gotoxy(18, 8); printf(" %-20s %-20s %-15s %-15s %-10s %-10s", "ID_PRODUIT", "CATEGORIE", "NOM", "DESCRIPTION", "PRIX", "QUANTITE");
-    c_gotoxy(18, 10); printf("-------------------------------------------------------------------------------------------------");
-    c_textattr(14);
-    while (fscanf(fk, "%d %19s %19s %19s %f %d", &p.id_product, p.category, p.name, p.description, &p.price, &p.quantity) == 6) {
-        c_gotoxy(18, 12); printf("%-20d %-20s %-15s %-15s %-10.2f       %-10d", p.id_product, p.category, p.name, p.description, p.price, p.quantity);
+
+    // Print the table header
+    c_textattr(8); // Set text color to gray
+    c_gotoxy(50, 4);
+    printf("====== LISTE DES PRODUITS ======");
+    c_gotoxy(18, 8);
+    printf(" %-10s %-20s %-20s %-10s %-10s %-30s", 
+           "ID", "NOM", "CATÉGORIE", "PRIX", "QUANTITÉ", "DESCRIPTION");
+    c_gotoxy(18, 10);
+    printf("-----------------------------------------------------------------------------------------------------------");
+
+    // Read and display each product
+    c_textattr(14); // Set text color to yellow
+    int row = 12; // Start displaying from row 12
+    int productFound = 0; // To track if any products are found
+
+    while (fread(&p, sizeof(produit), 1, fk) == 1) {
+        c_gotoxy(18, row);
+        printf("%-10d %-20s %-20s %-10.2f %-10d %-30s", 
+               p.id_product, p.name, p.category, p.price, p.quantity, p.description);
+        row++;
+        productFound = 1; // Mark that at least one product was found
     }
 
-    fclose(fk);
-    c_textattr(8);
+    // If no products were found, print a message
+    if (!productFound) {
+        c_textattr(4); // Set text color to red
+        printf("\nAucun produit trouvé dans le fichier.\n");
+    }
+
+    fclose(fk); // Close the file
+    c_textattr(8); // Reset text color to gray
 }
 
 void Add_Purchases(char *CIN) {
