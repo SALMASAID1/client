@@ -71,6 +71,57 @@ int quantity ;
 }clc ; // clc : client choice 
 
 
+  
+  typedef struct {
+    char **ops;
+    int len;
+    char *title;
+} Options;
+
+void c_draw_menu_f(int current_option, Options options) {
+    c_clrscr();
+    c_textcolor(15);
+    c_gotoxy(55, 5);
+    printf("%s", options.title);
+    c_textcolor(14);
+
+    for (int i = 0; i < options.len; i++) {
+        if (i == current_option) {
+            c_textcolor(10); // Highlight the selected option
+            c_gotoxy(60, 7 + i);
+            printf("> %s", options.ops[i]);
+        } else {
+            c_textcolor(15);
+            c_gotoxy(60, 7 + i);
+            printf("  %s", options.ops[i]);
+        }
+    }
+    c_textcolor(15);  // Reset text color
+}
+int c_select_menu_f(Options options) {
+    int current_option = 0;
+    int key;
+    c_draw_menu_f(current_option, options);
+
+    while (1) {
+        key = c_getch();
+        switch (key) {
+            case 72: // Arrow up
+                current_option = (current_option == 0) ? options.len - 1 : current_option - 1;
+                c_draw_menu_f(current_option, options);
+                break;
+            case 80: // Arrow down
+                current_option = (current_option == options.len - 1) ? 0 : current_option + 1;
+                c_draw_menu_f(current_option, options);
+                break;
+            case 13: // Enter key
+                return current_option;
+        }
+    }
+}
+
+
+
 void back() {
     c_textattr(1); 
     printf("\nReturning to the previous menu...\n");
@@ -135,99 +186,122 @@ void liste_client(char *Temp_cin, char *client_name) {
 
         c_gotoxy(65, 22); printf("------->> SELECT YOUR OPTION: ");
         scanf("%d", &c);
-        c_clrscr();
 
-        switch (c) {
-            case 1:
-                View_Product_List();
-                break;
-            case 2:
-                Add_Purchases(Temp_cin);
-                break;
-            case 3:
-                View_Purchases(Temp_cin);
-                break;
-            case 4:
-                Remove_Purchases(Temp_cin);
-                break;
-            case 5: {
-                FD = fopen("CREDIT_CARD.dat", "rb");
-                if (FD == NULL) {
-                    c_textcolor(4);
-                    printf("\nFILE IS NOT EXIST !!!");
-                    exit(0);
-                }
-
-                check_CRD = 0;
-                check_card_exists = 0;
-                while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
-                    // Check if the card already exists for this client
-                    if (strcmp(cd.client_CIN, Temp_cin) == 0) {
-                        check_CRD = 1;
-                        if (strcmp(cd.card_number, Temp_cin) == 0) {
-                            check_card_exists = 1;
-                            break;
-                        }
-                    }
-                }
-                fclose(FD);
-
-                if (check_CRD) {
-                    if (check_card_exists) {
-                        c_textcolor(4);
-                        printf("\nThe credit card already exists for this client!");
-                    } else {
-                        add_credit_card(Temp_cin, client_name);
-                        c_textcolor(2);
-                        printf("\nCredit card added successfully!");
-                    }
-                } else {
-                    add_credit_card(Temp_cin, client_name);
-                    c_textcolor(2);
-                    printf("\nCredit card added successfully!");
-                }
-                break;
-            }
-
-            case 6: {
-                FD = fopen("CREDIT_CARD.dat", "rb");
-                if (FD == NULL) {
-                    c_textcolor(4);
-                    printf("FILE IS NOT EXIST !!!");
-                    exit(0);
-                }
-
-                int found = 0;
-                while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
-                    if (strcmp(cd.client_CIN, Temp_cin) == 0) {
-                        display_credit_cards(client_name, Temp_cin);
-                        found = 1;
-                        break;
-                    }
-                }
-
-                if (!found) {
-                    c_textcolor(4);
-                    printf("No credit card found for this client!");
-                }
-                fclose(FD);
-                break;
-            }
-            case 7 : 
-                 confirm_purchases(Temp_cin);
-            case 8 : 
-                Home_LOGIN_menu();
-            case 9:
-                leave();
-                break;
-
-            default:
-                c_textattr(4);
-                printf("Incorrect choice! Your choice should be between [1 - 8]. Please retry.");
-                c_textattr(14);
-                c_getch();
-                break;
+ switch (c) {
+    case 1:
+        View_Product_List();
+        break;
+    case 2:
+        Add_Purchases(Temp_cin);
+        break;
+    case 3:
+        View_Purchases(Temp_cin);
+        break;
+    case 4:
+        Remove_Purchases(Temp_cin);
+        break;
+    case 5: {
+        FD = fopen("CREDIT_CARD.dat", "rb");
+        if (FD == NULL) {
+            c_textcolor(4);
+            printf("\nFILE IS NOT EXIST !!!");
+            exit(0);
         }
+
+        check_CRD = 0;
+        check_card_exists = 0;
+        while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
+            if (strcmp(cd.client_CIN, Temp_cin) == 0) {
+                check_CRD = 1;
+                if (strcmp(cd.card_number, Temp_cin) == 0) {
+                    check_card_exists = 1;
+                    break;
+                }
+            }
+        }
+        fclose(FD);
+
+        if (check_CRD) {
+            if (check_card_exists) {
+                c_textcolor(4);
+                printf("\nThe credit card already exists for this client!");
+            } else {
+                add_credit_card(Temp_cin, client_name);
+                c_textcolor(2);
+                printf("\nCredit card added successfully!");
+            }
+        } else {
+            add_credit_card(Temp_cin, client_name);
+            c_textcolor(2);
+            printf("\nCredit card added successfully!");
+        }
+        break;
+    }
+    case 6: {
+        FD = fopen("CREDIT_CARD.dat", "rb");
+        if (FD == NULL) {
+            c_textcolor(4);
+            printf("FILE IS NOT EXIST !!!");
+            exit(0);
+        }
+
+        int found = 0;
+        while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
+            if (strcmp(cd.client_CIN, Temp_cin) == 0) {
+                display_credit_cards(client_name, Temp_cin);
+                found = 1;
+                break;
+            }
+        }
+
+        if (!found) {
+            c_textcolor(4);
+            printf("No credit card found for this client!");
+        }
+        fclose(FD);
+        break;
+    }
+    case 7: { // Ensure the client has added a credit card
+        FD = fopen("CREDIT_CARD.dat", "rb");
+        if (FD == NULL) {
+            c_textcolor(4);
+            printf("\nError: Credit card file does not exist!\n");
+            exit(0);
+        }
+
+        int card_found = 0;
+
+        while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
+            if (strcmp(cd.client_CIN, Temp_cin) == 0) {
+                card_found = 1;
+                break;
+            }
+        }
+        fclose(FD);
+
+        if (!card_found) {
+            c_textcolor(4);
+            c_gotoxy(32,25); printf("Error: You must add a credit card before confirming your purchases!");
+            c_textcolor(14);
+        } else {
+            confirm_purchases(Temp_cin);
+        }
+        break;
+    }
+    case 8:
+        Home_LOGIN_menu();
+        break;
+    case 9:
+        leave();
+        break;
+    default:
+        c_textattr(4);
+        printf("Incorrect choice! Your choice should be between [1 - 9]. Please retry.");
+        c_textattr(14);
+        c_getch();
+        break;
+ }
+
          if (c != 8) {
             c_textcolor(9);
             c_gotoxy(60 ,26); printf("Press any key to continue...\n");
@@ -245,54 +319,52 @@ void liste_client_f(char *Temp_cin, char *client_name) {
     int check_card_exists = 0;
 
     do {
-        c_gotoxy(20, 6);
+        c_gotoxy(32, 6);
         c_textattr(14);
-        printf(" ===================================== Bienvenue M.%s =====================================", client_name);
-        c_gotoxy(45, 9); printf("---------------------------");
-        c_gotoxy(45, 10); printf("----- LISTE DES OPTIONS -----");
-        c_gotoxy(45, 11); printf("---------------------------");
+        printf(" ===================================== Bienvenue M.%s =====================================", client_name); // Translated
+        c_gotoxy(65, 9); printf("---------------------------");
+        c_gotoxy(65, 10); printf("----- LISTE DES OPTIONS -----"); // Translated
+        c_gotoxy(65, 11); printf("---------------------------");
         c_textattr(8);
-        c_gotoxy(45, 12); printf("  1 - Voir la liste des produits");
-        c_gotoxy(45, 13); printf("  2 - Ajouter des achats");
-        c_gotoxy(45, 14); printf("  3 - Voir les achats");
-        c_gotoxy(45, 15); printf("  4 - Retirer des achats");
-        c_gotoxy(45, 16); printf("  5 - Ajouter une carte de credit");
-        c_gotoxy(45, 17); printf("  6 - Afficher la carte de credit");
-        c_gotoxy(45, 18); printf("  7 - Confirmer l'achat");
-        c_gotoxy(45, 19); printf("  8 - Retour a la page d'accueil");
-        c_gotoxy(45, 20); printf("  9 - Quitter la page");
+        c_gotoxy(65, 12); printf("  1 - Voir la liste des produits"); // Translated
+        c_gotoxy(65, 13); printf("  2 - Ajouter des achats"); // Translated
+        c_gotoxy(65, 14); printf("  3 - Voir les achats "); // Translated
+        c_gotoxy(65, 15); printf("  4 - Supprimer des achats"); // Translated
+        c_gotoxy(65, 16); printf("  5 - Ajouter une carte de credit"); // Translated
+        c_gotoxy(65, 17); printf("  6 - Afficher la carte de credit"); // Translated
+        c_gotoxy(65, 18); printf("  7 - Confirmer l'achat "); // Translated
+        c_gotoxy(65, 19); printf("  8 - Retour a la page d'accueil"); // Translated
+        c_gotoxy(65, 20); printf("  9 - Quitter la page"); // Translated
         c_textattr(14);
-        c_gotoxy(45, 21); printf("--------------------------");
+        c_gotoxy(65, 21); printf("--------------------------");
 
-        c_gotoxy(45, 22); printf("------->> CHOISISSEZ VOTRE OPTION : ");
+        c_gotoxy(65, 22); printf("------->> SeLECTIONNEZ VOTRE OPTION: "); // Translated
         scanf("%d", &c);
-        c_clrscr();
 
         switch (c) {
             case 1:
                 View_Product_List_f();
                 break;
             case 2:
-                Add_Purchases(Temp_cin);
+                Add_Purchases_f(Temp_cin);
                 break;
             case 3:
-                View_Purchases(Temp_cin);
+                View_Purchases_f(Temp_cin);
                 break;
             case 4:
-                Remove_Purchases(Temp_cin);
+                Remove_Purchases_f(Temp_cin);
                 break;
             case 5: {
                 FD = fopen("CREDIT_CARD.dat", "rb");
                 if (FD == NULL) {
                     c_textcolor(4);
-                    printf("\nLE FICHIER N'EXISTE PAS !!!");
+                    printf("\nLE FICHIER N'EXISTE PAS !!!\n"); // Translated
                     exit(0);
                 }
 
                 check_CRD = 0;
                 check_card_exists = 0;
                 while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
-                    // Check if the card already exists for this client
                     if (strcmp(cd.client_CIN, Temp_cin) == 0) {
                         check_CRD = 1;
                         if (strcmp(cd.card_number, Temp_cin) == 0) {
@@ -306,32 +378,31 @@ void liste_client_f(char *Temp_cin, char *client_name) {
                 if (check_CRD) {
                     if (check_card_exists) {
                         c_textcolor(4);
-                        printf("\nLa carte de credit existe deja pour ce client !");
+                        printf("\nLa carte de credit existe deja pour ce client !\n"); // Translated
                     } else {
-                        add_credit_card(Temp_cin, client_name);
+                        add_credit_card_f(Temp_cin, client_name);
                         c_textcolor(2);
-                        printf("\nCarte de credit ajoutee avec succes !");
+                        printf("\nCarte de credit ajoutee avec succes !\n"); // Translated
                     }
                 } else {
-                    add_credit_card(Temp_cin, client_name);
+                    add_credit_card_f(Temp_cin, client_name);
                     c_textcolor(2);
-                    printf("\nCarte de credit ajoutee avec succes !");
+                    printf("\nCarte de credit ajoutee avec succes !\n"); // Translated
                 }
                 break;
             }
-
             case 6: {
                 FD = fopen("CREDIT_CARD.dat", "rb");
                 if (FD == NULL) {
                     c_textcolor(4);
-                    printf("LE FICHIER N'EXISTE PAS !!!");
+                    printf("LE FICHIER N'EXISTE PAS !!!\n"); // Translated
                     exit(0);
                 }
 
                 int found = 0;
                 while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
                     if (strcmp(cd.client_CIN, Temp_cin) == 0) {
-                        display_credit_cards(client_name, Temp_cin);
+                        display_credit_cards_f(client_name, Temp_cin);
                         found = 1;
                         break;
                     }
@@ -339,104 +410,60 @@ void liste_client_f(char *Temp_cin, char *client_name) {
 
                 if (!found) {
                     c_textcolor(4);
-                    printf("Aucune carte de credit trouvee pour ce client !");
+                    printf("Aucune carte de credit trouvee pour ce client !\n"); // Translated
                 }
                 fclose(FD);
                 break;
             }
-            case 7:
-                //////////////////////////
+            case 7: { // Ensure the client has added a credit card
+                FD = fopen("CREDIT_CARD.dat", "rb");
+                if (FD == NULL) {
+                    c_textcolor(4);
+                    printf("\nErreur : Le fichier de carte de credit n'existe pas !\n"); // Translated
+                    exit(0);
+                }
+
+                int card_found = 0;
+
+                while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
+                    if (strcmp(cd.client_CIN, Temp_cin) == 0) {
+                        card_found = 1;
+                        break;
+                    }
+                }
+                fclose(FD);
+
+                if (!card_found) {
+                    c_textcolor(4);
+                    c_gotoxy(32, 25); printf("Erreur : Vous devez ajouter une carte de credit avant de confirmer vos achats !\n"); // Translated
+                    c_textcolor(14);
+                } else {
+                    confirm_purchases_f(Temp_cin);
+                }
+                break;
+            }
             case 8:
                 Home_LOGIN_menu();
                 break;
             case 9:
                 leave();
                 break;
-
             default:
                 c_textattr(4);
-                printf("Choix incorrect ! Votre choix doit etre compris entre [1 - 8]. Veuillez reessayer.");
+                printf("Choix incorrect ! Votre choix doit être entre [1 - 9]. Veuillez reessayer.\n"); // Translated
                 c_textattr(14);
                 c_getch();
                 break;
         }
-         if (c != 8) {
+
+        if (c != 8) {
             c_textcolor(9);
-            c_gotoxy(60 ,26); printf("Appuyez sur une touche pour continuer...\n");
+            c_gotoxy(60 ,26); printf("Appuyez sur une touche pour continuer...\n"); // Translated
             c_getch();
         }
         c_clrscr();
     } while (c != 8);
 }
-
-
-char pdf_header[] = 
-    "%%PDF-1.4                  %% PDF header specifying version\n"
-    "1 0 obj                    %% Catalog object\n"
-    "<< /Type /Catalog\n"
-    "   /Pages 2 0 R\n"
-    ">>\n"
-    "endobj\n"
-    "\n"
-    "2 0 obj                    %% Pages object\n"
-    "<< /Type /Pages\n"
-    "   /Kids [3 0 R]\n"
-    "   /Count 1\n"
-    ">>\n"
-    "endobj\n"
-    "\n"
-    "3 0 obj                    %% Single Page object\n"
-    "<< /Type /Page\n"
-    "   /Parent 2 0 R\n"
-    "   /MediaBox [0 0 612 792]\n"
-    "   /Contents 4 0 R\n"
-    "   /Resources << /Font << /F1 5 0 R >> >>\n"
-    ">>\n"
-    "endobj\n"
-    "\n"
-    "4 0 obj                    %% Content stream for the page\n"
-    "<< /Length 330 >>          %% Length of text data\n"
-    "stream\n"
-    "BT                         %% Begin text block\n"
-    "/F1 12 Tf                  %% Set font to F1 at 12 points\n"
-    "72 750 Td                  %% Position text at (72, 750)\n";
-
-
-// -----------------------------
-
-char pdf_footer[] = 
-    "ET                         %% End text block\n"
-    "endstream\n"
-    "endobj\n"
-    "\n"
-    "5 0 obj                    %% Font object\n"
-    "<< /Type /Font\n"
-    "   /Subtype /Type1\n"
-    "   /BaseFont /Helvetica\n"
-    ">>\n"
-    "endobj\n"
-    "\n"
-    "xref                       %% Cross-reference table\n"
-    "0 6\n"
-    "0000000000 65535 f\n"
-    "0000000010 00000 n\n"
-    "0000000079 00000 n\n"
-    "0000000178 00000 n\n"
-    "0000000307 00000 n\n"
-    "0000000403 00000 n\n"
-    "\n"
-    "trailer\n"
-    "<< /Root 1 0 R\n"
-    "   /Size 6\n"
-    ">>\n"
-    "startxref\n"
-    "482                        %% Offset to start of xref\n"
-    "%%%%EOF\n";
-
-// -----------------------------
-
-
-
 
 
 int is_CIN_unique(const char *cin) {
@@ -886,6 +913,7 @@ void View_Product_List_f() {
 }
 
 void Add_Purchases(char *CIN) {
+    c_clrscr();
     produit l, p;           // 'l' for input product, 'p' for checking inventory
     Client client;
     char filename[100];
@@ -934,12 +962,21 @@ void Add_Purchases(char *CIN) {
         return;
     }
 
+    // Check if the product's quantity is 0
+    if (p.quantity == 0) {
+        c_textattr(4);
+        c_gotoxy(32, 11);
+        printf("Error: Product ID %d is out of stock!", l.id_product);
+        c_textattr(8);
+        return;
+    }
+
     // Input for quantity with validation
-    c_gotoxy(32, 11);
+    c_gotoxy(32, 12);
     printf("Enter quantity (1 - %d): ", p.quantity);
     while (scanf("%d", &l.quantity) != 1 || l.quantity < 1 || l.quantity > p.quantity) {
         c_textattr(4);
-        c_gotoxy(32, 12);
+        c_gotoxy(32, 13);
         printf("Invalid quantity! Enter a value between 1 and %d: ", p.quantity);
         c_textattr(8);
         while (getchar() != '\n'); // Clear invalid input buffer
@@ -951,7 +988,7 @@ void Add_Purchases(char *CIN) {
         ff = fopen(filename, "w");  // Create the file if it doesn't exist
         if (ff == NULL) {
             c_textattr(4);
-            c_gotoxy(32, 13);
+            c_gotoxy(32, 14);
             printf("Error: Unable to open or create the cart file!");
             c_textattr(8);
             c_clrscr();
@@ -969,7 +1006,7 @@ void Add_Purchases(char *CIN) {
             int totalQuantity = cart[cartSize].quantity + l.quantity;
             if (totalQuantity > p.quantity) {
                 c_textattr(4);
-                c_gotoxy(32, 14);
+                c_gotoxy(32, 15);
                 printf("Error: Total quantity (%d) exceeds available stock (%d)!", totalQuantity, p.quantity);
                 c_textattr(8);
                 fclose(ff);
@@ -995,14 +1032,16 @@ void Add_Purchases(char *CIN) {
     }
 
     c_textattr(2);
-    c_gotoxy(32, 15);
+    c_gotoxy(32, 16);
     printf("Success: Product added to the cart!");
     c_textattr(14);
 
     fclose(ff);
 }
+
 // french version
 void Add_Purchases_f(char *CIN) {
+    c_clrscr();
     produit l, p;           // 'l' for input product, 'p' for checking inventory
     Client client;
     char filename[100];
@@ -1028,7 +1067,7 @@ void Add_Purchases_f(char *CIN) {
     while (scanf("%d", &l.id_product) != 1) {
         c_textattr(4);
         c_gotoxy(32, 9);
-        printf("Entrée invalide ! Veuillez entrer un ID de produit valide (entier) : ");
+        printf("Entree invalide ! Veuillez entrer un ID de produit valide (entier) : ");
         c_textattr(8);
         while (getchar() != '\n'); // Clear invalid input buffer
     }
@@ -1045,19 +1084,18 @@ void Add_Purchases_f(char *CIN) {
     if (!found) {
         c_textattr(4);
         c_gotoxy(32, 10);
-        printf("Erreur : L'ID du produit %d n'a pas été trouvé dans l'inventaire !", l.id_product);
+        printf("Erreur : L'ID du produit %d n'a pas ete trouve dans l'inventaire !", l.id_product);
         c_textattr(8);
-        c_clrscr();
         return;
     }
 
     // Input for quantity with validation
     c_gotoxy(32, 11);
-    printf("Entrez la quantité (1 - %d) : ", p.quantity);
+    printf("Entrez la quantite (1 - %d) : ", p.quantity);
     while (scanf("%d", &l.quantity) != 1 || l.quantity < 1 || l.quantity > p.quantity) {
         c_textattr(4);
         c_gotoxy(32, 12);
-        printf("Quantité invalide ! Entrez une valeur entre 1 et %d : ", p.quantity);
+        printf("Quantite invalide ! Entrez une valeur entre 1 et %d : ", p.quantity);
         c_textattr(8);
         while (getchar() != '\n'); // Clear invalid input buffer
     }
@@ -1069,7 +1107,7 @@ void Add_Purchases_f(char *CIN) {
         if (ff == NULL) {
             c_textattr(4);
             c_gotoxy(32, 13);
-            printf("Erreur : Impossible d'ouvrir ou de créer le fichier du panier !");
+            printf("Erreur : Impossible d'ouvrir ou de creer le fichier du panier !");
             c_textattr(8);
             c_clrscr();
             return;
@@ -1087,7 +1125,7 @@ void Add_Purchases_f(char *CIN) {
             if (totalQuantity > p.quantity) {
                 c_textattr(4);
                 c_gotoxy(32, 14);
-                printf("Erreur : La quantité totale (%d) dépasse le stock disponible (%d) !", totalQuantity, p.quantity);
+                printf("Erreur : La quantite totale (%d) depasse le stock disponible (%d) !", totalQuantity, p.quantity);
                 c_textattr(8);
                 fclose(ff);
                 c_clrscr();
@@ -1113,7 +1151,7 @@ void Add_Purchases_f(char *CIN) {
 
     c_textattr(2);
     c_gotoxy(32, 15);
-    printf("Succès : Produit ajouté au panier !");
+    printf("Succes : Produit ajoute au panier !");
     c_textattr(14);
 
     fclose(ff);
@@ -1217,7 +1255,7 @@ void View_Purchases_f(char *CIN) {
     c_textattr(8);
     c_gotoxy(20, 10);
     printf("%-20s %-15s %-15s %-10s %-10s %-10s", 
-           "ID Produit", "Nom", "Catégorie", "Prix", "Quantité", "Prix Total");
+           "ID Produit", "Nom", "Categorie", "Prix", "Quantite", "Prix Total");
     c_gotoxy(20, 11);
     printf("-------------------------------------------------------------------------------------------------");
 
@@ -1270,6 +1308,7 @@ void View_Purchases_f(char *CIN) {
 }
 
 void Remove_Purchases(char *CIN) {
+    c_clrscr();
     Client client;
     char filename[100];
     int id_product, quantity, found = 0;
@@ -1432,6 +1471,7 @@ void Remove_Purchases(char *CIN) {
 }
 // french version
 void Remove_Purchases_f(char *CIN) {
+    c_clrscr();
     Client client;
     char filename[100];
     int id_product, quantity, found = 0;
@@ -1467,7 +1507,7 @@ void Remove_Purchases_f(char *CIN) {
     c_gotoxy(52, 8);
     printf("===== VOS ACHATS ACTUELS =====");
     c_gotoxy(32, 10);
-    printf("%-20s %-15s %-10s %-10s", "ID Produit", "Nom", "Prix", "Quantité");
+    printf("%-20s %-15s %-10s %-10s", "ID Produit", "Nom", "Prix", "Quantite");
     c_gotoxy(32, 11);
     printf("--------------------------------------------------------------");
     c_textattr(8);
@@ -1499,7 +1539,7 @@ void Remove_Purchases_f(char *CIN) {
     if (!found) {
         c_textattr(4);
         c_gotoxy(32, 16);
-        printf("Aucun produit trouvé dans votre panier.");
+        printf("Aucun produit trouve dans votre panier.");
         c_textattr(14);
         fclose(ff);
         fclose(tempFile);
@@ -1508,7 +1548,7 @@ void Remove_Purchases_f(char *CIN) {
 
     // Ask the user for the product ID and quantity to remove
     c_gotoxy(32, 17);
-    printf("Entrez l'ID du produit à SUPPRIMER : ");
+    printf("Entrez l'ID du produit a SUPPRIMER : ");
     scanf("%d", &id_product);
 
     // Check if the product ID exists in the current cart before proceeding
@@ -1533,11 +1573,11 @@ void Remove_Purchases_f(char *CIN) {
 
     // Ask the user for the quantity to remove
     c_gotoxy(32, 19);
-    printf("Entrez la quantité à SUPPRIMER : ");
+    printf("Entrez la quantite a SUPPRIMER : ");
     while (scanf("%d", &quantity) != 1 || quantity < 1) {
         c_textattr(4);
         c_gotoxy(32, 19);
-        printf("Quantité invalide. Veuillez entrer un entier positif : ");
+        printf("Quantite invalide. Veuillez entrer un entier positif : ");
         c_textattr(14);
         while (getchar() != '\n'); // Clear invalid input
     }
@@ -1554,15 +1594,15 @@ void Remove_Purchases_f(char *CIN) {
                     c_gotoxy(32, 20);
                     fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart - quantity);
                     c_gotoxy(32, 21);
-                    printf("Supprimé %d article(s) du panier. Il en reste %d.", quantity, quantity_in_cart - quantity);
+                    printf("Supprime %d article(s) du panier. Il en reste %d.", quantity, quantity_in_cart - quantity);
                 } else {
                     c_gotoxy(32, 22);
-                    printf("Tous les %d articles ont été supprimés du panier.", quantity_in_cart);
+                    printf("Tous les %d articles ont ete supprimes du panier.", quantity_in_cart);
                 }
             } else {
                 c_textattr(4);
                 c_gotoxy(32, 22);
-                printf("Erreur : Il n'y a que %d article(s) dans le panier. Aucun article supprimé.\n", quantity_in_cart);
+                printf("Erreur : Il n'y a que %d article(s) dans le panier. Aucun article supprime.\n", quantity_in_cart);
                 c_textattr(14);
                 fprintf(tempFile, "%d %d\n", id_product_in_cart, quantity_in_cart); // Write original data to tempFile
             }
@@ -1574,7 +1614,7 @@ void Remove_Purchases_f(char *CIN) {
     if (!found) {
         c_textattr(4);
         c_gotoxy(32, 23);
-        printf("L'ID Produit %d n'a pas été trouvé dans votre panier.", id_product);
+        printf("L'ID Produit %d n'a pas ete trouve dans votre panier.", id_product);
         c_textattr(14);
     }
 
@@ -1588,7 +1628,7 @@ void Remove_Purchases_f(char *CIN) {
     c_textattr(2);
 
     c_gotoxy(32, 24);
-    printf("Panier mis à jour avec succès.");
+    printf("Panier mis a jour avec succes.");
     c_textattr(14);
     c_getch();
 }
@@ -1608,20 +1648,24 @@ void confirm_purchases(char *Temp_cin) {
     if (cartFile == NULL) {
         c_textattr(4);
         c_gotoxy(32, 8); 
-        printf("Votre panier est vide ou le fichier n'existe pas.\n");
+        printf("Your cart is empty or the cart file does not exist.\n");
         c_textattr(14);
         return;
     }
 
-    // Ask for confirmation
-    c_gotoxy(32, 8);
-    printf("Voulez-vous confirmer votre achat ? [1] Oui [2] Non : ");
-    scanf("%d", &confirm_choice);
+    // Ask for purchase confirmation using the menu
+    Options options = { 
+        .ops = (char *[]){"Yes", "No"},
+        .len = 2,
+        .title = "Do you want to confirm your purchase?"
+    };
 
-    if (confirm_choice != 1) {
+    int selection = c_select_menu_f(options);
+
+    if (selection != 0) { // User selects "No"
         c_textattr(4);
         c_gotoxy(32, 10);
-        printf("Achat non confirmé.\n");
+        printf("Purchase not confirmed.\n");
         c_textattr(14);
         fclose(cartFile);
         return;
@@ -1632,7 +1676,7 @@ void confirm_purchases(char *Temp_cin) {
     if (productFile == NULL) {
         c_textattr(4);
         c_gotoxy(32, 12);
-        printf("Erreur d'ouverture du fichier produit !\n");
+        printf("Error opening the product file!\n");
         c_textattr(14);
         fclose(cartFile);
         return;
@@ -1651,23 +1695,23 @@ void confirm_purchases(char *Temp_cin) {
                 if (p.quantity >= quantity_in_cart) {
                     p.quantity -= quantity_in_cart;
 
-                    // Move the file pointer back to update the product
+                    // Move the file pointer to update the product
                     fseek(productFile, -sizeof(produit), SEEK_CUR);
                     fwrite(&p, sizeof(produit), 1, productFile);
 
                     c_textattr(2);
                     c_gotoxy(32, 14);
-                    printf("Produit ID %d mis à jour. Quantité restante : %d\n", p.id_product, p.quantity);
+                    printf("Product ID %d updated. Remaining quantity: %d\n", p.id_product, p.quantity);
                     c_textattr(14);
                 } else {
                     c_textattr(4);
                     c_gotoxy(32, 15);
-                    printf("Erreur : Stock insuffisant pour le produit ID %d. Achat annulé.\n", p.id_product);
+                    printf("Error: Insufficient stock for product ID %d. Purchase canceled.\n", p.id_product);
                     c_textattr(14);
 
                     fclose(cartFile);
                     fclose(productFile);
-                    return; // Exit safely
+                    return; // Exit cleanly
                 }
                 break;
             }
@@ -1676,26 +1720,45 @@ void confirm_purchases(char *Temp_cin) {
         if (!found) {
             c_textattr(4);
             c_gotoxy(32, 16);
-            printf("Produit ID %d introuvable.\n", id_product_in_cart);
+            printf("Product ID %d not found in the product list.\n", id_product_in_cart);
             c_textattr(14);
         }
 
-        // Rewind file pointer to search for the next product
+        // Reset the file pointer to search for the next product
         rewind(productFile);
     }
 
-    // Close files
+    // Close the files
     fclose(cartFile);
     fclose(productFile);
 
-    c_textattr(2);
-    c_gotoxy(32, 18);
-    printf("Achat confirmé. Quantités des produits mises à jour avec succès.\n");
+    // Purchase confirmed, call client_factor function
+    client_factor(Temp_cin);
+
+    // Show loading spinner before the final message
+    gradientSpinner(5); // Adjust duration for the spinner
+
+    // Remove the cart file after confirmation
+    char cart_file_name[100];
+    snprintf(cart_file_name, sizeof(cart_file_name), "%s_Cart.txt", Temp_cin);
+    if (remove(cart_file_name) == 0) {
+        // Adding a delay using usleep (500000 microseconds = 0.5 seconds)
+        usleep(500000);  // Sleep for 0.5 seconds before printing the message
+
+        // Display success message
+        c_textattr(2);
+        c_gotoxy(32, 18);
+        printf("Your factor is ready to print.\n");
+    } else {
+        c_textattr(4);
+        c_gotoxy(32, 18);
+        printf("Error removing the cart file.\n");
+    }
+
     c_textattr(14);
     c_getch();
     c_clrscr();
 }
-
 // french version
 void confirm_purchases_f(char *Temp_cin) {
     FILE *cartFile, *productFile;
@@ -1704,74 +1767,78 @@ void confirm_purchases_f(char *Temp_cin) {
     char filename[100];
     int confirm_choice;
 
-    // Construire le nom du fichier du panier
+    // Construct the cart filename
     snprintf(filename, sizeof(filename), "%s_Cart.txt", Temp_cin);
 
-    // Ouvrir le fichier panier
+    // Open the cart file
     cartFile = fopen(filename, "r");
     if (cartFile == NULL) {
         c_textattr(4);
         c_gotoxy(32, 8); 
-        printf("Votre panier est vide ou le fichier du panier n'existe pas.\n");
+        printf("Votre panier est vide ou le fichier du panier n'existe pas.\n"); // Translated
         c_textattr(14);
         return;
     }
 
-    // Demander confirmation d'achat
-    c_gotoxy(32, 8);
-    printf("Voulez-vous confirmer votre achat ? [1] Oui [2] Non : ");
-    scanf("%d", &confirm_choice);
+    // Ask for purchase confirmation using the menu
+    Options options = { 
+        .ops = (char *[]){"Oui", "Non"}, // Translated
+        .len = 2,
+        .title = "Voulez-vous confirmer votre achat ?" // Translated
+    };
 
-    if (confirm_choice != 1) {
+    int selection = c_select_menu_f(options);
+
+    if (selection != 0) { // User selects "Non" // Translated
         c_textattr(4);
         c_gotoxy(32, 10);
-        printf("Achat non confirmé.\n");
+        printf("Achat non confirme.\n"); // Translated
         c_textattr(14);
         fclose(cartFile);
         return;
     }
 
-    // Ouvrir le fichier produit
+    // Open the product file
     productFile = fopen("produit.dat", "r+b");
     if (productFile == NULL) {
         c_textattr(4);
         c_gotoxy(32, 12);
-        printf("Erreur lors de l'ouverture du fichier des produits !\n");
+        printf("Erreur d'ouverture du fichier produit !\n"); // Translated
         c_textattr(14);
         fclose(cartFile);
         return;
     }
 
-    // Traiter chaque produit dans le panier
+    // Process each product in the cart
     while (fscanf(cartFile, "%d %d", &id_product_in_cart, &quantity_in_cart) == 2) {
         int found = 0;
 
-        // Rechercher le produit dans produit.dat
+        // Search for the product in produit.dat
         while (fread(&p, sizeof(produit), 1, productFile) == 1) {
             if (p.id_product == id_product_in_cart) {
                 found = 1;
 
-                // Vérifier la disponibilité du stock
+                // Check stock availability
                 if (p.quantity >= quantity_in_cart) {
                     p.quantity -= quantity_in_cart;
 
-                    // Déplacer le pointeur de fichier pour mettre à jour le produit
+                    // Move the file pointer to update the product
                     fseek(productFile, -sizeof(produit), SEEK_CUR);
                     fwrite(&p, sizeof(produit), 1, productFile);
 
                     c_textattr(2);
                     c_gotoxy(32, 14);
-                    printf("Produit ID %d mis à jour. Quantité restante : %d\n", p.id_product, p.quantity);
+                    printf("Produit ID %d mis a jour. Quantite restante : %d\n", p.id_product, p.quantity); // Translated
                     c_textattr(14);
                 } else {
                     c_textattr(4);
                     c_gotoxy(32, 15);
-                    printf("Erreur : Stock insuffisant pour le produit ID %d. Achat annulé.\n", p.id_product);
+                    printf("Erreur : Stock insuffisant pour le produit ID %d. Achat annule.\n", p.id_product); // Translated
                     c_textattr(14);
 
                     fclose(cartFile);
                     fclose(productFile);
-                    return; // Quitter proprement
+                    return; // Exit cleanly
                 }
                 break;
             }
@@ -1780,25 +1847,46 @@ void confirm_purchases_f(char *Temp_cin) {
         if (!found) {
             c_textattr(4);
             c_gotoxy(32, 16);
-            printf("Produit ID %d introuvable dans la liste des produits.\n", id_product_in_cart);
+            printf("Produit ID %d introuvable dans la liste des produits.\n", id_product_in_cart); // Translated
             c_textattr(14);
         }
 
-        // Réinitialiser le pointeur du fichier pour rechercher le prochain produit
+        // Reset the file pointer to search for the next product
         rewind(productFile);
     }
 
-    // Fermer les fichiers
+    // Close the files
     fclose(cartFile);
     fclose(productFile);
 
-    c_textattr(2);
-    c_gotoxy(32, 18);
-    printf("Achat confirmé. Les quantités des produits ont été mises à jour avec succès.\n");
+    // Purchase confirmed, call client_factor function
+    client_factor(Temp_cin);
+
+    // Show loading spinner before the final message
+    gradientSpinner(5); // Adjust duration for the spinner
+
+    // Remove the cart file after confirmation
+    char cart_file_name[100];
+    snprintf(cart_file_name, sizeof(cart_file_name), "%s_Cart.txt", Temp_cin);
+    if (remove(cart_file_name) == 0) {
+        // Adding a delay using usleep (500000 microseconds = 0.5 seconds)
+        usleep(500000);  // Sleep for 0.5 seconds before printing the message
+
+        // Display success message
+        c_textattr(2);
+        c_gotoxy(32, 18);
+        printf("Votre facture est prête a être imprimee.\n"); // Translated
+    } else {
+        c_textattr(4);
+        c_gotoxy(32, 18);
+        printf("Erreur lors de la suppression du fichier du panier.\n"); // Translated
+    }
+
     c_textattr(14);
     c_getch();
     c_clrscr();
 }
+
 
 
 //----------------------------------------add product--------------------------------------
@@ -2176,65 +2264,18 @@ void delete_product_f(char *CINF) {
 
         c_gotoxy(30, 5);
         c_textcolor(2);
-        printf("\nLe produit a ete supprime avec succès et les IDs ont ete reorganises !\n");
+        printf("\nLe produit a ete supprime avec succes et les IDs ont ete reorganises !\n");
         c_textcolor(15);
     }
 }
 
 
 //----------------------------------------modify product--------------------------------------
-  
-  typedef struct {
-    char **ops;
-    int len;
-    char *title;
-} Options;
 
-void c_draw_menu_f(int current_option, Options options) {
-    c_clrscr();
-    c_textcolor(15);
-    c_gotoxy(55, 5);
-    printf("%s", options.title);
-    c_textcolor(14);
-
-    for (int i = 0; i < options.len; i++) {
-        if (i == current_option) {
-            c_textcolor(10); // Highlight the selected option
-            c_gotoxy(60, 7 + i);
-            printf("> %s", options.ops[i]);
-        } else {
-            c_textcolor(15);
-            c_gotoxy(60, 7 + i);
-            printf("  %s", options.ops[i]);
-        }
-    }
-    c_textcolor(15);  // Reset text color
-}
-int c_select_menu_f(Options options) {
-    int current_option = 0;
-    int key;
-    c_draw_menu_f(current_option, options);
-
-    while (1) {
-        key = c_getch();
-        switch (key) {
-            case 72: // Arrow up
-                current_option = (current_option == 0) ? options.len - 1 : current_option - 1;
-                c_draw_menu_f(current_option, options);
-                break;
-            case 80: // Arrow down
-                current_option = (current_option == options.len - 1) ? 0 : current_option + 1;
-                c_draw_menu_f(current_option, options);
-                break;
-            case 13: // Enter key
-                return current_option;
-        }
-    }
-}
 void modify_product(char *CINF) {
     FILE *fp, *temp;
     fp = fopen("produit.dat", "rb+"); // Open binary file for read/write
-    temp = fopen("temp.dat", "wb"); // Temporary file to store modifications
+    temp = fopen("temp.dat", "wb");   // Temporary file to store modifications
 
     if (fp == NULL || temp == NULL) {
         c_textcolor(4); // Set text color to red
@@ -2344,13 +2385,10 @@ void modify_product(char *CINF) {
                     fclose(temp);
                     return; // Exit the modify function
             }
-
-            // Write modified product to temp file
-            fwrite(&p, sizeof(produit), 1, temp);
-            break;
-        } else {
-            fwrite(&p, sizeof(produit), 1, temp); // Write unchanged product to temp file
         }
+
+        // Write the (modified or unchanged) product back to the temp file
+        fwrite(&p, sizeof(produit), 1, temp);
     }
 
     fclose(fp);
@@ -2374,11 +2412,11 @@ void modify_product(char *CINF) {
 void modify_product_f(char *CINF) {
     FILE *fp, *temp;
     fp = fopen("produit.dat", "rb+"); // Open binary file for read/write
-    temp = fopen("temp.dat", "wb"); // Temporary file to store modifications
+    temp = fopen("temp.dat", "wb");   // Temporary file to store modifications
 
     if (fp == NULL || temp == NULL) {
         c_textcolor(4); // Set text color to red
-        printf("Impossible d'ouvrir le fichier!\n");
+        printf("Impossible d'ouvrir le fichier !\n");
         exit(1);
     }
 
@@ -2393,7 +2431,7 @@ void modify_product_f(char *CINF) {
     // Ask user for product ID to modify
     c_textcolor(1);
     c_gotoxy(70, 14);
-    printf("Entrez l'ID du produit a modifier: ");
+    printf("Entrez l'ID du produit a modifier : ");
     scanf("%d", &id);
     c_textcolor(15);
 
@@ -2426,10 +2464,10 @@ void modify_product_f(char *CINF) {
             draw_frame(frame_width, frame_height, frame_x, frame_y); // Redraw frame
 
             switch (selected) {
-                case 0:  // Modifier le nom
+                case 0:  // Modify Name
                     c_textcolor(14);
                     c_gotoxy(70, 14);
-                    printf("Entrez le nouveau nom: ");
+                    printf("Entrez le nouveau nom : ");
                     c_textcolor(8);
                     c_gotoxy(94, 14);
                     fflush(stdin);
@@ -2437,10 +2475,10 @@ void modify_product_f(char *CINF) {
                     strcpy(p.name, pn.name);
                     break;
 
-                case 1:  // Modifier la categorie
+                case 1:  // Modify Category
                     c_textcolor(14);
                     c_gotoxy(70, 14);
-                    printf("Entrez la nouvelle categorie: ");
+                    printf("Entrez la nouvelle categorie : ");
                     c_textcolor(8);
                     c_gotoxy(94, 14);
                     fflush(stdin);
@@ -2448,30 +2486,30 @@ void modify_product_f(char *CINF) {
                     strcpy(p.category, pn.category);
                     break;
 
-                case 2:  // Modifier le prix
+                case 2:  // Modify Price
                     c_textcolor(14);
                     c_gotoxy(70, 14);
-                    printf("Entrez le nouveau prix: ");
+                    printf("Entrez le nouveau prix : ");
                     c_textcolor(8);
                     c_gotoxy(94, 14);
                     scanf("%f", &pn.price);
                     p.price = pn.price;
                     break;
 
-                case 3:  // Modifier la quantite
+                case 3:  // Modify Quantity
                     c_textcolor(14);
                     c_gotoxy(70, 14);
-                    printf("Entrez la nouvelle quantite: ");
+                    printf("Entrez la nouvelle quantite : ");
                     c_textcolor(8);
                     c_gotoxy(94, 14);
                     scanf("%d", &pn.quantity);
                     p.quantity = pn.quantity;
                     break;
 
-                case 4:  // Modifier la description
+                case 4:  // Modify Description
                     c_textcolor(14);
                     c_gotoxy(70, 14);
-                    printf("Entrez la nouvelle description: ");
+                    printf("Entrez la nouvelle description : ");
                     c_textcolor(8);
                     c_gotoxy(94, 14);
                     fflush(stdin);
@@ -2479,18 +2517,15 @@ void modify_product_f(char *CINF) {
                     strcpy(p.description, pn.description);
                     break;
 
-                case 5:  // Retour
+                case 5:  // Back
                     fclose(fp);
                     fclose(temp);
                     return; // Exit the modify function
             }
-
-            // Write modified product to temp file
-            fwrite(&p, sizeof(produit), 1, temp);
-            break;
-        } else {
-            fwrite(&p, sizeof(produit), 1, temp); // Write unchanged product to temp file
         }
+
+        // Write the (modified or unchanged) product back to the temp file
+        fwrite(&p, sizeof(produit), 1, temp);
     }
 
     fclose(fp);
@@ -2982,7 +3017,72 @@ void login_supplier_f(char *CIN) {
 
 //-----------------------------------------------------------------------
 
-void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
+
+
+char pdf_header[] = 
+    "%%PDF-1.4                  %% PDF header specifying version\n"
+    "1 0 obj                    %% Catalog object\n"
+    "<< /Type /Catalog\n"
+    "   /Pages 2 0 R\n"
+    ">>\n"
+    "endobj\n"
+    "\n"
+    "2 0 obj                    %% Pages object\n"
+    "<< /Type /Pages\n"
+    "   /Kids [3 0 R]\n"
+    "   /Count 1\n"
+    ">>\n"
+    "endobj\n"
+    "\n"
+    "3 0 obj                    %% Single Page object\n"
+    "<< /Type /Page\n"
+    "   /Parent 2 0 R\n"
+    "   /MediaBox [0 0 612 792]\n"
+    "   /Contents 4 0 R\n"
+    "   /Resources << /Font << /F1 5 0 R >> >>\n"
+    ">>\n"
+    "endobj\n"
+    "\n"
+    "4 0 obj                    %% Content stream for the page\n"
+    "<< /Length 330 >>          %% Length of text data\n"
+    "stream\n"
+    "BT                         %% Begin text block\n"
+    "/F1 12 Tf                  %% Set font to F1 at 12 points\n"
+    "72 750 Td                  %% Position text at (72, 750)\n";
+
+
+// -----------------------------
+
+char pdf_footer[] = 
+    "ET                         %% End text block\n"
+    "endstream\n"
+    "endobj\n"
+    "\n"
+    "5 0 obj                    %% Font object\n"
+    "<< /Type /Font\n"
+    "   /Subtype /Type1\n"
+    "   /BaseFont /Helvetica\n"
+    ">>\n"
+    "endobj\n"
+    "\n"
+    "xref                       %% Cross-reference table\n"
+    "0 6\n"
+    "0000000000 65535 f\n"
+    "0000000010 00000 n\n"
+    "0000000079 00000 n\n"
+    "0000000178 00000 n\n"
+    "0000000307 00000 n\n"
+    "0000000403 00000 n\n"
+    "\n"
+    "trailer\n"
+    "<< /Root 1 0 R\n"
+    "   /Size 6\n"
+    ">>\n"
+    "startxref\n"
+    "482                        %% Offset to start of xref\n"
+    "%%%%EOF\n";
+
+void client_factor(char *CIN) {
     FILE *FACT = fopen("FACTEUR.pdf", "w");
     if (FACT == NULL) {
         printf("Error: Unable to create FACTEUR.pdf file!\n");
@@ -2991,28 +3091,34 @@ void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
     
     CCD client_details;
     int found = 0;
-    rewind(CDM);
 
-    // Step 1: Search for client details in the credit card database (CDM)
+    // Read credit card details from CREDIT_CARD.dat
+    FILE *CDM = fopen("CREDIT_CARD.dat", "rb");
+    if (CDM == NULL) {
+        printf("Error: Unable to open CREDIT_CARD.dat!\n");
+        exit(1);
+    }
     while (fread(&client_details, sizeof(CCD), 1, CDM) == 1) {
         if (strcmp(client_details.client_CIN, CIN) == 0) {
             found = 1;
             break;
         }
     }
+    fclose(CDM);
+
     if (!found) {
         fprintf(FACT, "Error: Client with CIN %s not found in credit card database!\n", CIN);
         fclose(FACT);
         return;
     }
 
-    // Step 2: Mask credit card number
+    // Mask credit card number
     char hidden_card_number[50];
     snprintf(hidden_card_number, sizeof(hidden_card_number), "%.4s ** ** %.4s", 
              client_details.card_number, 
              client_details.card_number + strlen(client_details.card_number) - 4);
 
-    // Step 3: Write Client Information and Date to FACTEUR
+    // Write Client Information and Date to FACTEUR
     time_t currentTime = time(NULL);
     struct tm *localTime = localtime(&currentTime);
     fprintf(FACT, pdf_header);
@@ -3028,43 +3134,65 @@ void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
     fprintf(FACT, "(| Product         | Quantity   | Total Price |) Tj\n0 -20 Td");
     fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td");
 
+    // Dynamically create the file name based on CIN
+    char client_choice_filename[100];
+    snprintf(client_choice_filename, sizeof(client_choice_filename), "%s_Cart.txt", CIN);
+
+    // Open the dynamically generated file
+    FILE *client_choice_file = fopen(client_choice_filename, "r");
+    if (client_choice_file == NULL) {
+        printf("Error: Unable to open %s_Cart.txt!\n", CIN);
+        exit(1);
+    }
+
     // Step 4: Process Client's Choices and Calculate Total Cost
     clc client_choice_entry;
     float grand_total = 0.0;
-    rewind(client_choice);
-    while (fscanf(client_choice, "%d %s %s %f %d", 
-                  &client_choice_entry.id_product_clien,
-                  client_choice_entry.category, 
-                  client_choice_entry.name, 
-                  &client_choice_entry.price, 
-                  &client_choice_entry.quantity) == 5) {
+    while (fscanf(client_choice_file, "%d %d", &client_choice_entry.id_product_clien, &client_choice_entry.quantity) == 2) {
         
-        float product_price;
-        int stock_status = check_stock_and_get_price(PCM, client_choice_entry.category, client_choice_entry.name, client_choice_entry.quantity, &product_price);
+        produit product;
+        int product_found = 0;
 
-        switch (stock_status) {
-            case 1: // In stock
-                grand_total += client_choice_entry.price * client_choice_entry.quantity;
-                fprintf(FACT, "(| %-15s | %-10d | %-10.2f DH |) Tj\n0 -20 Td\n", client_choice_entry.name, client_choice_entry.quantity, client_choice_entry.price * client_choice_entry.quantity);
+        // Read product details from produit.dat
+        FILE *produit_file = fopen("produit.dat", "rb");
+        if (produit_file == NULL) {
+            printf("Error: Unable to open produit.dat!\n");
+            exit(1);
+        }
+
+        // Search for the product based on ID
+        while (fread(&product, sizeof(produit), 1, produit_file) == 1) {
+            if (product.id_product == client_choice_entry.id_product_clien) {
+                product_found = 1;
                 break;
-            case 0: // Out of stock
-                fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", client_choice_entry.name, client_choice_entry.quantity, "Out of Stock");
-                break;
-            case -1: // Product not found
-                fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", client_choice_entry.name, client_choice_entry.quantity, "Not Found");
-                break;
+            }
+        }
+        fclose(produit_file);
+
+        if (product_found) {
+            if (client_choice_entry.quantity <= product.quantity) {
+                float total_price = product.price * client_choice_entry.quantity;
+                grand_total += total_price;
+                fprintf(FACT, "(| %-15s | %-10d | %-10.2f DH |) Tj\n0 -20 Td\n", product.name, client_choice_entry.quantity, total_price);
+            } else {
+                fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", product.name, client_choice_entry.quantity, "Out of Stock");
+            }
+        } else {
+            fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", "Product Not Found", client_choice_entry.quantity, "Not Found");
         }
     }
+    fclose(client_choice_file);
 
     // Step 5: Print Grand Total and Close FACTEUR File
     fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td\n");
     fprintf(FACT, "(Grand Total: %.2f DH) Tj\n0 -20 Td\n", grand_total);
     fprintf(FACT, "(=============================================) Tj\n");
-    fprintf(FACT,pdf_footer);
+    fprintf(FACT, pdf_footer);
     fclose(FACT);
 }
+
 // french version
-void client_factor_f(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
+void client_factor_f(char *CIN) {
     FILE *FACT = fopen("FACTEUR.pdf", "w");
     if (FACT == NULL) {
         printf("Erreur : Impossible de creer le fichier FACTEUR.pdf !\n");
@@ -3073,28 +3201,34 @@ void client_factor_f(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
     
     CCD client_details;
     int found = 0;
-    rewind(CDM);
 
-    // etape 1 : Rechercher les details du client dans la base de donnees des cartes de credit (CDM)
+    // Lire les details de la carte de credit depuis CREDIT_CARD.dat
+    FILE *CDM = fopen("CREDIT_CARD.dat", "rb");
+    if (CDM == NULL) {
+        printf("Erreur : Impossible d'ouvrir le fichier CREDIT_CARD.dat !\n");
+        exit(1);
+    }
     while (fread(&client_details, sizeof(CCD), 1, CDM) == 1) {
         if (strcmp(client_details.client_CIN, CIN) == 0) {
             found = 1;
             break;
         }
     }
+    fclose(CDM);
+
     if (!found) {
-        fprintf(FACT, "Erreur : Client avec le CIN %s introuvable dans la base de donnees des cartes de credit !\n", CIN);
+        fprintf(FACT, "Erreur : Client avec CIN %s non trouve dans la base de donnees des cartes de credit !\n", CIN);
         fclose(FACT);
         return;
     }
 
-    // etape 2 : Masquer le numero de carte de credit
+    // Masquer le numero de carte de credit
     char hidden_card_number[50];
     snprintf(hidden_card_number, sizeof(hidden_card_number), "%.4s ** ** %.4s", 
              client_details.card_number, 
              client_details.card_number + strlen(client_details.card_number) - 4);
 
-    // etape 3 : ecrire les informations du client et la date dans FACTEUR
+    // ecrire les informations du client et la date dans FACTEUR
     time_t currentTime = time(NULL);
     struct tm *localTime = localtime(&currentTime);
     fprintf(FACT, pdf_header);
@@ -3107,38 +3241,59 @@ void client_factor_f(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
             localTime->tm_mon + 1, 
             localTime->tm_year + 1900);
     fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td");
-    fprintf(FACT, "(| Produit         | Quantite   | Prix Total  |) Tj\n0 -20 Td");
+    fprintf(FACT, "(| Produit         | Quantite   | Prix total   |) Tj\n0 -20 Td");
     fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td");
 
-    // etape 4 : Traiter les choix du client et calculer le coût total
-    clc client_choice_entry;
-    float grand_total = 0.0;
-    rewind(client_choice);
-    while (fscanf(client_choice, "%d %s %s %f %d", 
-                  &client_choice_entry.id_product_clien,
-                  client_choice_entry.category, 
-                  client_choice_entry.name, 
-                  &client_choice_entry.price, 
-                  &client_choice_entry.quantity) == 5) {
-        
-        float product_price;
-        int stock_status = check_stock_and_get_price(PCM, client_choice_entry.category, client_choice_entry.name, client_choice_entry.quantity, &product_price);
+    // Dynamically create the file name based on CIN
+    char client_choice_filename[100];
+    snprintf(client_choice_filename, sizeof(client_choice_filename), "%s_Cart.txt", CIN);
 
-        switch (stock_status) {
-            case 1: // En stock
-                grand_total += client_choice_entry.price * client_choice_entry.quantity;
-                fprintf(FACT, "(| %-15s | %-10d | %-10.2f DH |) Tj\n0 -20 Td\n", client_choice_entry.name, client_choice_entry.quantity, client_choice_entry.price * client_choice_entry.quantity);
-                break;
-            case 0: // Hors stock
-                fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", client_choice_entry.name, client_choice_entry.quantity, "Hors Stock");
-                break;
-            case -1: // Produit introuvable
-                fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", client_choice_entry.name, client_choice_entry.quantity, "Introuvable");
-                break;
-        }
+    // Open the dynamically generated file
+    FILE *client_choice_file = fopen(client_choice_filename, "r");
+    if (client_choice_file == NULL) {
+        printf("Erreur : Impossible d'ouvrir %s_Cart.txt !\n", CIN);
+        exit(1);
     }
 
-    // etape 5 : Imprimer le total general et fermer le fichier FACTEUR
+    // Step 4: Process Client's Choices and Calculate Total Cost
+    clc client_choice_entry;
+    float grand_total = 0.0;
+    while (fscanf(client_choice_file, "%d %d", &client_choice_entry.id_product_clien, &client_choice_entry.quantity) == 2) {
+        
+        produit product;
+        int product_found = 0;
+
+        // Read product details from produit.dat
+        FILE *produit_file = fopen("produit.dat", "rb");
+        if (produit_file == NULL) {
+            printf("Erreur : Impossible d'ouvrir produit.dat !\n");
+            exit(1);
+        }
+
+        // Search for the product based on ID
+        while (fread(&product, sizeof(produit), 1, produit_file) == 1) {
+            if (product.id_product == client_choice_entry.id_product_clien) {
+                product_found = 1;
+                break;
+            }
+        }
+        fclose(produit_file);
+
+        if (product_found) {
+            if (client_choice_entry.quantity <= product.quantity) {
+                float total_price = product.price * client_choice_entry.quantity;
+                grand_total += total_price;
+                fprintf(FACT, "(| %-15s | %-10d | %-10.2f DH |) Tj\n0 -20 Td\n", product.name, client_choice_entry.quantity, total_price);
+            } else {
+                fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", product.name, client_choice_entry.quantity, "En rupture de stock");
+            }
+        } else {
+            fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", "Produit non trouve", client_choice_entry.quantity, "Non trouve");
+        }
+    }
+    fclose(client_choice_file);
+
+    // Step 5: Print Grand Total and Close FACTEUR File
     fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td\n");
     fprintf(FACT, "(Total general : %.2f DH) Tj\n0 -20 Td\n", grand_total);
     fprintf(FACT, "(=============================================) Tj\n");
@@ -3147,7 +3302,9 @@ void client_factor_f(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN) {
 }
 
 
+
 void add_credit_card(char* CIN_client, char *name_client) {
+    c_clrscr();
     time_t t = time(NULL);   // Get the current time
     struct tm *current_time = localtime(&t); // Convert to local time structure
     int current_year = current_time->tm_year + 1900; // Extract the current year
@@ -3256,6 +3413,7 @@ void add_credit_card(char* CIN_client, char *name_client) {
 }
 // french version
 void add_credit_card_f(char* CIN_client, char *name_client) {
+    c_clrscr();
     time_t t = time(NULL);   // Obtenir l'heure actuelle
     struct tm *current_time = localtime(&t); // Convertir en structure de temps local
     int current_year = current_time->tm_year + 1900; // Extraire l'annee actuelle
@@ -3374,6 +3532,7 @@ void add_credit_card_f(char* CIN_client, char *name_client) {
 
 
 void display_credit_cards(char *client_name, char *CIN) {
+    c_clrscr();
     FILE *CDM_1 = fopen("CREDIT_CARD.dat", "rb");
     if (CDM_1 == NULL) {
         c_textcolor(4);
@@ -3440,6 +3599,7 @@ void display_credit_cards(char *client_name, char *CIN) {
 }
 // french version
 void display_credit_cards_f(char *client_name, char *CIN) {
+    c_clrscr();
     FILE *CDM_1 = fopen("CREDIT_CARD.dat", "rb");
     if (CDM_1 == NULL) {
         c_textcolor(4);
@@ -4745,7 +4905,7 @@ void view_product_supplier(char *CINF) {
 
                 y++;  // Move to the row under the header after clearing
             }
-            usleep(500000);  // Sleep for 500ms for a smoother user experience
+            usleep(100000);  // Sleep for 500ms for a smoother user experience
         }
     }
 
@@ -4822,7 +4982,7 @@ void view_product_supplier_f(char *CINF) {
 
                 y++;  // Move to the row under the header after clearing
             }
-            usleep(500000);  // Sleep for 500ms for a smoother user experience
+            usleep(100000);  // Sleep for 500ms for a smoother user experience
         }
     }
 

@@ -27,9 +27,8 @@
                 // TAMZIRT -------- MOHAMED //
     void add_credit_card(char* CIN_client , char * name_client);
     void display_credit_cards(char *name_client,char* CIN );
-//     FILE * PCM , FILE * client_choice ,
-    void Display_the_Supplier_Total_amount_sales_in_the_Day( char * CIN  ); // PCM : Product Client Managment 
-    void client_factor(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN);
+    void Display_the_Supplier_Total_amount_sales_in_the_Day( char * CIN  ); 
+    void client_factor(char *CIN);
     void feedback_and_rate_the_product(char * name_cl , int id_product);
     int check_stock_and_get_price(FILE *PCM, const char *category, const char *name, int quantity, float *price);
 
@@ -69,7 +68,7 @@ void confirm_purchases_f(char *CIN);
 void add_credit_card_f(char* CIN_client , char * name_client);
 void display_credit_cards_f(char *name_client,char* CIN );
 void Display_the_Supplier_Total_amount_sales_in_the_Day_f(char * CIN); // PCM: Product Client Management 
-void client_factor_f(FILE *PCM, FILE *CDM, FILE *client_choice, char *CIN);
+void client_factor_f(char *CIN);
 void feedback_and_rate_the_product_f(char * name_cl , int id_product);
 int check_stock_and_get_price(FILE *PCM, const char *category, const char *name, int quantity, float *price);
 
