@@ -539,24 +539,26 @@ void sign_in_client() {
     }
 
     c_clrscr();
-    c_textattr(14); // Set text color to yellow
+    c_textattr(2); 
     c_gotoxy(32, 6);
     printf("Create Your Account:");
-
-    c_textattr(8); // Set text color to gray
-
+    c_textattr(2);
     c_gotoxy(32, 8);
     printf("Enter your LAST NAME: ");
+    c_textattr(15);
     scanf("%s", client.last_name);
-
+    c_textattr(2); 
     c_gotoxy(32, 10);
     printf("Enter your FIRST NAME: ");
+    c_textattr(15);
     scanf("%s", client.First_name);
 
     // Validate CIN (Identification Number)
     while (1) {
         c_gotoxy(32, 12);
+        c_textattr(2);
         printf("Enter your CIN: ");
+        c_textattr(15);
         scanf("%s", client.CIN);
 
         if (is_CIN_unique(client.CIN)) {
@@ -574,12 +576,16 @@ void sign_in_client() {
 
     // Validate Password
     while (1) {
+        c_textattr(2);
         c_gotoxy(32, 14);
         printf("Enter the NEW PASSWORD: ");
+        c_textattr(15);
         strcpy(client.password, Pass_hide(20));
 
         c_gotoxy(32, 15);
+        c_textattr(2);
         printf("Confirm your PASSWORD: ");
+        c_textattr(15);
         strcpy(client.confirm_password, Pass_hide(20));
 
         if (strcmp(client.password, client.confirm_password) == 0) {
@@ -616,53 +622,59 @@ void sign_in_client_f() {
     if (fp == NULL) {
         c_textattr(4); // Set text color to red
         c_gotoxy(32, 8);
-        printf("Le fichier n'existe pas ou n'a pas pu etre ouvert !");
+        printf("Le fichier n'existe pas ou n'a pas pu être ouvert !");
         c_textattr(14); // Reset text color
         return;
     }
 
     c_clrscr();
-    c_textattr(14); // Set text color to yellow
+    c_textattr(2); 
     c_gotoxy(32, 6);
-    printf("Creez votre compte :");
-
-    c_textattr(8); // Set text color to gray
-
+    printf("Creer votre compte :");
+    c_textattr(2);
     c_gotoxy(32, 8);
     printf("Entrez votre NOM : ");
+    c_textattr(15);
     scanf("%s", client.last_name);
-
+    c_textattr(2); 
     c_gotoxy(32, 10);
-    printf("Entrez votre PRENOM : ");
+    printf("Entrez votre PRÉNOM : ");
+    c_textattr(15);
     scanf("%s", client.First_name);
 
     // Validate CIN (Identification Number)
     while (1) {
         c_gotoxy(32, 12);
+        c_textattr(2);
         printf("Entrez votre CIN : ");
+        c_textattr(15);
         scanf("%s", client.CIN);
 
         if (is_CIN_unique(client.CIN)) {
             // Clear any previous error message
             c_gotoxy(32, 13);
-            printf("                                                                                      "); // Clear line
+            printf("                                                                          "); // Clear line
             break; // CIN is valid, exit loop
         } else {
             c_textattr(4); // Set text color to red
             c_gotoxy(32, 13);
-            printf("Erreur : Le CIN existe deja ou le format est invalide. Veuillez en essayer un autre.");
+            printf("Erreur : Le CIN existe déjà ou est invalide. Veuillez réessayer.");
             c_textattr(14); // Reset text color
         }
     }
 
     // Validate Password
     while (1) {
+        c_textattr(2);
         c_gotoxy(32, 14);
-        printf("Entrez le NOUVEAU MOT DE PASSE : ");
+        printf("Entrez un NOUVEAU MOT DE PASSE : ");
+        c_textattr(15);
         strcpy(client.password, Pass_hide(20));
 
         c_gotoxy(32, 15);
+        c_textattr(2);
         printf("Confirmez votre MOT DE PASSE : ");
+        c_textattr(15);
         strcpy(client.confirm_password, Pass_hide(20));
 
         if (strcmp(client.password, client.confirm_password) == 0) {
@@ -673,7 +685,7 @@ void sign_in_client_f() {
         } else {
             c_textattr(4); // Set text color to red
             c_gotoxy(32, 16);
-            printf("Erreur : Les mots de passe ne correspondent pas. Veuillez reessayer.");
+            printf("Erreur : Les mots de passe ne correspondent pas. Veuillez réessayer.");
             c_textattr(14); // Reset text color
             c_gotoxy(32, 14); // Clear password fields for retry
             printf("                                                   ");
@@ -689,7 +701,7 @@ void sign_in_client_f() {
     // Success message
     c_textattr(2); // Set text color to green
     c_gotoxy(32, 18);
-    printf("Informations ajoutees avec succes !");
+    printf("Informations ajoutées avec succès !");
     c_textattr(14); // Reset text color
 }
 
@@ -697,7 +709,7 @@ char* Pass_hide(int max_length) {
     static char PIN[256]; // Static to ensure it persists after function execution
     int i = 0;
     char ch;
-
+    c_textcolor(14);
     while (i < max_length - 1 && (ch = c_getch()) != '\r') {  // '\r' is Enter key in Windows
         if (ch == '\b' && i > 0) {  // Handle backspace
             i--;
@@ -3530,101 +3542,42 @@ void add_credit_card_f(char* CIN_client, char *name_client) {
 }
 
 
-void display_credit_cards(char *client_name, char *CIN) {
-    c_clrscr();
-    FILE *CDM_1 = fopen("CREDIT_CARD.dat", "rb");
-    if (CDM_1 == NULL) {
-        c_textcolor(4);
-        printf("\nERROR: The file 'CREDIT_CARD.dat' does not exist!");
-        exit(0);
-    }
-
-    CCD CD; // CD: CARD DETAIL
-    int found = 0;
-
-    c_textcolor(14);
-    printf("\n------------------- Credit Card Details -------------------\n");
-
-    while (fread(&CD, sizeof(CCD), 1, CDM_1) == 1) {
-        if (strcmp(CIN, CD.client_CIN) == 0) {
-            found = 1;
-
-            c_textcolor(8);
-            printf("\nClient Name: ");
-            c_textcolor(14);
-            printf("%s\n", CD.client_name);
-
-            c_textcolor(8);
-            printf("CIN: ");
-            c_textcolor(14);
-            printf("%s\n", Temp_CIN);
-
-            c_textcolor(8);
-            printf("Card Number: ");
-            for (int i = 0; i < strlen(CD.card_number); i++) {
-                if (i < 4 || i >= strlen(CD.card_number) - 4) {
-                    c_textcolor(14);
-                    printf("%c", CD.card_number[i]);
-                } else {
-                    c_textcolor(5);
-                    printf("*");
-                }
-            }
-            printf("\n");
-
-            c_textcolor(8);
-            printf("CVV: ");
-            c_textcolor(5); 
-            printf("***\n");
-
-            c_textcolor(8);
-            printf("Card Expiry Date: ");
-            c_textcolor(14);
-            printf("%s/%s\n", CD.expiry_date.month, CD.expiry_date.year);
-        }
-    }
-
-    if (!found) {
-        c_textcolor(4);
-        printf("\nNo credit card found for client with CIN: %s\n", CIN);
-    }
-
-    fclose(CDM_1);
-
-    c_textattr(14);
-    printf("\n----------------------------------------------------------\n");
-}
-// french version
 void display_credit_cards_f(char *client_name, char *CIN) {
     c_clrscr();
     FILE *CDM_1 = fopen("CREDIT_CARD.dat", "rb");
     if (CDM_1 == NULL) {
         c_textcolor(4);
-        printf("\nERREUR : Le fichier 'CREDIT_CARD.dat' n'existe pas !");
+        c_gotoxy(50, 8);
+        printf("ERREUR : Le fichier 'CREDIT_CARD.dat' n'existe pas !");
         exit(0);
     }
 
-    CCD CD; // CD : DeTAILS DE LA CARTE
+    CCD CD; // CD: CARD DETAIL
     int found = 0;
+    int line = 10; // Start printing at line 10
 
     c_textcolor(14);
-    printf("\n------------------- Details de la Carte de Credit -------------------\n");
+    c_gotoxy(50, 8);
+    printf("------------------- Details de la Carte Credit -------------------");
 
     while (fread(&CD, sizeof(CCD), 1, CDM_1) == 1) {
         if (strcmp(CIN, CD.client_CIN) == 0) {
             found = 1;
 
             c_textcolor(8);
-            printf("\nNom du Client : ");
+            c_gotoxy(50, line++);
+            printf("Nom du Client : ");
             c_textcolor(14);
-            printf("%s\n", CD.client_name);
+            printf("%s", CD.client_name);
 
             c_textcolor(8);
+            c_gotoxy(50, line++);
             printf("CIN : ");
             c_textcolor(14);
-            printf("%s\n", Temp_CIN);
+            printf("%s", CIN);
 
             c_textcolor(8);
+            c_gotoxy(50, line++);
             printf("Numero de Carte : ");
             for (int i = 0; i < strlen(CD.card_number); i++) {
                 if (i < 4 || i >= strlen(CD.card_number) - 4) {
@@ -3635,30 +3588,113 @@ void display_credit_cards_f(char *client_name, char *CIN) {
                     printf("*");
                 }
             }
-            printf("\n");
 
             c_textcolor(8);
+            c_gotoxy(50, line++);
             printf("CVV : ");
-            c_textcolor(5); 
-            printf("***\n");
+            c_textcolor(5);
+            printf("***");
 
             c_textcolor(8);
+            c_gotoxy(50, line++);
             printf("Date d'Expiration : ");
             c_textcolor(14);
-            printf("%s/%s\n", CD.expiry_date.month, CD.expiry_date.year);
+            printf("%s/%s", CD.expiry_date.month, CD.expiry_date.year);
+
+            line++; // Add spacing after each card
         }
     }
 
     if (!found) {
         c_textcolor(4);
-        printf("\nAucune carte de credit trouvee pour le client avec le CIN : %s\n", CIN);
+        c_gotoxy(50, line++);
+        printf("Aucune carte de credit trouvee pour le client avec CIN : %s", CIN);
     }
 
     fclose(CDM_1);
 
     c_textattr(14);
-    printf("\n---------------------------------------------------------------------\n");
+    c_gotoxy(50, line++);
+    printf("----------------------------------------------------------");
 }
+
+// french version
+void display_credit_cards(char *client_name, char *CIN) {
+    c_clrscr();
+    FILE *CDM_1 = fopen("CREDIT_CARD.dat", "rb");
+    if (CDM_1 == NULL) {
+        c_textcolor(4);
+        c_gotoxy(50, 8);
+        printf("ERREUR : Le fichier 'CREDIT_CARD.dat' n'existe pas !");
+        exit(0);
+    }
+
+    CCD CD; // CD: DÉTAIL DE LA CARTE
+    int found = 0;
+    int line = 10; // Commence l'affichage à la ligne 10
+
+    c_textcolor(14);
+    c_gotoxy(50, 8);
+    printf("------------------- Détails de la Carte Bancaire -------------------");
+
+    while (fread(&CD, sizeof(CCD), 1, CDM_1) == 1) {
+        if (strcmp(CIN, CD.client_CIN) == 0) {
+            found = 1;
+
+            c_textcolor(8);
+            c_gotoxy(50, line++);
+            printf("Nom du Client : ");
+            c_textcolor(14);
+            printf("%s", CD.client_name);
+
+            c_textcolor(8);
+            c_gotoxy(50, line++);
+            printf("CIN : ");
+            c_textcolor(14);
+            printf("%s", CIN);
+
+            c_textcolor(8);
+            c_gotoxy(50, line++);
+            printf("Numero de Carte : ");
+            for (int i = 0; i < strlen(CD.card_number); i++) {
+                if (i < 4 || i >= strlen(CD.card_number) - 4) {
+                    c_textcolor(14);
+                    printf("%c", CD.card_number[i]);
+                } else {
+                    c_textcolor(5);
+                    printf("*");
+                }
+            }
+
+            c_textcolor(8);
+            c_gotoxy(50, line++);
+            printf("CVV : ");
+            c_textcolor(5);
+            printf("***");
+
+            c_textcolor(8);
+            c_gotoxy(50, line++);
+            printf("Date d'Expiration : ");
+            c_textcolor(14);
+            printf("%s/%s", CD.expiry_date.month, CD.expiry_date.year);
+
+            line++; // Ajoute un espace après chaque carte
+        }
+    }
+
+    if (!found) {
+        c_textcolor(4);
+        c_gotoxy(50, line++);
+        printf("Aucune carte de credit trouvee pour le client avec le CIN : %s", CIN);
+    }
+
+    fclose(CDM_1);
+
+    c_textattr(14);
+    c_gotoxy(50, line++);
+    printf("----------------------------------------------------------");
+}
+
 
 
 void Display_the_Supplier_Total_amount_sales_in_the_Day(char *CINF) {
