@@ -28,18 +28,18 @@ BT                         % Begin text block
 /F1 12 Tf                  % Set font to F1 at 12 points
 72 750 Td                  % Position text at (72, 750)
 (================== FACTURE ==================) Tj
-0 -20 Td  (Client Name: wael ) Tj
-0 -20 Td(Client CIN: ab123456 ) Tj
-0 -20 Td(Card Number: 5555 ** ** 6666 ) Tj
-0 -20 Td(Date of Purchase: 17-12-2024) Tj
+0 -20 Td  (Client Name: chicken ) Tj
+0 -20 Td(Client CIN: aw12345 ) Tj
+0 -20 Td(Card Number: 1234 ** ** 4442 ) Tj
+0 -20 Td(Date of Purchase: 18-12-2024) Tj
 0 -30 Td (---------------------------------------------) Tj
 0 -20 Td(| Product         | Quantity   | Total Price |) Tj
 0 -20 Td(---------------------------------------------) Tj
-0 -20 Td(| aa              | 256        | 76800.00   DH |) Tj
+0 -20 Td(| apple           | 2          | 12000.00   DH |) Tj
 0 -20 Td
 (---------------------------------------------) Tj
 0 -20 Td
-(Grand Total: 76800.00 DH) Tj
+(Grand Total: 12000.00 DH) Tj
 0 -20 Td
 (=============================================) Tj
 ET                         % End text block

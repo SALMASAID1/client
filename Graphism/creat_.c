@@ -1,30 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// void data_file (int supplier_num ){
-//     sprintf(filename, "supplier%d.txt", supplier_num);
-//     FILE *supplier_amount = fopen(filename, "rt");
-//     if (supplier_amount == NULL) {
-//         c_textcolor(4);
-//         printf("Error: Unable to create file %s!\n", filename);
-//         return;
-//     }
-//     FILE *data_file = fopen("data_file.txt","rt");
-//     if(data_file == NULL){
-//         printf("the file does not exist !!!");
-//         exit(0);
-//     }
-//     int taill = 0 ;
-//     int quantity;
-//     while(fscanf(data_file ,"%d",))
-//     int *Quantity ;
-//     while()
-// }
-
-
-#include <stdio.h>
-#include <stdlib.h>
-
 void ReadQuantitiesFromFile(int supplier_num) {
     // Array of weekdays
     const char *weekdays[] = {
