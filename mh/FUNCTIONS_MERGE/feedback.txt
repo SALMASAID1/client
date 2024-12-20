@@ -16,3 +16,5 @@ Client: chicken | Product ID: 4 | Comment: Nice
 Rating: 5 stars
 Client: chicken | Product ID: 9 | Comment: is Nice
 Rating: 4 stars
+Client: chicken | Product ID: 13 | Comment: is Nice but color is not that red
+Rating: 3 stars

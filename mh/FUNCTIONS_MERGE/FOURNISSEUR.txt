@@ -1,11 +1,7 @@
-chicken med abcd 000
 mohamed tamzirt Ay1911 2222
-mm aa aa 123
 ff gg tt 123
 salma said 1235 222
-chicken med abcd 000
 mohamed tamzirt Ay1911 2222
-mm aa aa 123
 ff gg tt 123
 salma said 1235 222chicken
 med abcd 000 chicken
@@ -18,7 +14,6 @@ aa 123 cc as
 1234 1234 ui rf
 124 333 ff gg
 tt 123 salma said
-1235 222 aa qq
 wael cheffoui vkkbk wael009
 wael saad ab123 123
 wael hhh abv 123
@@ -35,3 +30,6 @@ salma said ab123675 u
 wael cheffoui AS19002 Genie
 gg fff av123456 55
 eee eed an123678 2
+wael cheffoui AS12345 Genie
+Chicken TM AY12345 123
+ali baba as122222 11

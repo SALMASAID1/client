@@ -29,17 +29,17 @@ BT                         % Begin text block
 72 750 Td                  % Position text at (72, 750)
 (================== FACTURE ==================) Tj
 0 -20 Td  (Client Name: chicken ) Tj
-0 -20 Td(Client CIN: aw12345 ) Tj
-0 -20 Td(Card Number: 5555 ** ** 5777 ) Tj
+0 -20 Td(Client CIN: AY12344 ) Tj
+0 -20 Td(Card Number: 1233 ** ** 3333 ) Tj
 0 -20 Td(Date of Purchase: 20-12-2024) Tj
 0 -30 Td (---------------------------------------------) Tj
 0 -20 Td(| Product         | Quantity   | Total Price |) Tj
 0 -20 Td(---------------------------------------------) Tj
-0 -20 Td(| ananas          | 100        | 2000.00    DH |) Tj
+0 -20 Td(| appels          | 100        | 1000.00    DH |) Tj
 0 -20 Td
 (---------------------------------------------) Tj
 0 -20 Td
-(Grand Total: 2000.00 DH) Tj
+(Grand Total: 1000.00 DH) Tj
 0 -20 Td
 (=============================================) Tj
 ET                         % End text block

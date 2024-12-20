@@ -529,7 +529,7 @@ int is_CIN_unique_supplier(const char *cin) {
 }
 
 
-void sign_in_client() {
+void sign_up_client() {
     Client client;
     FILE *fp = fopen("CLIENT.txt", "a");
     if (fp == NULL) {
@@ -618,7 +618,7 @@ void sign_in_client() {
     c_textattr(14); // Reset text color
 }
 // french version
-void sign_in_client_f() {
+void sign_up_client_f() {
     Client client;
     FILE *fp = fopen("CLIENT.txt", "a");
     if (fp == NULL) {
@@ -1214,7 +1214,7 @@ void Add_Purchases_f(char *CIN) {
 
     c_textattr(2);
     c_gotoxy(32, 16);
-    printf("Succès : Produit ajoute au panier !");
+    printf("Succes : Produit ajoute au panier !");
     c_textattr(14);
 
     fclose(ff);
@@ -2561,7 +2561,7 @@ void modify_product_f(char *CINF) {
                 case 5:  // Back
                     fclose(fp);
                     fclose(temp);
-                    liste_fournisseur(CINF);
+                    liste_fournisseur_f(CINF);
             }
         }
 
@@ -4879,7 +4879,7 @@ void c_draw_menu(int op, Options options) {
     int frame_y = 15;
     c_textattr(15); 
     c_gotoxy(28, 6);
-    printf("****                                    ---->> Gestion des Achat <<----                                   ****");
+    printf("****    ****    ****    ****    ****   ---->> Gestion des Achat <<----   ****    ****    ****    ****     ****");
     // Display the title at specific coordinates
     c_textattr(2); 
     c_gotoxy(28, 10);
@@ -5007,7 +5007,7 @@ void Home_LOGIN_menu() {
                         login_supplier(Supplier_CIN);
                         break;
                     case 1: // Back to Main Menu
-                        Home_OPTIONS();
+                        Home_LOGIN_menu();
                         break;
                     case 2: // Leave Program
                         free(Client_CIN);
@@ -5018,7 +5018,7 @@ void Home_LOGIN_menu() {
             } while (choice != 1 && choice != 2);
         } else if (selected == 2) { // Client
             Options menuOptions = {
-                .ops = (char *[]) { "Login", "Sign In", "Back to Main Menu", "Leave Program" },
+                .ops = (char *[]) { "Login", "Sign Up", "Back to Main Menu", "Leave Program" },
                 .len = 4,
                 .title = "---->> CLIENT MENU <<----"
             };
@@ -5030,11 +5030,11 @@ void Home_LOGIN_menu() {
                     case 0: // Login
                         clientLogin(Client_CIN);
                         break;
-                    case 1: // Sign In
-                        sign_in_client();
+                    case 1: // Sign Up
+                        sign_up_client();
                         break;
                     case 2: // Back to Main Menu
-                        Home_OPTIONS();
+                        Home_LOGIN_menu();
                         break;
                     case 3: // Leave Program
                         free(Client_CIN);
@@ -5098,7 +5098,7 @@ void Home_LOGIN_menu_f() {
                         login_supplier_f(Supplier_CIN);
                         break;
                     case 1: // Retour au Menu Principal
-                        Home_OPTIONS();
+                        Home_LOGIN_menu_f();
                         break;
                     case 2: // Quitter le Programme
                         free(Client_CIN);
@@ -5122,10 +5122,10 @@ void Home_LOGIN_menu_f() {
                         clientLogin_f(Client_CIN);
                         break;
                     case 1: // S'inscrire
-                        sign_in_client_f();
+                        sign_up_client_f();
                         break;
                     case 2: // Retour au Menu Principal
-                        Home_OPTIONS();
+                        Home_LOGIN_menu_f();
                         break;
                     case 3: // Quitter le Programme
                         free(Client_CIN);
@@ -5234,7 +5234,7 @@ void delete_supplier_f() {
     char CIN[30];
     c_gotoxy(60, 27);
     printf("Entrez le CIN du fournisseur: ");
-    c_gotoxy(86, 27);
+    c_gotoxy(90, 27);
     scanf("%s", CIN);
     int tr = 0;
     fournisseur f, fs;
@@ -5266,7 +5266,7 @@ void delete_supplier_f() {
         gradientSpinner_s(20);
         c_gotoxy(60, y);
         c_textcolor(2);
-        printf("M. %s %s supprime avec succès", fs.nomf, fs.prenomf);
+        printf("M. %s %s supprime avec succes", fs.nomf, fs.prenomf);
         c_textcolor(15);
     }
     c_getch();
