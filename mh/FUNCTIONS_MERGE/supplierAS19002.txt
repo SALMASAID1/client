@@ -1,9 +1,9 @@
-SUPPLIER CIN: ab123675
-DATE: 20-12-2024
+SUPPLIER CIN: AS19002
+DATE: 18-12-2024
 
 Category           Quantity    Sale Amount (DH)
 ----------------------------------------------
-fg                 500        47000.00       
+li7wak             3          6000.00        
 ----------------------------------------------
-TOTAL SALES AMOUNT: 47000.00 DH
+TOTAL SALES AMOUNT: 6000.00 DH
 

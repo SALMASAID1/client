@@ -1,6 +1,6 @@
 set terminal pngcairo size 1920,1080 enhanced
 set output 'histogram.png'
-set title 'Weekly Sales Histogram of supplier t88'
+set title 'Product Statistics in a Week'
 set xlabel 'Days of the Week'
 set ylabel 'Quantities'
 set grid
