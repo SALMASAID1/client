@@ -2199,14 +2199,18 @@ void delete_product(char *CINF) {
     int id, tr = 0;
 
     if (fp == NULL || temp == NULL) {
-        printf("Unable to open file\n");
+        c_textcolor(4);
+        c_gotoxy(50, 8);
+        printf("Unable to open file");
         exit(1);
     }
 
     c_clrscr();
-    c_textcolor(1);
-    c_gotoxy(30, 3);
+    c_textcolor(2);
+    c_gotoxy(50, 10);
     printf("Enter the product ID to delete: ");
+    c_textcolor(15);
+    c_gotoxy(82, 10);
     scanf("%d", &id);
     c_textcolor(15);
 
@@ -2224,9 +2228,9 @@ void delete_product(char *CINF) {
     fclose(temp);
 
     if (tr == 0) {
-        c_gotoxy(30, 5);
         c_textcolor(4);
-        printf("\nWarning: The product does not exist or does not belong to the specified supplier!\n");
+        c_gotoxy(50, 12);
+        printf("Warning: The product does not exist or does not belong to the specified supplier!");
         c_textcolor(15);
     } else {
         // Reorder IDs for remaining products
@@ -2245,9 +2249,9 @@ void delete_product(char *CINF) {
 
         remove("temp.dat");
 
-        c_gotoxy(30, 5);
         c_textcolor(2);
-        printf("\nThe product has been successfully deleted and IDs have been reordered!\n");
+        c_gotoxy(50, 12);
+        printf("The product has been successfully deleted and IDs have been reordered!");
         c_textcolor(15);
     }
 }
@@ -2259,14 +2263,18 @@ void delete_product_f(char *CINF) {
     int id, tr = 0;
 
     if (fp == NULL || temp == NULL) {
-        printf("Impossible d'ouvrir le fichier\n");
+        c_textcolor(4);
+        c_gotoxy(50, 8);
+        printf("Impossible d'ouvrir le fichier");
         exit(1);
     }
 
     c_clrscr();
-    c_textcolor(1);
-    c_gotoxy(30, 3);
-    printf("Entrez l'ID du produit a supprimer : ");
+    c_textcolor(2);
+    c_gotoxy(50, 10);
+    printf("Entrez l'ID du produit à supprimer : ");
+    c_textcolor(15);
+    c_gotoxy(82, 10);
     scanf("%d", &id);
     c_textcolor(15);
 
@@ -2284,20 +2292,20 @@ void delete_product_f(char *CINF) {
     fclose(temp);
 
     if (tr == 0) {
-        c_gotoxy(30, 5);
         c_textcolor(4);
-        printf("\nAttention : Le produit n'existe pas ou n'appartient pas au fournisseur specifie !\n");
+        c_gotoxy(50, 12);
+        printf("Attention : Le produit n'existe pas ou n'appartient pas au fournisseur specifie !");
         c_textcolor(15);
     } else {
-        // Reorganiser les IDs des produits restants
+        // Reorganiser les IDs pour les produits restants
         fp = fopen("produit.dat", "wb");
         temp = fopen("temp.dat", "rb");
         int new_id = 1;
 
         while (fread(&p, sizeof(produit), 1, temp)) {
-            p.id_product = new_id++; // Mettre a jour l'ID pour maintenir l'ordre
+            p.id_product = new_id++; // Mettre à jour l'ID pour maintenir l'ordre
             fwrite(&p, sizeof(produit), 1, fp);
-            usleep(100000); // Pause pour l'effet visuel de basculement
+            usleep(100000); // Pause pour un affichage visuel fluide
         }
 
         fclose(fp);
@@ -2305,9 +2313,9 @@ void delete_product_f(char *CINF) {
 
         remove("temp.dat");
 
-        c_gotoxy(30, 5);
         c_textcolor(2);
-        printf("\nLe produit a ete supprime avec succes et les IDs ont ete reorganises !\n");
+        c_gotoxy(50, 12);
+        printf("Le produit a ete supprime avec succès et les IDs ont ete reorganises !");
         c_textcolor(15);
     }
 }
@@ -3341,7 +3349,20 @@ void product_statis(int id_prod, int year, int month , int day) {
         exit(1);
     }
     for (int i = 0; i < 7; i++) {
-        fprintf(statis, "%s %d\n", days[i], week_quatities[i]);
+        time_t t = date_to_days_unix (year,month,day) + i*24*60*60 ;
+        struct tm *time_info = localtime(&t);
+
+        if (time_info == NULL) {
+            printf("Error: Unable to convert Unix timestamp to date.\n");
+            return;
+        }
+
+        // Extract day, month, and year
+        int day = time_info->tm_mday;      // Day of the month (1-31)
+        int month = time_info->tm_mon + 1; // Month (0-11, so add 1)
+        int year = time_info->tm_year + 1900; // Years since 1900
+
+        fprintf(statis, "%d-%d-%d %d\n",  day, month, year , week_quatities[i]);
     }
     fclose(statis);
     generate_histogram("Product Statistics in a Week", "statis.txt");
@@ -4061,41 +4082,31 @@ void display_credit_cards(char *client_name, char *CIN) {
 
 void Display_the_Supplier_Total_amount_sales_in_the_Day(char *CINF) {
     c_clrscr();
+    FILE *sales = fopen("sales.bin", "rb");
+    FILE *sale_prod = fopen("sales_prod.bin", "rb");
     FILE *produit_file = fopen("produit.dat", "rb");
-    if (produit_file == NULL) {
-        printf("Error: 'produit.dat' does not exist!\n");
-        exit(0);
-    }
 
-    FILE *client_file = fopen("client.txt", "rt");
-    if (client_file == NULL) {
-        printf("Error: 'client.txt' does not exist!\n");
-        fclose(produit_file);
-        exit(0);
-    }
-
-    time_t currentTime;
-    time(&currentTime);
-    struct tm *localTime = localtime(&currentTime);
-    int day = localTime->tm_mday;
-    int month = localTime->tm_mon + 1;
-    int year = localTime->tm_year + 1900;
-
-    char report_filename[50];
-    sprintf(report_filename, "supplier%s.txt", CINF);
-    FILE *supplier_report_file = fopen(report_filename, "w+t");
-    if (supplier_report_file == NULL) {
-        printf("Error: Unable to create the report file '%s'!\n", report_filename);
-        fclose(produit_file);
-        fclose(client_file);
+    if (sales == NULL || sale_prod == NULL || produit_file == NULL) {
+        c_textcolor(4);
+        c_gotoxy(65, 10);
+        printf("Error: Unable to open required files!\n");
         return;
     }
 
+    // Get current date
+    time_t currentTime;
+    time(&currentTime);
+    struct tm *localTime = localtime(&currentTime);
+    int current_day = localTime->tm_mday;
+    int current_month = localTime->tm_mon + 1;
+    int current_year = localTime->tm_year + 1900;
+
+    // Display header
     c_textcolor(15);
     c_gotoxy(65, 10);
     printf("======== SUPPLIER TOTAL SALES REPORT ========\n");
     c_gotoxy(65, 11);
-    printf("DATE: %02d-%02d-%d\n", day, month, year);
+    printf("DATE: %02d-%02d-%d\n", current_day, current_month, current_year);
     c_gotoxy(65, 12);
     printf("SUPPLIER CIN: %s\n", CINF);
     c_gotoxy(65, 13);
@@ -4105,156 +4116,161 @@ void Display_the_Supplier_Total_amount_sales_in_the_Day(char *CINF) {
     c_gotoxy(65, 15);
     printf("|-----------------|------------|-----------------|\n");
 
-    fprintf(supplier_report_file, "SUPPLIER CIN: %s\nDATE: %02d-%02d-%d\n\n", CINF, day, month, year);
-    fprintf(supplier_report_file, "Category           Quantity    Sale Amount (DH)\n");
-    fprintf(supplier_report_file, "----------------------------------------------\n");
-
-    produit p;
-    int cart_product_id, cart_quantity;
+    // Track sales data
     float total_sales_amount = 0.0;
+    int row = 16;
+    
+    sale s;
+    sale_product sp;
+    produit p;
 
-    char client_name[30], client_lastname[30], client_cinc[30], client_motpass[30];
-    while (fscanf(client_file, "%s %s %s %s", client_name, client_lastname, client_cinc, client_motpass) == 4) {
-        char cart_filename[50];
-        sprintf(cart_filename, "%s_Cart.txt", client_cinc);
-        FILE *cart_file = fopen(cart_filename, "rt");
-        if (cart_file == NULL) {
-            continue;
-        }
+    // Process each sale
+    while (fread(&s, sizeof(sale), 1, sales) == 1) {
+        int sale_day, sale_month, sale_year;
+        sscanf(s.sale_date, "%d-%d-%d", &sale_day, &sale_month, &sale_year);
 
-        while (fscanf(cart_file, "%d %d", &cart_product_id, &cart_quantity) == 2) {
-            rewind(produit_file);
-            while (fread(&p, sizeof(produit), 1, produit_file)) {
-                if (p.id_product == cart_product_id && strcmp(p.CINF, CINF) == 0) {
-                    float total_amount = p.price * cart_quantity;
-                    total_sales_amount += total_amount;
+        // Check if sale is from today
+        if (sale_day == current_day && sale_month == current_month && sale_year == current_year) {
+            // Process products in this sale
+            rewind(sale_prod);
+            while (fread(&sp, sizeof(sale_product), 1, sale_prod) == 1) {
+                if (sp.sale_id == s.sale_id) {
+                    // Find product details
+                    rewind(produit_file);
+                    while (fread(&p, sizeof(produit), 1, produit_file) == 1) {
+                        if (p.id_product == sp.product_id && strcmp(p.CINF, CINF) == 0) {
+                            float amount = p.price * sp.quantity;
+                            total_sales_amount += amount;
 
-                    c_textcolor(2);
-                    c_gotoxy(65, 16);
-                    printf("| %-15s | %-10d | %-15.2f |\n", p.category, cart_quantity, total_amount);
-                    fprintf(supplier_report_file, "%-18s %-10d %-15.2f\n", p.category, cart_quantity, total_amount);
-
-                    usleep(100000);
-                    break;
+                            // Display sale line
+                            c_textcolor(2);
+                            c_gotoxy(65, row++);
+                            printf("| %-15s | %-10d | %-12.2f |\n", 
+                                   p.category, sp.quantity, amount);
+                            
+                            usleep(50000); // Slow down display for readability
+                            break;
+                        }
+                    }
                 }
             }
         }
-        fclose(cart_file);
     }
 
+    // Display totals
     c_textcolor(15);
-    c_gotoxy(65, 17);
+    c_gotoxy(65, row++);
     printf("============================================\n");
-    c_gotoxy(65, 18);
+    c_gotoxy(65, row++);
     printf("TOTAL SALES AMOUNT: %.2f DH\n", total_sales_amount);
-    c_gotoxy(65, 19);
+    c_gotoxy(65, row);
     printf("============================================\n");
 
-    fprintf(supplier_report_file, "----------------------------------------------\n");
-    fprintf(supplier_report_file, "TOTAL SALES AMOUNT: %.2f DH\n\n", total_sales_amount);
-
-    fclose(supplier_report_file);
+    // Cleanup
+    fclose(sales);
+    fclose(sale_prod);
     fclose(produit_file);
-    fclose(client_file);
+
+    c_gotoxy(65, row + 2);
+    c_textcolor(14);
+    printf("Press any key to continue...");
+    c_getch();
 }
 // french version
 void Display_the_Supplier_Total_amount_sales_in_the_Day_f(char *CINF) {
     c_clrscr();
+    FILE *sales = fopen("sales.bin", "rb");
+    FILE *sale_prod = fopen("sales_prod.bin", "rb");
     FILE *produit_file = fopen("produit.dat", "rb");
-    if (produit_file == NULL) {
-        printf("Erreur : 'produit.dat' n'existe pas !\n");
-        exit(0);
-    }
 
-    FILE *client_file = fopen("client.txt", "rt");
-    if (client_file == NULL) {
-        printf("Erreur : 'client.txt' n'existe pas !\n");
-        fclose(produit_file);
-        exit(0);
-    }
-
-    time_t currentTime;
-    time(&currentTime);
-    struct tm *localTime = localtime(&currentTime);
-    int day = localTime->tm_mday;
-    int month = localTime->tm_mon + 1;
-    int year = localTime->tm_year + 1900;
-
-    char report_filename[50];
-    sprintf(report_filename, "supplier%s.txt", CINF);
-    FILE *supplier_report_file = fopen(report_filename, "w+t");
-    if (supplier_report_file == NULL) {
-        printf("Erreur : Impossible de creer le fichier du rapport '%s' !\n", report_filename);
-        fclose(produit_file);
-        fclose(client_file);
+    if (sales == NULL || sale_prod == NULL || produit_file == NULL) {
+        c_textcolor(4);
+        c_gotoxy(65, 10);
+        printf("Erreur : Impossible d'ouvrir les fichiers requis !\n");
         return;
     }
 
+    // Obtenir la date actuelle
+    time_t currentTime;
+    time(&currentTime);
+    struct tm *localTime = localtime(&currentTime);
+    int current_day = localTime->tm_mday;
+    int current_month = localTime->tm_mon + 1;
+    int current_year = localTime->tm_year + 1900;
+
+    // Afficher l'en-tête
     c_textcolor(15);
     c_gotoxy(65, 10);
-    printf("======== RAPPORT DES VENTES TOTALES DU FOURNISSEUR ========\n");
+    printf("======== RAPPORT TOTAL DES VENTES FOURNISSEUR ========\n");
     c_gotoxy(65, 11);
-    printf("DATE : %02d-%02d-%d\n", day, month, year);
+    printf("DATE : %02d-%02d-%d\n", current_day, current_month, current_year);
     c_gotoxy(65, 12);
     printf("CIN DU FOURNISSEUR : %s\n", CINF);
     c_gotoxy(65, 13);
-    printf("============================================================\n");
+    printf("=====================================================\n");
     c_gotoxy(65, 14);
-    printf("| %-15s | %-10s | %-12s |\n", "CATEGORIE", "QUANTITE", "MONTANT DE LA VENTE (DH)");
+    printf("| %-15s | %-10s | %-15s |\n", "CATEGORIE", "QUANTITE", "MONTANT VENTE (DH)");
     c_gotoxy(65, 15);
-    printf("|-----------------|------------|-----------------|\n");
+    printf("|-----------------|------------|-------------------|\n");
 
-    fprintf(supplier_report_file, "CIN DU FOURNISSEUR : %s\nDATE : %02d-%02d-%d\n\n", CINF, day, month, year);
-    fprintf(supplier_report_file, "Categorie         Quantite    Montant de la vente (DH)\n");
-    fprintf(supplier_report_file, "----------------------------------------------\n");
-
-    produit p;
-    int cart_product_id, cart_quantity;
+    // Suivre les donnees de vente
     float total_sales_amount = 0.0;
+    int row = 16;
+    
+    sale s;
+    sale_product sp;
+    produit p;
 
-    char client_name[30], client_lastname[30], client_cinc[30], client_motpass[30];
-    while (fscanf(client_file, "%s %s %s %s", client_name, client_lastname, client_cinc, client_motpass) == 4) {
-        char cart_filename[50];
-        sprintf(cart_filename, "%s_Cart.txt", client_cinc);
-        FILE *cart_file = fopen(cart_filename, "rt");
-        if (cart_file == NULL) {
-            continue;
-        }
+    // Traiter chaque vente
+    while (fread(&s, sizeof(sale), 1, sales) == 1) {
+        int sale_day, sale_month, sale_year;
+        sscanf(s.sale_date, "%d-%d-%d", &sale_day, &sale_month, &sale_year);
 
-        while (fscanf(cart_file, "%d %d", &cart_product_id, &cart_quantity) == 2) {
-            rewind(produit_file);
-            while (fread(&p, sizeof(produit), 1, produit_file)) {
-                if (p.id_product == cart_product_id && strcmp(p.CINF, CINF) == 0) {
-                    float total_amount = p.price * cart_quantity;
-                    total_sales_amount += total_amount;
+        // Verifier si la vente est d'aujourd'hui
+        if (sale_day == current_day && sale_month == current_month && sale_year == current_year) {
+            // Traiter les produits dans cette vente
+            rewind(sale_prod);
+            while (fread(&sp, sizeof(sale_product), 1, sale_prod) == 1) {
+                if (sp.sale_id == s.sale_id) {
+                    // Trouver les details du produit
+                    rewind(produit_file);
+                    while (fread(&p, sizeof(produit), 1, produit_file) == 1) {
+                        if (p.id_product == sp.product_id && strcmp(p.CINF, CINF) == 0) {
+                            float amount = p.price * sp.quantity;
+                            total_sales_amount += amount;
 
-                    c_textcolor(2);
-                    c_gotoxy(65, 16);
-                    printf("| %-15s | %-10d | %-15.2f |\n", p.category, cart_quantity, total_amount);
-                    fprintf(supplier_report_file, "%-18s %-10d %-15.2f\n", p.category, cart_quantity, total_amount);
-
-                    usleep(100000);
-                    break;
+                            // Afficher la ligne de vente
+                            c_textcolor(2);
+                            c_gotoxy(65, row++);
+                            printf("| %-15s | %-10d | %-15.2f |\n", 
+                                   p.category, sp.quantity, amount);
+                            
+                            usleep(50000); // Ralentir l'affichage pour une meilleure lisibilite
+                            break;
+                        }
+                    }
                 }
             }
         }
-        fclose(cart_file);
     }
 
+    // Afficher les totaux
     c_textcolor(15);
-    c_gotoxy(65, 17);
-    printf("============================================================\n");
-    c_gotoxy(65, 18);
+    c_gotoxy(65, row++);
+    printf("=====================================================\n");
+    c_gotoxy(65, row++);
     printf("MONTANT TOTAL DES VENTES : %.2f DH\n", total_sales_amount);
-    c_gotoxy(65, 19);
-    printf("============================================================\n");
+    c_gotoxy(65, row);
+    printf("=====================================================\n");
 
-    fprintf(supplier_report_file, "----------------------------------------------\n");
-    fprintf(supplier_report_file, "MONTANT TOTAL DES VENTES : %.2f DH\n\n", total_sales_amount);
-
-    fclose(supplier_report_file);
+    // Nettoyage
+    fclose(sales);
+    fclose(sale_prod);
     fclose(produit_file);
-    fclose(client_file);
+
+    c_gotoxy(65, row + 2);
+    c_textcolor(14);
+    printf("Appuyez sur une touche pour continuer...");
     c_getch();
 }
 
@@ -5643,4 +5659,3 @@ void view_product_supplier_f(char *CINF) {
     c_gotoxy(x, y + 2);
     printf("Fin de la liste. Appuyez sur une touche pour revenir au menu.");
 }
-
