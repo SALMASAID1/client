@@ -3228,7 +3228,7 @@ void generate_histogram(const char *title, const char *data_file) {
         printf("Error: Gnuplot command failed.\n");
         return;
     }
-
+    c_gotoxy(50, 30);
     printf("Histogram generated successfully! Open 'histogram.png' to view the plot.");
 }
 //statistics of the product in  a week  starting  from a  given date
@@ -5074,13 +5074,14 @@ void Home_LOGIN_menu_f() {
 //-----------------------function delete supplier--------------
 
 void delete_supplier() {
-    FILE *fp, *temp;
-    fp = fopen("fournisseur.txt", "r");
-    temp = fopen("temp.txt", "w");
+    FILE *fp = fopen("fournisseur.txt", "r");
+    FILE *temp = fopen("temp.txt", "w");
     if (fp == NULL || temp == NULL) {
         c_gotoxy(50, 25);
-        printf("Unable to open this file");
-        exit(1);
+        printf("Unable to open the file.");
+        if (fp) fclose(fp);
+        if (temp) fclose(temp);
+        return;
     }
 
     fseek(fp, 0, SEEK_END); // Check if file is empty
@@ -5103,7 +5104,7 @@ void delete_supplier() {
     fournisseur f, fs;
     int y = 29; // Starting y-coordinate for output
 
-    while (fscanf(fp, "%s %s %s %s\n", f.prenomf, f.nomf, f.Cinf, f.mdpf) == 4) {
+    while (fscanf(fp, "%s %s %s %s", f.prenomf, f.nomf, f.Cinf, f.mdpf) == 4) {
         if (strcmp(f.Cinf, CIN) == 0) {
             tr = 1;
             strcpy(fs.prenomf, f.prenomf);
@@ -5116,34 +5117,37 @@ void delete_supplier() {
     }
     fclose(fp);
     fclose(temp);
-    remove("fournisseur.txt");
-    rename("temp.txt", "fournisseur.txt");
 
     if (tr == 0) {
         c_gotoxy(60, y);
         c_textcolor(4);
         printf("Warning, the supplier does not exist!!");
         c_textcolor(15);
+        remove("temp.txt");
     } else {
+        remove("fournisseur.txt");
+        rename("temp.txt", "fournisseur.txt");
         gradientSpinner_s(20); // Show the spinner first
         c_gotoxy(60, y); // Set position after the spinner
         c_textcolor(2);
-        printf("Mr. %s %s successfully deleted", fs.nomf, fs.prenomf); // Show the success message after spinner
+        printf("M. %s %s successfully deleted", fs.nomf, fs.prenomf); // Show the success message after spinner
         c_textcolor(15);
     }
+    c_getch();
 }
 // version french
 void delete_supplier_f() {
-    FILE *fp, *temp;
-    fp = fopen("fournisseur.txt", "r");
-    temp = fopen("temp.txt", "w");
+    FILE *fp = fopen("fournisseur.txt", "r");
+    FILE *temp = fopen("temp.txt", "w");
     if (fp == NULL || temp == NULL) {
         c_gotoxy(50, 25);
-        printf("Impossible d'ouvrir ce fichier");
-        exit(1);
+        printf("Impossible d'ouvrir le fichier.");
+        if (fp) fclose(fp);
+        if (temp) fclose(temp);
+        return;
     }
 
-    fseek(fp, 0, SEEK_END); // Verifier si le fichier est vide
+    fseek(fp, 0, SEEK_END);
     if (ftell(fp) == 0) {
         c_gotoxy(50, 26);
         printf("Le fichier fournisseur.txt est vide.");
@@ -5152,18 +5156,18 @@ void delete_supplier_f() {
         remove("temp.txt");
         return;
     }
-    rewind(fp); // Reinitialiser le pointeur de fichier au debut
+    rewind(fp);
 
     char CIN[30];
     c_gotoxy(60, 27);
-    printf("Entrez le CIN du fournisseur : ");
-    c_gotoxy(91, 27);
+    printf("Entrez le CIN du fournisseur: ");
+    c_gotoxy(86, 27);
     scanf("%s", CIN);
     int tr = 0;
     fournisseur f, fs;
-    int y = 29; // Coordonnee de depart pour l'affichage
+    int y = 29;
 
-    while (fscanf(fp, "%s %s %s %s\n", f.prenomf, f.nomf, f.Cinf, f.mdpf) == 4) {
+    while (fscanf(fp, "%s %s %s %s", f.prenomf, f.nomf, f.Cinf, f.mdpf) == 4) {
         if (strcmp(f.Cinf, CIN) == 0) {
             tr = 1;
             strcpy(fs.prenomf, f.prenomf);
@@ -5176,23 +5180,24 @@ void delete_supplier_f() {
     }
     fclose(fp);
     fclose(temp);
-    remove("fournisseur.txt");
-    rename("temp.txt", "fournisseur.txt");
 
     if (tr == 0) {
         c_gotoxy(60, y);
         c_textcolor(4);
-        printf("Attention, le fournisseur n'existe pas !!");
+        printf("Attention, le fournisseur n'existe pas!!");
         c_textcolor(15);
+        remove("temp.txt");
     } else {
-        gradientSpinner_s_f(20); // Afficher le spinner d'abord
-        c_gotoxy(60, y); // Positionner apres le spinner
+        remove("fournisseur.txt");
+        rename("temp.txt", "fournisseur.txt");
+        gradientSpinner_s(20);
+        c_gotoxy(60, y);
         c_textcolor(2);
-        printf("M. %s %s supprime avec succes", fs.nomf, fs.prenomf); // Afficher le message de succes apres le spinner
+        printf("M. %s %s supprimé avec succès", fs.nomf, fs.prenomf);
         c_textcolor(15);
-    } 
+    }
+    c_getch();
 }
-
 //----------------------show supplier-----------------------
 void gradientSpinner_f(int duration) {
     char spinner[] = "|/-\\";

@@ -157,9 +157,6 @@ void show_supplier_f();
 int  get_next_product_id(FILE *fp);
 
 
-
-
-void c_print_centered(const char *text, int y, int x_offset);
 void get_console_size(int *rows, int *cols);
 void menu_admin();
 void menu_admin_f();
