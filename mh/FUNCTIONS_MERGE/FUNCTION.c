@@ -109,41 +109,47 @@ void liste_client(char *Temp_cin, char *client_name) {
     Options menu_options = {
         .ops = (char*[]) {
             "View Product List",
-            "Add Purchases",
+            "Add Purchases", 
             "View Purchases",
             "Remove Purchases",
             "Add A Credit Card",
             "Display Credit Card",
             "Confirm the purchase",
+            "Rate Products",
             "Back to Home Page",
             "Leave Page"
         },
-        .len = 9,
+        .len = 10,
         .title = "----- LIST OF OPTIONS -----"
     };
+
     int choice;
     do {
-        // Draw menu and get the user's selection
         choice = c_select_menu_f(menu_options);
 
         switch (choice) {
-            case 0: // View Product List
+            case 0:
                 View_Product_List();
                 break;
-            case 1: // Add Purchases
+
+            case 1:
                 Add_Purchases(Temp_cin);
                 break;
-            case 2: // View Purchases
+
+            case 2:
                 View_Purchases(Temp_cin);
                 break;
-            case 3: // Remove Purchases
+
+            case 3:
                 Remove_Purchases(Temp_cin);
                 break;
-            case 4: { // Add A Credit Card
+
+            case 4: {
                 FD = fopen("CREDIT_CARD.dat", "rb");
                 if (FD == NULL) {
                     c_textcolor(4);
-                    printf("\nFILE DOES NOT EXIST !!!");
+                    c_gotoxy(45, 27);
+                    printf("FILE DOES NOT EXIST !!!");
                     exit(0);
                 }
 
@@ -163,23 +169,28 @@ void liste_client(char *Temp_cin, char *client_name) {
                 if (check_CRD) {
                     if (check_card_exists) {
                         c_textcolor(4);
-                        printf("\nThe credit card already exists for this client!");
+                        c_gotoxy(45, 27);
+                        printf("The credit card already exists for this client!");
                     } else {
                         add_credit_card(Temp_cin, client_name);
                         c_textcolor(2);
-                        printf("\nCredit card added successfully!");
+                        c_gotoxy(45, 27);
+                        printf("Credit card added successfully!");
                     }
                 } else {
                     add_credit_card(Temp_cin, client_name);
                     c_textcolor(2);
-                    printf("\nCredit card added successfully!");
+                    c_gotoxy(45, 27);
+                    printf("Credit card added successfully!");
                 }
                 break;
             }
-            case 5: { // Display Credit Card
+
+            case 5: {
                 FD = fopen("CREDIT_CARD.dat", "rb");
                 if (FD == NULL) {
                     c_textcolor(4);
+                    c_gotoxy(45, 27);
                     printf("FILE DOES NOT EXIST !!!");
                     exit(0);
                 }
@@ -195,21 +206,23 @@ void liste_client(char *Temp_cin, char *client_name) {
 
                 if (!found) {
                     c_textcolor(4);
+                    c_gotoxy(45, 27);
                     printf("No credit card found for this client!");
                 }
                 fclose(FD);
                 break;
             }
-            case 6: { // Confirm the purchase
+
+            case 6: {
                 FD = fopen("CREDIT_CARD.dat", "rb");
                 if (FD == NULL) {
                     c_textcolor(4);
-                    printf("\nError: Credit card file does not exist!\n");
+                    c_gotoxy(45, 27);
+                    printf("Error: Credit card file does not exist!\n");
                     exit(0);
                 }
 
                 int card_found = 0;
-
                 while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
                     if (strcmp(cd.client_CIN, Temp_cin) == 0) {
                         card_found = 1;
@@ -220,33 +233,59 @@ void liste_client(char *Temp_cin, char *client_name) {
 
                 if (!card_found) {
                     c_textcolor(4);
-                    c_gotoxy(32, 25); 
-                    printf("Error: You must add a credit card before confirming your purchases!");
+                    c_gotoxy(45, 27);
+                    printf("You must add a credit card before confirming your purchases!");
                 } else {
                     confirm_purchases(Temp_cin);
                 }
                 break;
             }
-            case 7: // Back to Home Page
+
+            case 7: {
+                char cart_filename[100];
+                snprintf(cart_filename, sizeof(cart_filename), "%s_Cart.txt", Temp_cin);
+                FILE *cart_file = fopen(cart_filename, "r");
+                
+                if (cart_file == NULL) {
+                    c_textcolor(4);
+                    c_gotoxy(45, 27);
+                    printf("No purchases found to rate!\n");
+                    break;
+                }
+
+                int product_id, quantity;
+                while (fscanf(cart_file, "%d %d", &product_id, &quantity) == 2) {
+                    c_textcolor(15);
+                    printf("Rating product ID : %d", product_id);
+                    feedback_and_rate_the_product(client_name, product_id);
+                }
+                fclose(cart_file);
+                break;
+            }
+
+            case 8:
                 Home_LOGIN_menu();
                 break;
-            case 8: // Leave Page
+
+            case 9:
                 leave();
                 break;
+
             default:
                 c_textcolor(4);
+                c_gotoxy(45, 27);
                 printf("Invalid choice! Please retry.");
                 break;
         }
 
-        if (choice != 7 && choice != 8) { 
+        if (choice != 8 && choice != 9) {
             c_textcolor(9);
-            c_gotoxy(60, 26);
-            printf("Press any key to continue...\n");
+            c_gotoxy(60, 30);
+            printf("Press any key to continue...");
             c_getch();
         }
         c_clrscr();
-    } while (choice != 7 && choice != 8);
+    } while (choice != 8 && choice != 9);
 }
 // french version
 void liste_client_f(char *Temp_cin, char *client_name) {
@@ -255,52 +294,50 @@ void liste_client_f(char *Temp_cin, char *client_name) {
     int check_CRD = 0;
     int check_card_exists = 0;
 
-    // Menu options structure
     Options menu_options = {
         .ops = (char*[]) {
             "Afficher la liste des produits",
-            "Ajouter des achats",
-            "Voir les achats",
+            "Ajouter des achats", 
+            "Afficher les achats",
             "Supprimer des achats",
             "Ajouter une carte de credit",
             "Afficher la carte de credit",
             "Confirmer l'achat",
-            "Retourner a la page d'accueil",
+            "Evaluer les produits",
+            "Retour a la page d'accueil",
             "Quitter la page"
         },
-        .len = 9,
-        .title = "------ MENU DES OPTIONS ------"
+        .len = 10,
+        .title = "----- LISTE DES OPTIONS -----"
     };
 
     int choice;
-    int width = 50;   // Width of the frame
-    int height = 15;  // Height of the frame
-    int start_x = 8;  // Starting position of the frame (horizontal)
-    int start_y = 65; // Starting position of the frame (vertical)
-
     do {
-        // Wait for the user to select an option
         choice = c_select_menu_f(menu_options);
 
-        // Handle the selection based on the choice made by the user
         switch (choice) {
-            case 0: // Afficher la liste des produits
+            case 0:
                 View_Product_List_f();
                 break;
-            case 1: // Ajouter des achats
+
+            case 1:
                 Add_Purchases_f(Temp_cin);
                 break;
-            case 2: // Voir les achats
+
+            case 2:
                 View_Purchases_f(Temp_cin);
                 break;
-            case 3: // Supprimer des achats
+
+            case 3:
                 Remove_Purchases_f(Temp_cin);
                 break;
-            case 4: { // Ajouter une carte de credit
+
+            case 4: {
                 FD = fopen("CREDIT_CARD.dat", "rb");
                 if (FD == NULL) {
                     c_textcolor(4);
-                    printf("\nLe fichier n'existe pas !!!");
+                    c_gotoxy(45, 27);
+                    printf("LE FICHIER N'EXISTE PAS !!!");
                     exit(0);
                 }
 
@@ -320,31 +357,36 @@ void liste_client_f(char *Temp_cin, char *client_name) {
                 if (check_CRD) {
                     if (check_card_exists) {
                         c_textcolor(4);
-                        printf("\nLa carte de credit existe deja pour ce client!");
+                        c_gotoxy(45, 27);
+                        printf("La carte de credit existe deja pour ce client !");
                     } else {
-                        add_credit_card(Temp_cin, client_name);
+                        add_credit_card_f(Temp_cin, client_name);
                         c_textcolor(2);
-                        printf("\nCarte de credit ajoutee avec succes!");
+                        c_gotoxy(45, 27);
+                        printf("Carte de credit ajoutee avec succes !");
                     }
                 } else {
-                    add_credit_card(Temp_cin, client_name);
+                    add_credit_card_f(Temp_cin, client_name);
                     c_textcolor(2);
-                    printf("\nCarte de credit ajoutee avec succes!");
+                    c_gotoxy(45, 27);
+                    printf("Carte de credit ajoutee avec succes !");
                 }
                 break;
             }
-            case 5: { // Afficher la carte de credit
+
+            case 5: {
                 FD = fopen("CREDIT_CARD.dat", "rb");
                 if (FD == NULL) {
                     c_textcolor(4);
-                    printf("Le fichier n'existe pas !!!");
+                    c_gotoxy(45, 27);
+                    printf("LE FICHIER N'EXISTE PAS !!!");
                     exit(0);
                 }
 
                 int found = 0;
                 while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
                     if (strcmp(cd.client_CIN, Temp_cin) == 0) {
-                        display_credit_cards(client_name, Temp_cin);
+                        display_credit_cards_f(client_name, Temp_cin);
                         found = 1;
                         break;
                     }
@@ -352,21 +394,23 @@ void liste_client_f(char *Temp_cin, char *client_name) {
 
                 if (!found) {
                     c_textcolor(4);
-                    printf("Aucune carte de credit trouvee pour ce client!");
+                    c_gotoxy(45, 27);
+                    printf("Aucune carte de credit trouvee pour ce client !");
                 }
                 fclose(FD);
                 break;
             }
-            case 6: { // Confirmer l'achat
+
+            case 6: {
                 FD = fopen("CREDIT_CARD.dat", "rb");
                 if (FD == NULL) {
                     c_textcolor(4);
-                    printf("\nErreur : Le fichier de carte de credit n'existe pas!\n");
+                    c_gotoxy(45, 27);
+                    printf("Erreur : Le fichier des cartes de credit n'existe pas !");
                     exit(0);
                 }
 
                 int card_found = 0;
-
                 while (fread(&cd, sizeof(CCD), 1, FD) == 1) {
                     if (strcmp(cd.client_CIN, Temp_cin) == 0) {
                         card_found = 1;
@@ -377,33 +421,59 @@ void liste_client_f(char *Temp_cin, char *client_name) {
 
                 if (!card_found) {
                     c_textcolor(4);
-                    c_gotoxy(32, 25); 
-                    printf("Erreur : Vous devez ajouter une carte de credit avant de confirmer votre achat!");
+                    c_gotoxy(45, 27);
+                    printf("Vous devez ajouter une carte de credit avant de confirmer vos achats !");
                 } else {
-                    confirm_purchases(Temp_cin);
+                    confirm_purchases_f(Temp_cin);
                 }
                 break;
             }
-            case 7: // Retourner a la page d'accueil
+
+            case 7: {
+                char cart_filename[100];
+                snprintf(cart_filename, sizeof(cart_filename), "%s_Cart.txt", Temp_cin);
+                FILE *cart_file = fopen(cart_filename, "r");
+                
+                if (cart_file == NULL) {
+                    c_textcolor(4);
+                    c_gotoxy(45, 27);
+                    printf("Aucun achat trouve a evaluer !");
+                    break;
+                }
+
+                int product_id, quantity;
+                while (fscanf(cart_file, "%d %d", &product_id, &quantity) == 2) {
+                    c_textcolor(15);
+                    printf("Evaluation du produit ID : %d\n", product_id);
+                    feedback_and_rate_the_product_f(client_name, product_id);
+                }
+                fclose(cart_file);
+                break;
+            }
+
+            case 8:
                 Home_LOGIN_menu_f();
                 break;
-            case 8: // Quitter la page
-                leave();
+
+            case 9:
+                leave_f();
                 break;
+
             default:
                 c_textcolor(4);
-                printf("Choix invalide! Veuillez reessayer.");
+                c_gotoxy(45, 27);
+                printf("Choix invalide ! Veuillez reessayer.");
                 break;
         }
 
-        // After every selection, prompt the user to continue
-        if (choice != 7 && choice != 8) { 
+        if (choice != 8 && choice != 9) {
             c_textcolor(9);
-            c_gotoxy(60, 26);
-            printf("Appuyez sur une touche pour continuer...\n");
+            c_gotoxy(60, 30);
+            printf("Appuyez sur une touche pour continuer...");
             c_getch();
         }
-    } while (choice != 7 && choice != 8);
+        c_clrscr();
+    } while (choice != 8 && choice != 9);
 }
 
 
@@ -1644,8 +1714,8 @@ void confirm_purchases(char *Temp_cin) {
 
     if (selection != 0) { // User selects "No"
         c_textattr(4);
-        c_gotoxy(32, 10);
-        printf("Purchase not confirmed.\n");
+        c_gotoxy(55, 27);
+        printf("Purchase not confirmed.");
         c_textattr(14);
         fclose(cartFile);
         return;
@@ -1769,8 +1839,8 @@ void confirm_purchases_f(char *Temp_cin) {
 
     if (selection != 0) { // User selects "Non" // Translated
         c_textattr(4);
-        c_gotoxy(32, 10);
-        printf("Achat non confirme.\n"); // Translated
+        c_gotoxy(55, 27);
+        printf("Achat non confirme."); // Translated
         c_textattr(14);
         fclose(cartFile);
         return;
@@ -3717,9 +3787,6 @@ void add_credit_card(char* CIN_client, char *name_client) {
     c_textcolor(15);
     fwrite(&A, sizeof(CCD), 1, CDM);
     fclose(CDM);
-    c_getch();
-    c_clrscr();
-
 }
 // french version
 void add_credit_card_f(char* CIN_client, char *name_client) {
@@ -3836,8 +3903,6 @@ void add_credit_card_f(char* CIN_client, char *name_client) {
     c_textcolor(15);
     fwrite(&A, sizeof(CCD), 1, CDM);
     fclose(CDM);
-    c_getch();
-    c_clrscr();
 }
 
 void display_credit_cards_f(char *client_name, char *CIN) {
@@ -4190,135 +4255,143 @@ void Display_the_Supplier_Total_amount_sales_in_the_Day_f(char *CINF) {
     fclose(supplier_report_file);
     fclose(produit_file);
     fclose(client_file);
+    c_getch();
 }
 
 void feedback_and_rate_the_product(char *name_cl, int id_product) { 
+    c_clrscr();
     FILE *client_opinion = fopen("feedback.txt", "a");
     if (client_opinion == NULL) {
         c_textcolor(4); 
-        printf("Error: feedback.txt does not exist!\n");
+        c_gotoxy(45, 8);
+        printf("Error: feedback.txt does not exist!");
         return;
-    }
+        }
 
-    char comment[256];
-    c_textcolor(14);
-    printf("%s, enter your comment about Product %d: ", name_cl, id_product);
-    c_textcolor(8);
-    fflush(stdin);
-    fgets(comment, sizeof(comment), stdin);
-    size_t len = strlen(comment);
-    if (len > 0 && comment[len - 1] == '\n') 
-    comment[len - 1] = '\0'; 
-    fprintf(client_opinion, "Client: %s | Product ID: %d | Comment: %s\n", name_cl, id_product, comment);
-    puts(comment);
+        char comment[256];
+        c_textcolor(2); // Green color for prompts
+        c_gotoxy(45, 10);
+        printf("%s, enter your comment about Product %d: ", name_cl, id_product);
+        c_textcolor(15); // White color for input
+        fflush(stdin);
+        fgets(comment, sizeof(comment), stdin);
+        size_t len = strlen(comment);
+        if (len > 0 && comment[len - 1] == '\n') 
+        comment[len - 1] = '\0'; 
+        fprintf(client_opinion, "Client: %s | Product ID: %d | Comment: %s\n", name_cl, id_product, comment);
 
-    int rating;
-    c_textcolor(14);
-    printf(" Rate the product (1 to 5 stars): ");
-    c_textcolor(14);
-    while (1) {
+        int rating;
+        c_textcolor(2);
+        c_gotoxy(45, 12);
+        printf("Rate the product (1 to 5 stars): ");
+        c_textcolor(15);
+        while (1) {
         if (scanf("%d", &rating) != 1 || rating < 1 || rating > 5) {
-            // Clear invalid input from buffer
             while (getchar() != '\n');
             c_textcolor(4);
+            c_gotoxy(45, 14);
             printf("Invalid rating. Please enter a number between 1 and 5: ");
+            c_textcolor(15);
         } else {
             break;
         }
-    }
+        }
 
-    c_textcolor(8);
-    switch (rating) {
+        c_textcolor(2);
+        c_gotoxy(45, 16);
+        printf("You rated this product %d star%s: ", rating, (rating > 1) ? "s" : "");
+        fprintf(client_opinion, "Rating: %d star%s\n", rating, (rating > 1) ? "s" : "");
+
+        switch (rating) {
         case 1:
-            printf("- You rated this product 1 star: We're sorry to hear that you had a poor experience.\n");
-            fprintf(client_opinion, "Rating: 1 star\n");
+            printf("We're sorry to hear that you had a poor experience.");
             break;
         case 2:
-            printf("-- You rated this product 2 stars: Thank you! We'll work on improving.\n");
-            fprintf(client_opinion, "Rating: 2 stars\n");
+            printf("Thank you! We'll work on improving.");
             break;
         case 3:
-            printf("--- You rated this product 3 stars: Thanks for the feedback! We're glad it was satisfactory.\n");
-            fprintf(client_opinion, "Rating: 3 stars\n");
+            printf("Thanks for the feedback! We're glad it was satisfactory.");
             break;
         case 4:
-            printf("---- You rated this product 4 stars: Great! Thank you for the positive feedback!\n");
-            fprintf(client_opinion, "Rating: 4 stars\n");
+            printf("Great! Thank you for the positive feedback!");
             break;
         case 5:
-            printf("----- You rated this product 5 stars: Awesome! We're thrilled you loved it!\n");
-            fprintf(client_opinion, "Rating: 5 stars\n");
+            printf("Awesome! We're thrilled you loved it!");
             break;
-    }
-    c_textcolor(14);
-    printf("Thank you for your feedback!");
-    c_textcolor(15);
-    fclose(client_opinion);
+        }
+        c_textcolor(2);
+        c_gotoxy(45, 18);
+        printf("Thank you for your feedback!");
+        fclose(client_opinion);
+        c_getch();
 }
-// french version
-void feedback_and_rate_the_product_f(char *name_cl, int id_product) { // name_cl : nom du client, id_product : ID du produit
-    FILE *client_opinion = fopen("feedback.txt", "a");
-    if (client_opinion == NULL) {
+// French version
+void feedback_and_rate_the_product_f(char *name_cl, int id_product) {
+        c_clrscr();
+        FILE *client_opinion = fopen("feedback.txt", "a");
+        if (client_opinion == NULL) {
         c_textcolor(4); 
-        printf("Erreur : feedback.txt n'existe pas !\n");
+        c_gotoxy(45, 8);
+        printf("Erreur : feedback.txt n'existe pas !");
         return;
-    }
+        }
 
-    char comment[256];
-    c_textcolor(14);
-    printf("%s, entrez votre commentaire sur le produit %d : ", name_cl, id_product);
-    c_textcolor(8);
-    fflush(stdin);
-    fgets(comment, sizeof(comment), stdin);
-    size_t len = strlen(comment);
-    if (len > 0 && comment[len - 1] == '\n') 
-    comment[len - 1] = '\0'; // Supprimer le caractere de nouvelle ligne
-    // ecrire le commentaire dans le fichier
-    fprintf(client_opinion, "Client : %s | ID Produit : %d | Commentaire : %s\n", name_cl, id_product, comment);
-    puts(comment);
+        char comment[256];
+        c_textcolor(2);
+        c_gotoxy(45, 10);
+        printf("%s, entrez votre commentaire sur le produit %d : ", name_cl, id_product);
+        c_textcolor(15);
+        fflush(stdin);
+        fgets(comment, sizeof(comment), stdin);
+        size_t len = strlen(comment);
+        if (len > 0 && comment[len - 1] == '\n') 
+        comment[len - 1] = '\0';
+        fprintf(client_opinion, "Client : %s | ID Produit : %d | Commentaire : %s\n", name_cl, id_product, comment);
 
-    int rating;
-    c_textcolor(14);
-    printf(" Notez le produit (1 a 5 etoiles) : ");
-    c_textcolor(14);
-    while (1) {
+        int rating;
+        c_textcolor(2);
+        c_gotoxy(45, 12);
+        printf("Notez le produit (1 à 5 etoiles) : ");
+        c_textcolor(15);
+        while (1) {
         if (scanf("%d", &rating) != 1 || rating < 1 || rating > 5) {
-            // Effacer les entrees non valides dans le tampon
             while (getchar() != '\n');
             c_textcolor(4);
+            c_gotoxy(45, 14);
             printf("Note invalide. Veuillez entrer un nombre entre 1 et 5 : ");
+            c_textcolor(15);
         } else {
             break;
         }
-    }
+        }
 
-    c_textcolor(8);
-    switch (rating) {
+        c_textcolor(2);
+        c_gotoxy(45, 16);
+        printf("Vous avez attribue %d etoile%s : ", rating, (rating > 1) ? "s" : "");
+        fprintf(client_opinion, "Note : %d etoile%s\n", rating, (rating > 1) ? "s" : "");
+
+        switch (rating) {
         case 1:
-            printf("- Vous avez attribue 1 etoile : Nous sommes desoles d'apprendre que votre experience a ete mauvaise.\n");
-            fprintf(client_opinion, "Note : 1 etoile\n");
+            printf("Nous sommes desoles d'apprendre que votre experience a ete mauvaise.");
             break;
         case 2:
-            printf("-- Vous avez attribue 2 etoiles : Merci ! Nous travaillerons pour nous ameliorer.\n");
-            fprintf(client_opinion, "Note : 2 etoiles\n");
+            printf("Merci ! Nous travaillerons pour nous ameliorer.");
             break;
         case 3:
-            printf("--- Vous avez attribue 3 etoiles : Merci pour votre retour ! Nous sommes heureux que ce soit satisfaisant.\n");
-            fprintf(client_opinion, "Note : 3 etoiles\n");
+            printf("Merci pour votre retour ! Nous sommes heureux que ce soit satisfaisant.");
             break;
         case 4:
-            printf("---- Vous avez attribue 4 etoiles : Super ! Merci pour ce retour positif !\n");
-            fprintf(client_opinion, "Note : 4 etoiles\n");
+            printf("Super ! Merci pour ce retour positif !");
             break;
         case 5:
-            printf("----- Vous avez attribue 5 etoiles : Genial ! Nous sommes ravis que vous ayez adore !\n");
-            fprintf(client_opinion, "Note : 5 etoiles\n");
+            printf("Genial ! Nous sommes ravis que vous ayez adore !");
             break;
-    }
-    c_textcolor(14);
-    printf("Merci pour votre retour !");
-    c_textcolor(15);
-    fclose(client_opinion);
+        }
+        c_textcolor(2);
+        c_gotoxy(45, 18);
+        printf("Merci pour votre retour !");
+        fclose(client_opinion);
+        c_getch();
 }
 
 
@@ -5193,7 +5266,7 @@ void delete_supplier_f() {
         gradientSpinner_s(20);
         c_gotoxy(60, y);
         c_textcolor(2);
-        printf("M. %s %s supprimé avec succès", fs.nomf, fs.prenomf);
+        printf("M. %s %s supprime avec succès", fs.nomf, fs.prenomf);
         c_textcolor(15);
     }
     c_getch();

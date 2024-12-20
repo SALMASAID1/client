@@ -1,0 +1,18 @@
+Client: chicken | Product ID: 3 | Comment: Nice to try
+Rating: 4 stars
+Client: chicken | Product ID: 3 | Comment: dd
+Rating: 2 stars
+Client: chicken | Product ID: 3 | Comment: 555
+Rating: 3 stars
+Client: chicken | Product ID: 4 | Comment: dds
+Rating: 1 star
+Client: chicken | Product ID: 3 | Comment: is nice
+Rating: 3 stars
+Client: chicken | Product ID: 4 | Comment: good
+Rating: 4 stars
+Client: chicken | Product ID: 3 | Comment: good
+Rating: 3 stars
+Client: chicken | Product ID: 4 | Comment: Nice
+Rating: 5 stars
+Client: chicken | Product ID: 9 | Comment: is Nice
+Rating: 4 stars

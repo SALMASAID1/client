@@ -30,16 +30,16 @@ BT                         % Begin text block
 (================== FACTURE ==================) Tj
 0 -20 Td  (Client Name: chicken ) Tj
 0 -20 Td(Client CIN: aw12345 ) Tj
-0 -20 Td(Card Number: 1234 ** ** 4442 ) Tj
+0 -20 Td(Card Number: 5555 ** ** 5777 ) Tj
 0 -20 Td(Date of Purchase: 20-12-2024) Tj
 0 -30 Td (---------------------------------------------) Tj
 0 -20 Td(| Product         | Quantity   | Total Price |) Tj
 0 -20 Td(---------------------------------------------) Tj
-0 -20 Td(| Laptop          | 5          | Out of Stock DH |) Tj
+0 -20 Td(| ananas          | 100        | 2000.00    DH |) Tj
 0 -20 Td
 (---------------------------------------------) Tj
 0 -20 Td
-(Grand Total: 0.00 DH) Tj
+(Grand Total: 2000.00 DH) Tj
 0 -20 Td
 (=============================================) Tj
 ET                         % End text block
