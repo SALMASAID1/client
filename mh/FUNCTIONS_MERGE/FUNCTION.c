@@ -4078,8 +4078,6 @@ void display_credit_cards(char *client_name, char *CIN) {
     printf("----------------------------------------------------------");
 }
 
-
-
 void Display_the_Supplier_Total_amount_sales_in_the_Day(char *CINF) {
     c_clrscr();
     FILE *sales = fopen("sales.bin", "rb");

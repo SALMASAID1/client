@@ -161,4 +161,6 @@
         void gradientSpinner_s(int duration);
         void gradientSpinner_s_f(int duration);
         void image(const char *filepath);
+
+        
 #endif // FONCTION_H_INCLUDED
