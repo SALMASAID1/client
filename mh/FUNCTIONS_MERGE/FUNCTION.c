@@ -1908,7 +1908,7 @@ void confirm_purchases_f(char *Temp_cin) {
     fclose(productFile);
 
     // Purchase confirmed, call client_factor function
-    client_factor(Temp_cin);
+    client_factor_f(Temp_cin);
 
     // Show loading spinner before the final message
     gradientSpinner(5); // Adjust duration for the spinner
@@ -3317,6 +3317,7 @@ void product_statis(int id_prod, int year, int month , int day) {
 
     if (sales == NULL || sale_prod == NULL) {
         printf("Error: Unable to open sales.bin or sale_prod.bin!\n");
+        c_getch();
         exit(1);
     }
 
@@ -3346,6 +3347,7 @@ void product_statis(int id_prod, int year, int month , int day) {
 
     if (statis == NULL) {
         printf("Error: Unable to open statis.txt!\n");
+        c_getch();
         exit(1);
     }
     for (int i = 0; i < 7; i++) {
@@ -3354,6 +3356,7 @@ void product_statis(int id_prod, int year, int month , int day) {
 
         if (time_info == NULL) {
             printf("Error: Unable to convert Unix timestamp to date.\n");
+            c_getch();
             return;
         }
 
@@ -3378,6 +3381,7 @@ void product_statis_f(int id_prod, int year, int month , int day) {
 
     if (sales == NULL || sale_prod == NULL) {
         printf("Erreur : Impossible d'ouvrir sales.bin ou sale_prod.bin !\n");
+        c_getch();
         exit(1);
     }
 
@@ -3407,6 +3411,7 @@ void product_statis_f(int id_prod, int year, int month , int day) {
 
     if (statis == NULL) {
         printf("Erreur : Impossible d'ouvrir statis.txt !\n");
+        c_getch();
         exit(1);
     }
     for (int i = 0; i < 7; i++) {
@@ -3556,24 +3561,20 @@ void client_factor(char *CIN) {
 }
 // french version
 void client_factor_f(char *CIN) {
-    
     FILE *FACT = fopen("FACTEUR.pdf", "w");
-
-    FILE *sales = fopen("sales.bin", "ab");
-    FILE *sale_prod = fopen("sales_prod.bin", "ab");
-
-    int sale_id = generate_random_id();
-
-
-    if (FACT == NULL || sales == NULL || sale_prod == NULL) {
+    if (FACT == NULL) {
         printf("Erreur : Impossible de creer le fichier FACTEUR.pdf !\n");
         exit(1);
     }
     
     CCD client_details;
     int found = 0;
+    
+    FILE *sales = fopen("sales.bin", "ab");
+    FILE *sale_prod = fopen("sales_prod.bin", "ab");
 
-    // Lire les details de la carte de credit depuis CREDIT_CARD.dat
+    int sale_id = generate_random_id();
+    // Read credit card details from CREDIT_CARD.dat
     FILE *CDM = fopen("CREDIT_CARD.dat", "rb");
     if (CDM == NULL) {
         printf("Erreur : Impossible d'ouvrir le fichier CREDIT_CARD.dat !\n");
@@ -3588,18 +3589,18 @@ void client_factor_f(char *CIN) {
     fclose(CDM);
 
     if (!found) {
-        fprintf(FACT, "Erreur : Client avec CIN %s non trouve dans la base de donnees des cartes de credit !\n", CIN);
+        fprintf(FACT, "Erreur : Client avec CIN %s introuvable dans la base de donnees des cartes de credit !\n", CIN);
         fclose(FACT);
         return;
     }
 
-    // Masquer le numero de carte de credit
+    // Mask credit card number
     char hidden_card_number[50];
     snprintf(hidden_card_number, sizeof(hidden_card_number), "%.4s ** ** %.4s", 
              client_details.card_number, 
              client_details.card_number + strlen(client_details.card_number) - 4);
 
-    // ecrire les informations du client et la date dans FACTEUR
+    // Write Client Information and Date to FACTEUR
     time_t currentTime = time(NULL);
     struct tm *localTime = localtime(&currentTime);
     fprintf(FACT, pdf_header);
@@ -3607,12 +3608,12 @@ void client_factor_f(char *CIN) {
     fprintf(FACT, "(Nom du client : %s ) Tj\n0 -20 Td", client_details.client_name);
     fprintf(FACT, "(CIN du client : %s ) Tj\n0 -20 Td", client_details.client_CIN);
     fprintf(FACT, "(Numero de carte : %s ) Tj\n0 -20 Td", hidden_card_number);
-    fprintf(FACT, "(Date d'achat : %02d-%02d-%d) Tj\n0 -30 Td " ,  
+    fprintf(FACT, "(Date d'achat : %02d-%02d-%d) Tj\n0 -30 Td ",  
             localTime->tm_mday, 
             localTime->tm_mon + 1, 
             localTime->tm_year + 1900);
     fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td");
-    fprintf(FACT, "(| Produit         | Quantite   | Prix total   |) Tj\n0 -20 Td");
+    fprintf(FACT, "(| Produit         | Quantite   | Prix Total  |) Tj\n0 -20 Td");
     fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td");
 
     // Dynamically create the file name based on CIN
@@ -3622,7 +3623,7 @@ void client_factor_f(char *CIN) {
     // Open the dynamically generated file
     FILE *client_choice_file = fopen(client_choice_filename, "r");
     if (client_choice_file == NULL) {
-        printf("Erreur : Impossible d'ouvrir %s_Cart.txt !\n", CIN);
+        printf("Erreur : Impossible d'ouvrir le fichier %s_Cart.txt !\n", CIN);
         exit(1);
     }
 
@@ -3637,7 +3638,7 @@ void client_factor_f(char *CIN) {
         // Read product details from produit.dat
         FILE *produit_file = fopen("produit.dat", "rb");
         if (produit_file == NULL) {
-            printf("Erreur : Impossible d'ouvrir produit.dat !\n");
+            printf("Erreur : Impossible d'ouvrir le fichier produit.dat !\n");
             exit(1);
         }
 
@@ -3648,7 +3649,7 @@ void client_factor_f(char *CIN) {
                 break;
             }
         }
-        
+        fclose(produit_file);
 
         if (product_found) {
             if (client_choice_entry.quantity <= product.quantity) {
@@ -3656,10 +3657,10 @@ void client_factor_f(char *CIN) {
                 grand_total += total_price;
                 fprintf(FACT, "(| %-15s | %-10d | %-10.2f DH |) Tj\n0 -20 Td\n", product.name, client_choice_entry.quantity, total_price);
             } else {
-                fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", product.name, client_choice_entry.quantity, "En rupture de stock");
+                fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", product.name, client_choice_entry.quantity, "Stock epuise");
             }
         } else {
-            fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", "Produit non trouve", client_choice_entry.quantity, "Non trouve");
+            fprintf(FACT, "(| %-15s | %-10d | %-10s DH |) Tj\n0 -20 Td\n", "Produit introuvable", client_choice_entry.quantity, "Non trouve");
         }
 
         sale_product sp;
@@ -3667,17 +3668,19 @@ void client_factor_f(char *CIN) {
         sp.sale_id = sale_id;
         sp.product_id = product.id_product;
         sp.quantity = client_choice_entry.quantity;
-        printf("sale_id : %d\n", sp.sale_id);
-
         fwrite(&sp, sizeof(sale_product), 1, sale_prod);
-        
-
-
-        fclose(produit_file);
-
-
     }
 
+    
+    currentTime = time(NULL);
+    localTime = localtime(&currentTime);
+
+    sale s;
+    s.sale_id = sale_id;
+    sprintf(s.sale_date, "%02d-%02d-%d", localTime->tm_mday, localTime->tm_mon + 1, localTime->tm_year + 1900);
+    sprintf(s.client_CIN, "%s", CIN);
+    s.total_price = grand_total;
+    fwrite(&s, sizeof(sale), 1, sales);
 
     fclose(client_choice_file);
 
@@ -3685,23 +3688,11 @@ void client_factor_f(char *CIN) {
     fprintf(FACT, "(---------------------------------------------) Tj\n0 -20 Td\n");
     fprintf(FACT, "(Total general : %.2f DH) Tj\n0 -20 Td\n", grand_total);
     fprintf(FACT, "(=============================================) Tj\n");
-    
-
-    currentTime = time(NULL);
-    localTime = localtime(&currentTime);
-
-    sale s;
-    s.sale_id = sale_id;
-    sprintf(s.sale_date, "%02d-%02d-%d", localTime->tm_mday - 3, localTime->tm_mon + 1, localTime->tm_year + 1900);
-    sprintf(s.client_CIN, "%s", CIN);
-    s.total_price = grand_total;
-    fwrite(&s, sizeof(sale), 1, sales);
-
-
     fprintf(FACT, pdf_footer);
     fclose(FACT);
     fclose(sales);
     fclose(sale_prod);
+    openPDFInBrave("C:\\Users\\rabat\\Desktop\\Desktop_FILE\\c_project_last_updates\\C_PROJET_ACHATS-1\\mh\\FUNCTIONS_MERGE\\FACTEUR.pdf");
 }
 
 void add_credit_card(char* CIN_client, char *name_client) {
